@@ -174,7 +174,10 @@ def list_block(lines, i, out):
 
 def main():
     md = open(SRC, encoding="utf-8").read()
-    # Las referencias a otros ficheros del repo no existen en la interfaz: quedan como texto.
+    # Los otros ficheros del repositorio no existen en la interfaz: fuera el enlace a la
+    # versión inglesa y los enlaces a .md quedan como texto.
+    md = re.sub(r"^\*\[English version\]\([^)]*\)\*\n+", "", md, flags=re.M)
+    md = re.sub(r"\[([^\]]+)\]\([^)\s]*\.md\)", r"\1", md)
     page = HEAD + convert(md) + "\n" + TAIL
     open(DST, "w", encoding="utf-8", newline="\n").write(page)
     print(f"{DST}: {len(page)} bytes")

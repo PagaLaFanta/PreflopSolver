@@ -12,3 +12,9 @@ ventana, el programa se cierra solo en menos de un minuto.
   (solve.exe --help).
 - Guía de uso y práctica: GUIA_DE_USO.md (ábrela con cualquier editor o visor de
   Markdown).
+
+English
+-------
+Double-click PreflopSolver.exe: the interface opens in its own window (Chrome or Edge in
+app mode; otherwise the default browser). The interface is in Spanish; USER_GUIDE.md
+explains every screen in English, and README.md describes the program.

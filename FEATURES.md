@@ -1,85 +1,89 @@
-# PreflopSolver — qué hace por debajo
+# PreflopSolver — what it does under the hood
 
-Solver de preflop de torneos (CFR+ / MCCFR) escrito desde cero en Rust. El núcleo de
-cálculo no tiene dependencias externas salvo dos: `rayon` para el paralelismo y
-`mimalloc` como allocator. Todo lo demás (evaluador de manos, equity, ICM, abstracción
-postflop, CFR+) está escrito a mano.
+*[Versión en español](FEATURES.es.md)*
 
-## Modelos de equidad
+A preflop tournament solver (CFR+ / MCCFR) written from scratch in Rust. The computing core
+has no external dependencies except two: `rayon` for parallelism and `mimalloc` as the
+allocator. Everything else (hand evaluator, equity, ICM, postflop abstraction, CFR+) is
+hand-written.
 
-- **Chip EV** puro.
-- **ICM** (Malmuth-Harville, DP exacta; Monte Carlo con números aleatorios comunes para
-  campos grandes, sin ruido en el gradiente).
-- **ICM multimesa**: el resto del torneo (otras mesas) entra en el cálculo, no solo tu mesa.
-- **FGS** (Future Game Simulation): en vez de congelar el valor de las fichas en el ICM de
-  esta mano, simula las manos siguientes resolviendo el push/fold de cada estado futuro,
-  con overcalls a 3, botón móvil entre manos y subida de ciegas opcional. Así una SB corta
-  que va a pasar a botón no se infravalora.
-- **PKO / SKO**: bounties progresivos o estándar, reparto en empates, eliminaciones
-  simultáneas, valor de las cabezas futuras repartido por fichas. Con o sin ICM: en chip EV
-  los bounties van en fichas, para aislar su efecto sin presión de ICM.
+## Equity models
 
-## Árbol preflop
+- Plain **chip EV**.
+- **ICM** (Malmuth-Harville, exact DP; Monte Carlo with common random numbers for large
+  fields, so the gradient has no noise).
+- **Multi-table ICM**: the rest of the tournament (other tables) enters the calculation,
+  not just your table.
+- **FGS** (Future Game Simulation): instead of freezing the chips' value at this hand's
+  ICM, it simulates the following hands by solving the push/fold game of each future state,
+  with 3-way overcalls, a moving button between hands and an optional blind increase. A
+  short SB about to move to the button is not undervalued.
+- **PKO / SKO**: progressive or standard bounties, split pots, simultaneous eliminations,
+  and the value of future bounties distributed by chips. With or without ICM: in chip EV
+  the bounties are valued in chips, to isolate their effect without ICM pressure.
 
-- Tamaños de open por asiento, con escalado automático por limpers y callers
-  (`2.5bb+1bb`, `3x+1x`, `75%`, `ai`).
-- Raise sobre limp de la BB con tamaño propio.
-- Niveles de 3-bet, 4-bet y 5-bet independientes, con tamaños en y fuera de posición.
-- **Flats por nivel**: cuántos pueden limpear u overlimpear y cuántos pueden pagar sin subir
-  en cada nivel, más *closing flats* (quien cierra la acción siempre puede pagar) y la
-  opción de prohibir cold calls frente a 3-bet o más.
-- Umbral de all-in: un tamaño que comprometa más de cierto % del stack efectivo pasa a
-  all-in solo; un tamaño por debajo del raise mínimo sube al mínimo.
-- Máximo de jugadores por bote (2 a 6) independiente de los jugadores en la mesa: botes a
-  3 con evaluación exacta y a 4+ con cálculo analítico por board, todo con botes laterales.
-- **Poda antes de resolver**: quita acciones concretas de un nodo exacto sobre una vista
-  previa del árbol, en vez de resolver primero y recortar a ciegas después.
-- Perfiles Push/fold y Estándar, con tamaños por defecto que escalan con el stack efectivo.
+## Preflop tree
+
+- Open sizes by seat, with automatic scaling by limpers and callers (`2.5bb+1bb`,
+  `3x+1x`, `75%`, `ai`).
+- Big blind raise over limp with its own size.
+- Independent 3-bet, 4-bet and 5-bet levels, with in-position and out-of-position sizes.
+- **Flats per level**: how many players may limp or overlimp and how many may call without
+  raising at each level, plus *closing flats* (whoever closes the action can always call)
+  and the option to forbid cold calls against 3-bets or more.
+- All-in threshold: a size committing more than a given % of the effective stack becomes
+  an all-in automatically; a size below the minimum raise is raised to the minimum.
+- Maximum players per pot (2 to 6) independent of the number of players at the table:
+  3-way pots evaluated exactly and 4+ way pots analytically per board, all with side pots.
+- **Pruning before solving**: removes specific actions from an exact node on a preview of
+  the tree, instead of solving first and trimming blindly afterwards.
+- Push/fold and Standard profiles, with default sizes that scale with the effective stack.
 
 ## Postflop
 
-- MCCFR con tamaños geométricos, all-in como opción con SPR bajo, raises y re-raises,
-  check-down forzado según el número de jugadores, donk limitado y tamaños propios para el
-  flop (c-bet, donk, raise).
-- Botes a 3 y 4 jugadores postflop con el stack de cada uno y botes laterales.
-- Abstracción de manos por calle: flop y turn por la distribución de fuerza final (k-means
-  EMD), río por fuerza contra 8 grupos de rivales (OCHS). 256 o 1024 grupos por calle.
-- **Reducción de varianza** (VR-MCCFR) en las hojas heads-up: a igual número de
-  iteraciones, la NashConv baja ~2,3× con poco coste extra.
-- Board bunching exacto: los rangos de los que foldearon cambian el board y las manos de
-  los demás.
-- Modo check-down para estudiar solo la estructura preflop muy rápido.
+- MCCFR with geometric sizes, all-in as an option at low SPR, raises and re-raises, forced
+  check-down by number of players, limited donk bets and dedicated flop sizes (c-bet, donk,
+  raise).
+- 3- and 4-way postflop pots with each player's own stack and side pots.
+- Hand abstraction per street: flop and turn by final strength distribution (EMD k-means),
+  river by strength against 8 opponent groups (OCHS). 256 or 1024 groups per street.
+- **Variance reduction** (VR-MCCFR) at heads-up leaves: at the same number of iterations,
+  NashConv drops ~2.3× at little extra cost.
+- Exact board bunching: the ranges of the players who folded change the board and the
+  other players' hands.
+- Check-down mode to study the preflop structure alone, very quickly.
 
-## Convergencia
+## Convergence
 
-- CFR+ con media ponderada, updates simultáneos con 3+ jugadores.
-- **Indicador de convergencia (CI)** con una escala fija: < 10 estrategia estable, ≤ 3
-  calidad de referencia. El usuario elige la calidad, no las iteraciones.
-- NashConv (mejor respuesta exacta) para medir la distancia real al equilibrio.
+- CFR+ with a weighted average, simultaneous updates with 3+ players.
+- **Convergence indicator (CI)** on a fixed scale: < 10 stable strategy, ≤ 3 reference
+  quality. The user picks the quality, not the number of iterations.
+- NashConv (exact best response) to measure the real distance to equilibrium.
 
-## Rendimiento
+## Performance
 
-- Paralelismo con `rayon` (work-stealing) en todo el recorrido del árbol.
-- Vectores por mano en orden de fuerza, que el compilador vectoriza; binario AVX2 aparte,
-  elegido solo si la CPU lo soporta.
-- En CPU híbridas de Intel, el motor se saca del modo de eficiencia de Windows para no
-  quedarse en los núcleos lentos.
-- Parar un cálculo responde en menos de un segundo y guarda lo hecho para continuar.
+- Parallelism with `rayon` (work stealing) across the whole tree traversal.
+- Per-hand vectors in strength order that the compiler vectorizes; a separate AVX2 build,
+  used only if the CPU supports it.
+- On Intel hybrid CPUs, the engine takes itself out of Windows efficiency mode so it does
+  not get stuck on the slow cores.
+- Stopping a calculation responds within a second and keeps the work done so it can be
+  continued.
 
-## Interfaz
+## Interface
 
-- Asistente en tres pasos, con **plantillas** de spots típicos, importación de
-  **historiales de PokerStars, GGPoker y Winamax** (stacks, ante, ante de BB y bounties) y
-  stacks en fichas o en bb.
-- Vista previa del árbol completo antes de resolver, con poda.
-- Calidad Rápido / Estudio / Referencia, con estimación del tiempo restante.
-- Árbol con los folds aplanados, rejilla 13×13 con estrategia, EV y «EV frente a la mejor
-  otra acción», panel por nodo con combos y EV.
-- Bloqueo de rango o de frecuencia por nodo (node locking) y afinado de un subárbol.
-- Calculadora ICM con bubble factors, también con campo y FGS.
-- Exportación de rangos (TSV), solución completa (JSON), informe HTML y rangos de llegada a
-  cada flop en formato PioSolver.
+- Three-step wizard with **templates** for typical spots, import of **PokerStars, GGPoker
+  and Winamax hand histories** (stacks, ante, big blind ante and bounties) and stacks in
+  chips or in bb.
+- Preview of the full tree before solving, with pruning.
+- Quick / Study / Reference quality, with an estimate of the remaining time.
+- Tree with flattened folds, 13×13 grid with strategy, EV and "EV vs best alternative",
+  node panel with combos and EV.
+- Range or frequency locking per node (node locking) and subtree refinement.
+- ICM calculator with bubble factors, also with a field and FGS.
+- Export of ranges (TSV), the full solution (JSON), an HTML report and the ranges reaching
+  each flop in PioSolver format.
 
 ---
 
-*Windows, portable (sin instalación), ~20 000 líneas de Rust.*
+*Windows, portable (no installation), ~20,000 lines of Rust.*

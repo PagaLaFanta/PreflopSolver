@@ -20,6 +20,6 @@ Copy-Item target\release\solve.exe, target\release\serve.exe $out
 Copy-Item target\release\preflop.exe "$out\$name.exe"
 Copy-Item target\v3\release\solve.exe "$out\solve-avx2.exe"
 Copy-Item -Recurse ui, spots $out
-Copy-Item README.md, docs\GUIA_DE_USO.md, scripts\LEEME.txt $out
+Copy-Item README.md, README.es.md, docs\GUIA_DE_USO.md, docs\USER_GUIDE.md, scripts\LEEME.txt $out
 Compress-Archive -Force $out "dist\$name.zip"
 Write-Output "dist\$name.zip"

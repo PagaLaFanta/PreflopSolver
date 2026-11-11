@@ -1,8 +1,11 @@
 # PreflopSolver — Guía de uso y práctica
 
+*[English version](USER_GUIDE.md)*
+
 Guía para usar el solver en el día a día: cómo montar un spot, qué ajustes elegir, cómo
 leer los resultados y qué hacer cuando algo no cuadra. La descripción general y la
-compilación están en el `README.md`; la lista de funciones, en `FEATURES.md`.
+compilación están en el [README](../README.es.md); la lista de funciones, en
+[FEATURES.es.md](../FEATURES.es.md).
 
 ## Índice
 

@@ -17,8 +17,8 @@ mkdir -p "$out"
 cp "$rel/solve.exe" "$rel/serve.exe" "$out/"
 cp "$rel/preflop.exe" "$out/$name.exe"
 cp "target/v3/$target/release/solve.exe" "$out/solve-avx2.exe"
-cp -r ui spots README.md "$out/"
-cp scripts/LEEME.txt docs/GUIA_DE_USO.md "$out/"
+cp -r ui spots README.md README.es.md "$out/"
+cp scripts/LEEME.txt docs/GUIA_DE_USO.md docs/USER_GUIDE.md "$out/"
 # Sin símbolos de depuración (el perfil release los incluye para perfilar).
 if command -v x86_64-w64-mingw32-strip >/dev/null 2>&1; then
     x86_64-w64-mingw32-strip "$out/solve.exe" "$out/solve-avx2.exe" "$out/serve.exe" "$out/$name.exe"

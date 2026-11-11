@@ -35,9 +35,9 @@ unsafe impl<T: ZeroInit + Sync> Sync for AlignedBuf<T> {}
 
 impl<T: ZeroInit> AlignedBuf<T> {
     pub fn zeroed(len: usize) -> Self {
-        let bytes = len.checked_mul(std::mem::size_of::<T>()).expect("overflow de tamaño").max(1);
+        let bytes = len.checked_mul(std::mem::size_of::<T>()).expect("size overflow").max(1);
         let align = CACHE_LINE.max(std::mem::align_of::<T>());
-        let layout = Layout::from_size_align(bytes, align).expect("layout inválido");
+        let layout = Layout::from_size_align(bytes, align).expect("invalid layout");
         // SAFETY: layout de tamaño > 0; `T: ZeroInit` hace válido el contenido a cero.
         let raw = unsafe { alloc_zeroed(layout) } as *mut T;
         let ptr = NonNull::new(raw).unwrap_or_else(|| handle_alloc_error(layout));

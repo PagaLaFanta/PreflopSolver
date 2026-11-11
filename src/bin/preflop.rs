@@ -6,7 +6,7 @@
 use std::process::{Command, Stdio};
 
 fn main() {
-    let exe = std::env::current_exe().expect("ruta del ejecutable");
+    let exe = std::env::current_exe().expect("executable path");
     let serve = exe.with_file_name(if cfg!(windows) { "serve.exe" } else { "serve" });
     let mut cmd = Command::new(&serve);
     cmd.arg("--app").stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null());
@@ -19,7 +19,7 @@ fn main() {
         cmd.creation_flags(0x0800_0000 | 0x0000_0008); // CREATE_NO_WINDOW | DETACHED_PROCESS
     }
     if let Err(e) = cmd.spawn() {
-        eprintln!("no se pudo arrancar {}: {e}", serve.display());
+        eprintln!("could not start {}: {e}", serve.display());
         std::process::exit(1);
     }
 }

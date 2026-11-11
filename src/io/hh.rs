@@ -126,10 +126,10 @@ fn hand_id(site: Site, header: &str) -> String {
 pub fn parse_hand(text: &str) -> Result<ParsedHand, String> {
     let text = text.trim_start_matches('\u{feff}');
     let mut lines = text.lines();
-    let header = lines.next().ok_or("historial vacío")?.trim();
-    let site = site_of(header).ok_or("no es un historial de PokerStars, GGPoker ni Winamax")?;
+    let header = lines.next().ok_or("empty hand history")?.trim();
+    let site = site_of(header).ok_or("not a PokerStars, GGPoker or Winamax hand history")?;
     let hand_id = hand_id(site, header);
-    let (mut sb, mut bb, header_ante) = blind_level(header).ok_or("nivel de ciegas no encontrado")?;
+    let (mut sb, mut bb, header_ante) = blind_level(header).ok_or("blind level not found")?;
 
     let mut button: Option<u32> = None;
     let mut seats: Vec<(u32, String, f64, Option<f64>)> = Vec::new();
@@ -192,17 +192,17 @@ pub fn parse_hand(text: &str) -> Result<ParsedHand, String> {
         }
     }
     if seats.len() < 2 {
-        return Err("se necesitan al menos 2 jugadores".into());
+        return Err("at least 2 players are needed".into());
     }
     seats.sort_by_key(|s| s.0);
-    let button = button.ok_or("botón no encontrado")?;
+    let button = button.ok_or("button not found")?;
     // Orden horario empezando por el primer asiento tras el botón.
     let start = seats.iter().position(|s| s.0 > button).unwrap_or(0);
     let clockwise: Vec<_> = seats[start..].iter().chain(&seats[..start]).cloned().collect();
     // clockwise = [SB, BB, UTG, …, BTN] (en HU: [BB, BTN=SB]).
     let n = clockwise.len();
     let bb_pos = match &bb_player {
-        Some(p) => clockwise.iter().position(|s| &s.1 == p).ok_or("jugador de BB no sentado")?,
+        Some(p) => clockwise.iter().position(|s| &s.1 == p).ok_or("big blind player not seated")?,
         None => if n == 2 { 0 } else { 1 },
     };
     // Orden de acción preflop: tras la BB, en sentido horario, terminando en la BB.

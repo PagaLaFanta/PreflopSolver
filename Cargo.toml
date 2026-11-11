@@ -1,6 +1,6 @@
 [package]
 name = "preflop_engine"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "Motor preflop de torneos (cEV / ICM / PKO) con CFR+ preflop y MCCFR postflop abstraído"
 license = "GPL-3.0-only"

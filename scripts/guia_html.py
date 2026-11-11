@@ -1,5 +1,6 @@
-"""Genera ui/guia.html (la «Guía» de la interfaz) a partir de docs/GUIA_DE_USO.md, para que
-las dos no se desincronicen. Ejecutar tras cambiar la guía:
+"""Genera las guías de la interfaz a partir de las de docs/, para que no se desincronicen:
+ui/guia.html desde docs/GUIA_DE_USO.md y ui/guide.html desde docs/USER_GUIDE.md. Ejecutar
+tras cambiar una guía:
 
     python scripts/guia_html.py
 
@@ -11,15 +12,18 @@ import os
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "docs", "GUIA_DE_USO.md")
-DST = os.path.join(ROOT, "ui", "guia.html")
+# (fuente, destino, lang, título, enlace de vuelta)
+GUIDES = [
+    ("GUIA_DE_USO.md", "guia.html", "es", "Guía de uso", "← Volver al solver"),
+    ("USER_GUIDE.md", "guide.html", "en", "User guide", "← Back to the solver"),
+]
 
 HEAD = """<!doctype html>
-<html lang="es">
+<html lang="{lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Guía de uso</title>
+<title>{title}</title>
 <style>
 :root{--bg:#f3f3ef;--panel:#fff;--line:#d9d8d0;--fg:#1e1e1c;--muted:#6f6e68;--accent:#2f6fdb}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--line:#34332f;--fg:#ecebe6;--muted:#9a9993}}
@@ -43,7 +47,7 @@ ol li,ul li{margin:4px 0}
 </head>
 <body>
 <main>
-<p class="muted"><a href="/">← Volver al solver</a></p>
+<p class="muted"><a href="/">{back}</a></p>
 """
 TAIL = "</main>\n</body>\n</html>\n"
 
@@ -173,14 +177,17 @@ def list_block(lines, i, out):
 
 
 def main():
-    md = open(SRC, encoding="utf-8").read()
-    # Los otros ficheros del repositorio no existen en la interfaz: fuera el enlace a la
-    # versión inglesa y los enlaces a .md quedan como texto.
-    md = re.sub(r"^\*\[English version\]\([^)]*\)\*\n+", "", md, flags=re.M)
-    md = re.sub(r"\[([^\]]+)\]\([^)\s]*\.md\)", r"\1", md)
-    page = HEAD + convert(md) + "\n" + TAIL
-    open(DST, "w", encoding="utf-8", newline="\n").write(page)
-    print(f"{DST}: {len(page)} bytes")
+    for src, dst, lang, title, back in GUIDES:
+        md = open(os.path.join(ROOT, "docs", src), encoding="utf-8").read()
+        # Los otros ficheros del repositorio no existen en la interfaz: fuera el enlace a la
+        # otra versión y los enlaces a .md quedan como texto.
+        md = re.sub(r"^\*\[(?:English version|Versión en español)\]\([^)]*\)\*\n+", "", md, flags=re.M)
+        md = re.sub(r"\[([^\]]+)\]\([^)\s]*\.md\)", r"\1", md)
+        head = HEAD.replace("{lang}", lang).replace("{title}", title).replace("{back}", back)
+        page = head + convert(md) + "\n" + TAIL
+        out = os.path.join(ROOT, "ui", dst)
+        open(out, "w", encoding="utf-8", newline="\n").write(page)
+        print(f"{out}: {len(page)} bytes")
 
 
 if __name__ == "__main__":

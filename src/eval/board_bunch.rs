@@ -120,7 +120,7 @@ impl BoardBunching {
     }
 
     pub fn load(path: &Path) -> std::io::Result<Self> {
-        let bad = || std::io::Error::new(std::io::ErrorKind::InvalidData, "caché de board bunching inválida");
+        let bad = || std::io::Error::new(std::io::ErrorKind::InvalidData, "invalid board bunching cache");
         let mut b = Vec::new();
         std::fs::File::open(path)?.read_to_end(&mut b)?;
         if b.len() < 16 || &b[..8] != MAGIC {
@@ -167,10 +167,10 @@ impl BoardBunching {
                 return m;
             }
         }
-        eprintln!("board bunching: calculando las matrices exactas (solo la primera vez, 1-3 min)…");
+        eprintln!("board bunching: computing the exact matrices (first time only, 1-3 min)…");
         let m = Self::build(basis, threads);
         if let Err(e) = m.save(path) {
-            eprintln!("aviso: no se pudo guardar la caché de board bunching en {}: {e}", path.display());
+            eprintln!("warning: could not save the board bunching cache to {}: {e}", path.display());
         }
         m
     }

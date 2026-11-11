@@ -116,7 +116,7 @@ pub trait PostflopEstimator: Send + Sync {
         _seats: &[usize],
         _pool: pool::Pool<'_>,
     ) -> Vec<Box<RangeVec>> {
-        panic!("este estimador no resuelve flops a 3 jugadores")
+        panic!("this estimator does not solve 3-player flops")
     }
 
     /// Valores de **todos** los jugadores de una hoja (2 o 3, rangos por posición) de una
@@ -138,7 +138,7 @@ pub trait PostflopEstimator: Send + Sync {
                 self.values(tree, leaf, true, reaches[1], reaches[0], mode, update_mask & 2 != 0, seed ^ 1, &[l.ip as usize], pool),
             ]
         } else {
-            let m = l.multi.as_ref().expect("hoja multiway");
+            let m = l.multi.as_ref().expect("multiway leaf");
             let r3 = [reaches[0], reaches[1], reaches[2]];
             (0..3)
                 .map(|p| {

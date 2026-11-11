@@ -12,7 +12,7 @@ rango`) y ejecutar:
 ```
 
 Rutas: acciones separadas por espacio, `POS:F|C|X|A|R<total>` (p.ej. `LJ:F HJ:R2.5 CO:F`);
-la raíz es `(raíz)`. Los rangos aceptan pesos (`AKo:0.5`).
+la raíz es `(root)`. Los rangos aceptan pesos (`AKo:0.5`).
 
 | Fichero | Qué es |
 |---|---|
@@ -30,7 +30,7 @@ la raíz es `(raíz)`. Los rangos aceptan pesos (`AKo:0.5`).
 
 Each spot is a `key = value` file accepted by `solve --spot`. Keys are the CLI options
 without `--`; `show` and `lock` can be repeated. Paths are actions separated by spaces,
-`POS:F|C|X|A|R<total>` (e.g. `LJ:F HJ:R2.5 CO:F`); the root is `(raíz)`. Ranges accept
+`POS:F|C|X|A|R<total>` (e.g. `LJ:F HJ:R2.5 CO:F`); the root is `(root)`. Ranges accept
 weights (`AKo:0.5`). To compare a solution with your own reference ranges, write them in a
 TSV with the `--export` format and run `solve --spot spots/<name>.spot --compare reference.tsv`.
 

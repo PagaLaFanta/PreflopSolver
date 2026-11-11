@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -144,256 +144,238 @@ tr.click{cursor:pointer}tr.click:hover{background:var(--bg)}tr.on{background:var
 <body>
 <div class="toolbar">
   <b class="t">Preflop<span>●</span>Solver</b>
-  <button id="side-btn" title="Mostrar u ocultar la lista de manos abiertas">☰</button>
-  <button id="new" title="Asistente de configuración">＋ Nueva mano</button>
-  <select id="spot-list" title="Spots guardados"><option value="">Abrir spot…</option></select>
-  <button id="spot-save">Guardar spot</button>
+  <button id="side-btn" title="Show or hide the list of open hands" data-es-title="Mostrar u ocultar la lista de manos abiertas">☰</button>
+  <button id="new" title="Setup wizard" data-es-title="Asistente de configuración" data-es="＋ Nueva mano">＋ New hand</button>
+  <select id="spot-list" title="Saved spots" data-es-title="Spots guardados"><option value="" data-es="Abrir spot…">Open spot…</option></select>
+  <button id="spot-save" data-es="Guardar spot">Save spot</button>
   <span class="sep"></span>
-  <button class="primary" id="run">▶ Resolver</button><button id="cont" disabled title="Carga la solución anterior y sigue iterando (mismo árbol)">⏩ Continuar</button><button id="stop" disabled>■ Parar</button>
-  <span id="dl" class="note" style="display:none;margin-left:6px">descargar: <a id="dl-tsv" href="/api/export" download="rangos.tsv">rangos TSV</a> · <a id="dl-json" href="/api/export.json" download="solucion.json">estrategias JSON</a></span>
+  <button class="primary" id="run" data-es="▶ Resolver">▶ Solve</button><button id="cont" disabled title="Loads the previous solution and keeps iterating (same tree)" data-es-title="Carga la solución anterior y sigue iterando (mismo árbol)" data-es="⏩ Continuar">⏩ Continue</button><button id="stop" disabled data-es="■ Parar">■ Stop</button>
+  <span id="dl" class="note" style="display:none;margin-left:6px"><span data-es="descargar:">download:</span> <a id="dl-tsv" href="/api/export" download="ranges.tsv" data-es="rangos TSV">ranges TSV</a> · <a id="dl-json" href="/api/export.json" download="solution.json" data-es="estrategias JSON">strategies JSON</a></span>
   <span class="sep"></span>
-  <button id="theme" title="Tema claro / oscuro">◐</button><button id="colors-btn" title="Colores de las acciones">🎨 Colores</button>
-  <a href="/guia" target="_blank" class="note" style="margin-left:6px" title="Cómo usar el solver">Guía</a>
+  <button id="theme" title="Light / dark theme" data-es-title="Tema claro / oscuro">◐</button><button id="colors-btn" title="Action colors" data-es-title="Colores de las acciones" data-es="🎨 Colores">🎨 Colors</button>
+  <a id="guide-link" href="/guide" target="_blank" class="note" style="margin-left:6px" title="How to use the solver" data-es-title="Cómo usar el solver" data-es="Guía">Guide</a>
+  <button id="lang" title="Idioma / Language" style="margin-left:6px">ES</button>
   <div class="stat">
-    <details class="stat-more" id="stat-more"><summary title="Iteraciones hechas y NashConv (qué tan lejos del equilibrio exacto está la estrategia -- más fino que el CI pero caro de calcular con postflop real; para el día a día basta con el CI de al lado)">iter / NashConv</summary><span>iter <b id="s-iter">–</b></span><span>NashConv <b id="s-nc">–</b></span></details>
-    <span title="Indicador de convergencia con la misma fórmula y escala que el CI: cuánto cambia todavía la estrategia. < 10 ya es estable; ≤ 3 para material de referencia.">CI <b id="s-ci">–</b></span><span id="s-state">sin cálculo</span>
+    <details class="stat-more" id="stat-more"><summary title="Iterations done and NashConv (how far the strategy is from the exact equilibrium -- finer than the CI but expensive with real postflop play; for everyday use the CI next to it is enough)" data-es-title="Iteraciones hechas y NashConv (qué tan lejos del equilibrio exacto está la estrategia -- más fino que el CI pero caro de calcular con postflop real; para el día a día basta con el CI de al lado)">iter / NashConv</summary><span>iter <b id="s-iter">–</b></span><span>NashConv <b id="s-nc">–</b></span></details>
+    <span title="Convergence indicator: how much the strategy is still changing. Below 10 it is stable; 3 or less for reference material." data-es-title="Indicador de convergencia: cuánto cambia todavía la estrategia. Por debajo de 10 ya es estable; 3 o menos para material de referencia.">CI <b id="s-ci">–</b></span><span id="s-state" data-es="sin cálculo">no calculation</span>
   </div>
 </div>
 <div class="main">
   <div class="side">
-    <h3>Manos abiertas</h3>
+    <h3 data-es="Manos abiertas">Open hands</h3>
     <div class="hands" id="hands"></div>
-    <div style="display:flex;gap:6px;margin:4px 0 2px"><button id="hand-dup" title="Copia de la mano actual (sin solución)">Duplicar</button></div>
-    <!-- La configuración (stacks, perfil, tamaños…) vive solo en el asistente («＋ Nueva
-         mano»): tenerla también aquí eran dos formularios que podían desincronizarse (p.
-         ej. el "Perfil" de uno en Estándar y el del otro en Push/fold sin que se notara) —
-         la causa de varios bugs raros de árboles rotos. Los campos siguen aquí, ocultos:
-         son el único almacén real que lee `pairs()`/`args()`; el asistente los rellena. -->
+    <div style="display:flex;gap:6px;margin:4px 0 2px"><button id="hand-dup" title="Copy of the current hand (without the solution)" data-es-title="Copia de la mano actual (sin solución)" data-es="Duplicar">Duplicate</button></div>
+    <!-- Configuration lives only in the wizard; these hidden fields are the store that
+         pairs()/args() read. -->
     <div style="display:none">
-    <h3>Juego y equidad</h3>
-    <label>Stacks en bb, en orden de acción (…, SB, BB)<input id="stacks" value="20,20,20"></label>
-    <div class="two">
-      <label>Ante<input id="ante" value="0"></label>
-      <label class="chk" style="margin-top:16px"><input type="checkbox" id="bbante"> Ante de BB</label>
-    </div>
-    <label>Premios (vacío = chip EV)<input id="payouts" value="50,30,20"></label>
-    <label>Otras mesas (p. ej. 16x25,2x40)<input id="offtable"></label>
-    <label>Bounties PKO (mesa + otras)<input id="bounties"></label>
-    <label>FGS<select id="fgs"><option value="">no</option><option>1</option><option>2</option><option>3</option><option value="auto">auto</option></select></label>
-    <h3>Betting</h3>
-    <label>Perfil<select id="profile"><option value="pushfold">Push/fold</option><option value="standard" selected>Estándar</option></select></label>
-    <div class="two">
-      <label>Opens<input id="opens" placeholder="2.5bb+1bb"></label>
-      <label>Re-raise<input id="reraise" placeholder="3x+1x"></label>
-    </div>
-    <label>Máx. jugadores activos<select id="maxpot"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></label>
-    <label class="chk"><input type="checkbox" id="limp"> Open-limp</label>
-    <label class="chk"><input type="checkbox" id="checkdown" checked> Postflop en check-down (más rápido)</label>
-    <h3>Cálculo</h3>
-    <div class="two">
-      <label>Iteraciones<input id="iters" value="300"></label>
-      <label>Informe cada<input id="every" value="25"></label>
-    </div>
-    <div class="two">
-      <label>Objetivo NashConv<input id="target" placeholder="0"></label>
-      <label title="CI < 10: estrategia estable; 2-3: material de referencia">Objetivo CI<input id="targetci" placeholder="10 estable · 3 ref."></label>
-    </div>
-    <label><span>Opciones extra de <code>solve</code> (separadas por espacios)</span><textarea id="extra" placeholder="--pf-max-bets 2"></textarea></label>
+    <input id="stacks" value="20,20,20">
+    <input id="ante" value="0">
+    <input type="checkbox" id="bbante">
+    <input id="payouts" value="50,30,20">
+    <input id="offtable">
+    <input id="bounties">
+    <select id="fgs"><option value="">no</option><option>1</option><option>2</option><option>3</option><option value="auto">auto</option></select>
+    <select id="profile"><option value="pushfold">Push/fold</option><option value="standard" selected>Standard</option></select>
+    <input id="opens">
+    <input id="reraise">
+    <select id="maxpot"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select>
+    <input type="checkbox" id="limp">
+    <input type="checkbox" id="checkdown" checked>
+    <input id="iters" value="300">
+    <input id="every" value="25">
+    <input id="target">
+    <input id="targetci">
+    <textarea id="extra"></textarea>
     </div>
   </div>
   <div class="center">
-    <div class="tabs"><button class="on" data-p="strat">Estrategia</button><button data-p="icm">ICM</button><button data-p="log">Registro</button></div>
+    <div class="tabs"><button class="on" data-p="strat" data-es="Estrategia">Strategy</button><button data-p="icm">ICM</button><button data-p="log" data-es="Registro">Log</button></div>
     <div class="page on" id="p-strat"><div class="stratwrap">
-      <div class="treebox"><div class="th"><b>Árbol</b><button id="tree-all" title="Desplegar todo el árbol">＋</button><button id="tree-none" title="Plegar hasta el nodo actual">－</button></div>
+      <div class="treebox"><div class="th"><b data-es="Árbol">Tree</b><button id="tree-all" title="Expand the whole tree" data-es-title="Desplegar todo el árbol">＋</button><button id="tree-none" title="Collapse down to the current node" data-es-title="Plegar hasta el nodo actual">－</button></div>
         <div id="tree-stats" class="note" style="padding:4px 8px;border-bottom:1px solid var(--line);display:none"></div>
-        <div class="tree" id="tree" tabindex="0" title="Flechas: ← nodo padre, ↑↓ acciones, → entrar"><div class="note">Resuelve una mano para ver el árbol.</div></div></div>
+        <div class="tree" id="tree" tabindex="0" title="Arrows: ← parent node, ↑↓ actions, → enter" data-es-title="Flechas: ← nodo padre, ↑↓ acciones, → entrar"><div class="note" data-es="Resuelve una mano para ver el árbol.">Solve a hand to see the tree.</div></div></div>
       <div class="stratmain">
       <div class="crumbs" id="crumbs"></div>
       <div class="note" id="seat-ev"></div>
       <div class="legend" id="legend"></div>
-      <div class="modes" id="modes"><button data-m="strat" class="on">Estrategia</button><button data-m="ev">EV</button><button data-m="evdiff">EV vs mejor otra</button><select id="ev-unit" title="Unidades del EV"><option value="ev">EV en $ (ICM)</option><option value="ev_chips">EV en fichas (bb)</option></select><span style="flex:1"></span><button id="paint" title="Pinta acciones sobre el grid y bloquea el nodo con esa estrategia">✎ Pintar bloqueo</button><button id="img" title="Descarga el grid del nodo como imagen PNG">Imagen</button></div>
+      <div class="modes" id="modes"><button data-m="strat" class="on" data-es="Estrategia">Strategy</button><button data-m="ev">EV</button><button data-m="evdiff" data-es="EV vs mejor otra">EV vs best other</button><select id="ev-unit" title="EV units" data-es-title="Unidades del EV"><option value="ev" data-es="EV en $ (ICM)">EV in $ (ICM)</option><option value="ev_chips" data-es="EV en fichas (bb)">EV in chips (bb)</option></select><span style="flex:1"></span><button id="paint" title="Paint actions onto the grid and lock the node to that strategy" data-es-title="Pinta acciones sobre el grid y bloquea el nodo con esa estrategia" data-es="✎ Pintar bloqueo">✎ Paint lock</button><button id="img" title="Download the node's grid as a PNG image" data-es-title="Descarga el grid del nodo como imagen PNG" data-es="Imagen">Image</button></div>
       <div id="paintbar"></div>
       <div class="grid" id="grid"></div>
       <p class="note" id="mode-note"></p>
     </div></div></div>
     <div class="page" id="p-icm">
-      <div class="card"><h2>Calculadora ICM</h2>
-        <p class="note">Usa los stacks, premios, otras mesas, antes y FGS de la mano actual (configúrala con ＋ Nueva mano). La primera vez con FGS se calibran las tablas push/fold (≈ 1 minuto) y quedan en caché.</p>
-        <button id="icm-go">Calcular</button> <span id="icm-err" class="err"></span>
+      <div class="card"><h2 data-es="Calculadora ICM">ICM calculator</h2>
+        <p class="note" data-es="Usa los stacks, premios, otras mesas, antes y FGS de la mano actual (configúrala con ＋ Nueva mano). La primera vez con FGS se calibran las tablas push/fold (≈ 1 minuto) y quedan en caché.">Uses the stacks, prizes, other tables, antes and FGS of the current hand (set it up with ＋ New hand). The first time with FGS, the push/fold tables are calibrated (≈ 1 minute) and cached.</p>
+        <button id="icm-go" data-es="Calcular">Calculate</button> <span id="icm-err" class="err"></span>
         <div id="icm-out"></div>
         <div id="icm-detail" style="display:none"></div></div>
     </div>
     <div class="page" id="p-log">
       <svg class="chart" id="chart" viewBox="0 0 600 160" preserveAspectRatio="none"></svg>
-      <p class="note">NashConv por informe (escala logarítmica). Con postflop solo se calcula al final.</p>
+      <p class="note" data-es="NashConv por informe (escala logarítmica). Con postflop solo se calcula al final.">NashConv per report (log scale). With postflop play it is only computed at the end.</p>
       <div class="log" id="log"></div>
     </div>
   </div>
   <div class="right">
-    <h3>Nodo</h3>
-    <div id="detail" class="note">Sin nodo seleccionado.</div>
-    <h3>Mano</h3>
-    <div id="hand" class="note">Pasa el ratón por el grid.</div>
-    <h3>Bloqueos (se aplican al resolver)</h3>
-    <div class="locks" id="locks"><span class="note">Ninguno.</span></div>
+    <h3 data-es="Nodo">Node</h3>
+    <div id="detail" class="note" data-es="Sin nodo seleccionado.">No node selected.</div>
+    <h3 data-es="Mano">Hand</h3>
+    <div id="hand" class="note" data-es="Pasa el ratón por el grid.">Hover over the grid.</div>
+    <h3 data-es="Bloqueos (se aplican al resolver)">Locks (applied when solving)</h3>
+    <div class="locks" id="locks"><span class="note" data-es="Ninguno.">None.</span></div>
     <p class="note" id="locks-warn" style="display:none"></p>
   </div>
 </div>
 <div class="modal" id="wizard"><div class="dlg">
-  <div class="dlg-h"><b>Nueva mano</b><button id="wz-close">✕</button></div>
+  <div class="dlg-h"><b data-es="Nueva mano">New hand</b><button id="wz-close">✕</button></div>
   <div class="dlg-b">
-    <div id="wz-steps"><span class="on">1 · Juego y equidad</span><span>2 · Betting preflop</span><span>3 · Postflop y cálculo</span></div>
+    <div id="wz-steps"><span class="on" data-es="1 · Juego y equidad">1 · Game and equity</span><span data-es="2 · Betting preflop">2 · Preflop betting</span><span data-es="3 · Postflop y cálculo">3 · Postflop and calculation</span></div>
     <div class="wpage">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
-        <label style="flex:1;min-width:240px;margin:0" title="Rellena el asistente con un spot típico: luego cambia stacks y premios a los de tu mano.">Plantilla<select id="wz-template"><option value="">— elige un spot típico para empezar —</option></select></label>
+        <label style="flex:1;min-width:240px;margin:0" title="Fills the wizard with a typical spot: then change the stacks and prizes to those of your hand." data-es-title="Rellena el asistente con un spot típico: luego cambia stacks y premios a los de tu mano."><span data-es="Plantilla">Template</span><select id="wz-template"><option value="" data-es="— elige un spot típico para empezar —">— pick a typical spot to start —</option></select></label>
         <span id="wz-template-note" class="note"></span>
       </div>
       <div style="margin-bottom:8px">
-        <button type="button" id="wz-hh-btn" title="Pega o abre un historial de PokerStars, GGPoker o Winamax y se rellenan jugadores, stacks, ciegas, ante (también el de la BB) y bounties">📋 Importar historial</button>
+        <button type="button" id="wz-hh-btn" title="Paste or open a PokerStars, GGPoker or Winamax hand history to fill in players, stacks, blinds, ante (including the big blind ante) and bounties" data-es-title="Pega o abre un historial de PokerStars, GGPoker o Winamax y se rellenan jugadores, stacks, ciegas, ante (también el de la BB) y bounties" data-es="📋 Importar historial">📋 Import hand history</button>
         <span id="wz-hh-note" class="note"></span>
         <div id="wz-hh" style="display:none;margin-top:6px">
-          <textarea id="wz-hh-text" rows="4" spellcheck="false" style="width:100%" placeholder="Pega aquí una o varias manos de PokerStars, GGPoker o Winamax…"></textarea>
+          <textarea id="wz-hh-text" rows="4" spellcheck="false" style="width:100%" placeholder="Paste one or more PokerStars, GGPoker or Winamax hands here…" data-es-ph="Pega aquí una o varias manos de PokerStars, GGPoker o Winamax…"></textarea>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px">
             <input type="file" id="wz-hh-file" accept=".txt,text/plain">
             <select id="wz-hh-hand" style="flex:1;min-width:200px"></select>
-            <button type="button" id="wz-hh-go">Usar esta mano</button>
+            <button type="button" id="wz-hh-go" data-es="Usar esta mano">Use this hand</button>
           </div>
         </div>
       </div>
       <div class="cols">
-        <label>Jugadores<select id="wz-n"><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
-        <label>Modelo de equidad<select id="wz-model"><option value="chip">Chip EV</option><option value="icm">ICM (Malmuth-Harville)</option><option value="icm-field">ICM multimesa (MTSNG/MTT)</option></select></label>
-        <label title="Con Modelo = ICM, los bounties se cobran en $ y se suman al valor ICM del resto del stack. Con Modelo = Chip EV, los bounties van directamente en fichas, sin ICM — útil en early-game de torneos PKO, donde la presión de ICM todavía es despreciable pero el incentivo del bounty no.">Bounty<select id="wz-bounty"><option value="off">Off</option><option value="pko">PKO (progresivo)</option><option value="sko">Knockout clásico (SKO, 100%)</option></select></label>
+        <label><span data-es="Jugadores">Players</span><select id="wz-n"><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+        <label><span data-es="Modelo de equidad">Equity model</span><select id="wz-model"><option value="chip">Chip EV</option><option value="icm">ICM (Malmuth-Harville)</option><option value="icm-field" data-es="ICM multimesa (MTSNG/MTT)">Multi-table ICM (MTSNG/MTT)</option></select></label>
+        <label title="With an ICM model, bounties are paid in $ and added to the ICM value of the rest of the stack. With Chip EV, bounties go straight into chips, without ICM — useful early in PKO tournaments, where ICM pressure is still negligible but the bounty incentive is not." data-es-title="Con Modelo = ICM, los bounties se cobran en $ y se suman al valor ICM del resto del stack. Con Modelo = Chip EV, los bounties van directamente en fichas, sin ICM — útil en early-game de torneos PKO, donde la presión de ICM todavía es despreciable pero el incentivo del bounty no.">Bounty<select id="wz-bounty"><option value="off">Off</option><option value="pko" data-es="PKO (progresivo)">PKO (progressive)</option><option value="sko" data-es="Knockout clásico (SKO, 100%)">Classic knockout (SKO, 100%)</option></select></label>
         <span id="wz-bounty-note" class="note" style="display:none"></span>
-        <label title="Opcional:, mete los stacks, la ciega pequeña y el ante en fichas (lo que marque el reloj del torneo) en vez de en bb — se convierte solo, con la BB en fichas de aquí como referencia.">BB en fichas (opcional)<input id="wz-bbchips" placeholder="p.ej. 100"></label>
-        <label>Ciega pequeña<input data-key="sb" data-def="" data-omit="0.5" placeholder="0.5 bb"><span id="wz-sb-hint" class="note"></span></label>
+        <label title="Optional: enter the stacks, small blind and ante in chips (as shown by the tournament clock) instead of bb — they are converted using the BB in chips entered here." data-es-title="Opcional: mete los stacks, la ciega pequeña y el ante en fichas (lo que marque el reloj del torneo) en vez de en bb — se convierte solo, con la BB en fichas de aquí como referencia."><span data-es="BB en fichas (opcional)">BB in chips (optional)</span><input id="wz-bbchips" placeholder="e.g. 100" data-es-ph="p.ej. 100"></label>
+        <label><span data-es="Ciega pequeña">Small blind</span><input data-key="sb" data-def="" data-omit="0.5" placeholder="0.5 bb"><span id="wz-sb-hint" class="note"></span></label>
         <label>Ante<input data-key="ante" data-def="" placeholder="0"><span id="wz-ante-hint" class="note"></span></label>
-        <label class="chk" style="margin-top:16px"><input type="checkbox" data-key="bb-ante"> Ante de BB</label>
+        <label class="chk" style="margin-top:16px"><input type="checkbox" data-key="bb-ante"> <span data-es="Ante de BB">Big blind ante</span></label>
       </div>
       <table id="wz-seats"></table>
       <div class="cols icm" style="margin-top:8px">
-        <label title="FGS: en cada estado futuro se resuelve el push/fold de la mano siguiente con sus utilidades ICM. «auto» aplica las reglas de profundidad (2-4 jugadores: 3 manos; 5-7: 2; resto: 1).">FGS<select data-key="fgs" data-def=""><option value="">no</option><option value="1">1 mano</option><option value="2">2 manos</option><option value="3">3 manos</option><option value="auto">auto</option></select></label>
-        <label title="Subida de ciegas en las manos simuladas del FGS: desde la mano simulada d (1 = la primera), ciegas y ante nuevos en bb del nivel actual. Ejemplo: 2@0.75/1.5/0.2.">Subida de nivel en el FGS<input data-key="fgs-next-level" data-def="" placeholder="d@sb/bb/ante, opcional"></label>
+        <label title="FGS: in every future state, the push/fold game of the next hand is solved with that state's ICM values. «auto» applies the depth rules (2-4 players: 3 hands; 5-7: 2; otherwise: 1)." data-es-title="FGS: en cada estado futuro se resuelve el push/fold de la mano siguiente con sus utilidades ICM. «auto» aplica las reglas de profundidad (2-4 jugadores: 3 manos; 5-7: 2; resto: 1).">FGS<select data-key="fgs" data-def=""><option value="">no</option><option value="1" data-es="1 mano">1 hand</option><option value="2" data-es="2 manos">2 hands</option><option value="3" data-es="3 manos">3 hands</option><option value="auto">auto</option></select></label>
+        <label title="Blind increase in the hands simulated by FGS: from simulated hand d (1 = the first), new blinds and ante in bb of the current level. Example: 2@0.75/1.5/0.2." data-es-title="Subida de ciegas en las manos simuladas del FGS: desde la mano simulada d (1 = la primera), ciegas y ante nuevos en bb del nivel actual. Ejemplo: 2@0.75/1.5/0.2."><span data-es="Subida de nivel en el FGS">Blind level increase in FGS</span><input data-key="fgs-next-level" data-def="" placeholder="d@sb/bb/ante, optional" data-es-ph="d@sb/bb/ante, opcional"></label>
       </div>
       <div class="card icm" id="wz-prizes-panel" style="margin-top:8px">
-        <h2 style="font-size:13px;margin:0 0 8px">Premios restantes</h2>
+        <h2 style="font-size:13px;margin:0 0 8px" data-es="Premios restantes">Remaining prizes</h2>
         <table id="wz-prizes"></table>
         <div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
-          <button type="button" id="wz-prize-add">+ Puesto</button>
-          <input id="wz-prizes-paste" placeholder="o pega una lista: 50,30,20,18" style="flex:1;min-width:160px">
+          <button type="button" id="wz-prize-add" data-es="+ Puesto">+ Place</button>
+          <input id="wz-prizes-paste" placeholder="or paste a list: 50,30,20,18" data-es-ph="o pega una lista: 50,30,20,18" style="flex:1;min-width:160px">
         </div>
         <p class="note" id="wz-prizes-sum"></p>
         <input type="hidden" data-key="payouts" id="wz-payouts-hidden">
       </div>
       <div class="cols pko">
-        <label title="Qué parte de la cabeza del eliminado se cobra en efectivo al momento; el resto crece en la cabeza de quien elimina. Varía por sala: 50 % es lo normal (PKO progresivo), pero algunas dan el 100 % (KO clásico) u otro valor">% de la cabeza en efectivo<input id="wz-ko" data-key="ko" data-def="" placeholder="50"></label>
+        <label title="Share of the eliminated player's bounty paid out in cash right away; the rest is added to the eliminator's bounty. It varies by site: 50 % is the usual (progressive KO), but some pay 100 % (classic KO) or another value" data-es-title="Qué parte de la cabeza del eliminado se cobra en efectivo al momento; el resto crece en la cabeza de quien elimina. Varía por sala: 50 % es lo normal (PKO progresivo), pero algunas dan el 100 % (KO clásico) u otro valor"><span data-es="% de la cabeza en efectivo">% of the bounty paid in cash</span><input id="wz-ko" data-key="ko" data-def="" placeholder="50"></label>
       </div>
       <div class="card icm-field" id="wz-field-panel" style="margin-top:8px;display:none">
-        <h2 style="font-size:13px;margin:0 0 8px">Otras mesas del torneo</h2>
+        <h2 style="font-size:13px;margin:0 0 8px" data-es="Otras mesas del torneo">Other tables in the tournament</h2>
         <div class="cols">
-          <label>Stacks de las otras mesas (sueltos o NxS)<input id="wz-offtable" data-key="offtable" data-def="" placeholder="16x25,2x40"></label>
-          <label class="pko" title="Si no sabes cuánto bounty le queda de media a los rivales de otras mesas, déjalo en blanco: asumimos que es parecido al de tu propia mesa (mejor estimación que suponer que no les queda nada).">Bounty media de otras mesas<span id="wz-offbounty-unit" class="note"></span><input id="wz-offbounty" placeholder="si no lo sabes, déjalo en blanco"></label>
+          <label><span data-es="Stacks de las otras mesas (sueltos o NxS)">Stacks at the other tables (individual or NxS)</span><input id="wz-offtable" data-key="offtable" data-def="" placeholder="16x25,2x40"></label>
+          <label class="pko" title="If you don't know the average bounty left at the other tables, leave it blank: it is assumed to be similar to your own table's (a better estimate than assuming nothing is left)." data-es-title="Si no sabes cuánto bounty le queda de media a los rivales de otras mesas, déjalo en blanco: asumimos que es parecido al de tu propia mesa (mejor estimación que suponer que no les queda nada)."><span data-es="Bounty media de otras mesas">Average bounty at other tables</span><span id="wz-offbounty-unit" class="note"></span><input id="wz-offbounty" placeholder="leave blank if unknown" data-es-ph="si no lo sabes, déjalo en blanco"></label>
         </div>
-        <p class="note" style="margin:8px 0 2px">¿No sabes el stack de cada rival? Pon lo que normalmente da el lobby del torneo y genera una distribución a partir de ahí:</p>
+        <p class="note" style="margin:8px 0 2px" data-es="¿No sabes el stack de cada rival? Pon lo que normalmente da el lobby del torneo y genera una distribución a partir de ahí:">Don't know each opponent's stack? Enter what the tournament lobby usually shows and generate a distribution from it:</p>
         <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
-          <label style="flex:1;min-width:140px">Jugadores fuera de tu mesa<input id="wz-gen-n" placeholder="p.ej. 550"></label>
-          <label style="flex:1;min-width:140px">Media del torneo<span id="wz-gen-unit" class="note"></span><input id="wz-gen-avg" placeholder="p.ej. 22"></label>
-          <button type="button" id="wz-gen-go" style="margin-bottom:6px" title="Genera stacks al azar con esa media (más cortos que largos, como un campo real) y rellena el campo de arriba">🎲 Generar stacks</button>
+          <label style="flex:1;min-width:140px"><span data-es="Jugadores fuera de tu mesa">Players outside your table</span><input id="wz-gen-n" placeholder="e.g. 550" data-es-ph="p.ej. 550"></label>
+          <label style="flex:1;min-width:140px"><span data-es="Media del torneo">Tournament average</span><span id="wz-gen-unit" class="note"></span><input id="wz-gen-avg" placeholder="e.g. 22" data-es-ph="p.ej. 22"></label>
+          <button type="button" id="wz-gen-go" style="margin-bottom:6px" title="Generates random stacks with that average (more short stacks than deep ones, like a real field) and fills in the field above" data-es-title="Genera stacks al azar con esa media (más cortos que largos, como un campo real) y rellena el campo de arriba" data-es="🎲 Generar stacks">🎲 Generate stacks</button>
         </div>
         <table id="wz-field-stats" style="margin-top:8px"></table>
         <svg class="chart" id="wz-field-chart" viewBox="0 0 600 170" preserveAspectRatio="none" style="margin-top:8px"></svg>
-        <p class="note">Percentil de stack en todo el campo del torneo (0 = líder, 100 = el más corto). Área = resto de mesas; puntos rojos = tu mesa.</p>
+        <p class="note" data-es="Percentil de stack en todo el campo del torneo (0 = líder, 100 = el más corto). Área = resto de mesas; puntos rojos = tu mesa.">Stack percentile across the whole tournament field (0 = chip leader, 100 = shortest). Area = other tables; red dots = your table.</p>
       </div>
     </div>
     <div class="wpage" style="display:none">
       <div class="cols">
-        <label title="Push/fold: solo foldear o ir all-in (y, si se permite, el complete de la SB), sin tamaños de raise — para stacks cortos (≤ unas 10-15 bb). Estándar: tamaños de open/3-bet/4-bet propios y postflop real — la opción normal salvo que estés de verdad en stacks de push/fold.">Perfil<select id="wz-profile" data-key="profile" data-def="standard"><option value="pushfold">Push/fold</option><option value="standard" selected>Estándar</option></select></label>
-        <label title="Un raise que suba más de este % del stack efectivo se convierte automáticamente en all-in, aunque hayas puesto un tamaño concreto. Por defecto 40 % con perfil Estándar, 50 % con Push/fold. Súbelo si un tamaño que has puesto desaparece y solo ves All-in en su lugar -- p. ej. a stacks cortos, un re-raise ×3 sobre un ROL ya pequeño puede caer justo por encima del 40 % y perderse.">Umbral de all-in<input data-key="allin-threshold" data-def="" placeholder="40%"></label>
-        <label title="Jugadores activos como máximo en un bote. Cada jugador más multiplica el árbol -- 2 es bastante más rápido si no te hacen falta los botes a 3.">Máx. jugadores activos<select id="wz-maxpot" data-key="max-in-pot" data-def="3"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></label>
+        <label title="Push/fold: only fold or go all-in (plus the SB complete, if allowed), no raise sizes — for short stacks (up to about 10-15 bb). Standard: your own open/3-bet/4-bet sizes and real postflop play — the normal choice unless you are really at push/fold depth." data-es-title="Push/fold: solo foldear o ir all-in (y, si se permite, el complete de la SB), sin tamaños de raise — para stacks cortos (≤ unas 10-15 bb). Estándar: tamaños de open/3-bet/4-bet propios y postflop real — la opción normal salvo que estés de verdad en stacks de push/fold."><span data-es="Perfil">Profile</span><select id="wz-profile" data-key="profile" data-def="standard"><option value="pushfold">Push/fold</option><option value="standard" selected data-es="Estándar">Standard</option></select></label>
+        <label title="A raise committing more than this % of the effective stack automatically becomes an all-in, even if you set a specific size. Default 40 % with the Standard profile, 50 % with Push/fold. Raise it if a size you set disappears and you only see All-in instead -- e.g. at short stacks, a ×3 re-raise over an already small raise can land just above 40 % and get lost." data-es-title="Un raise que suba más de este % del stack efectivo se convierte automáticamente en all-in, aunque hayas puesto un tamaño concreto. Por defecto 40 % con perfil Estándar, 50 % con Push/fold. Súbelo si un tamaño que has puesto desaparece y solo ves All-in en su lugar -- p. ej. a stacks cortos, un re-raise ×3 sobre un ROL ya pequeño puede caer justo por encima del 40 % y perderse."><span data-es="Umbral de all-in">All-in threshold</span><input data-key="allin-threshold" data-def="" placeholder="40%"></label>
+        <label title="Maximum number of active players in a pot. Each extra player multiplies the tree -- 2 is much faster if you don't need 3-way pots." data-es-title="Jugadores activos como máximo en un bote. Cada jugador más multiplica el árbol -- 2 es bastante más rápido si no te hacen falta los botes a 3."><span data-es="Máx. jugadores activos">Max active players</span><select id="wz-maxpot" data-key="max-in-pot" data-def="3"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></label>
       </div>
-      <h3>Tamaños de open, por posición</h3>
+      <h3 data-es="Tamaños de open, por posición">Open sizes, by position</h3>
       <div class="cols">
-        <label title="La SB suele abrir más grande que el resto por estar fuera de posición contra toda la mesa. Por defecto escala con el stack efectivo: 3bb hasta 25bb, 3.5bb a partir de ahí.">Opens de la SB<input data-key="sb-opens" data-def="" placeholder="3bb+1bb"></label>
-        <label class="chk" style="margin-top:16px"><input type="checkbox" data-key="no-limp"> No completar SB</label>
-        <label title="Tamaño al subir sobre un limp (raise-over-limp): la BB nunca «abre» en el sentido normal, solo puede subir sobre quien ha limpeado delante. Por defecto escala con el stack efectivo: 2.5bb (<17bb), 3bb (17-20bb), 3.2bb (20-25bb), 3.5bb (25bb+).">ROL de la BB<input data-key="bb-opens" data-def="" placeholder="3bb+1bb"></label>
-        <label title="Genérico: un único tamaño de open para el resto de posiciones (BTN, CO, HJ, UTG...). Por posición: tamaño (y si pueden limpear) de cada una por separado -- más preciso, pero hay que rellenar más.">Modo<select id="wz-bet-mode"><option value="generic" selected>Genérico</option><option value="position">Por posición</option></select></label>
-        <label class="bet-generic">Opens (resto de posiciones)<input data-key="opens" data-def="2.1bb+1bb" placeholder="2.1bb+1bb"></label>
-        <label class="bet-generic chk" style="margin-top:16px"><input type="checkbox" id="wz-open-limp" data-key="limp"> Open-limp desde cualquier posición</label>
+        <label title="The SB usually opens larger than the rest because it is out of position against the whole table. By default it scales with the effective stack: 3bb up to 25bb, 3.5bb above that." data-es-title="La SB suele abrir más grande que el resto por estar fuera de posición contra toda la mesa. Por defecto escala con el stack efectivo: 3bb hasta 25bb, 3.5bb a partir de ahí."><span data-es="Opens de la SB">SB opens</span><input data-key="sb-opens" data-def="" placeholder="3bb+1bb"></label>
+        <label class="chk" style="margin-top:16px"><input type="checkbox" data-key="no-limp"> <span data-es="No completar SB">No SB complete</span></label>
+        <label title="Size when raising over a limp: the BB never «opens» in the normal sense, it can only raise over whoever limped before it. By default it scales with the effective stack: 2.5bb (<17bb), 3bb (17-20bb), 3.2bb (20-25bb), 3.5bb (25bb+)." data-es-title="Tamaño al subir sobre un limp (raise-over-limp): la BB nunca «abre» en el sentido normal, solo puede subir sobre quien ha limpeado delante. Por defecto escala con el stack efectivo: 2.5bb (<17bb), 3bb (17-20bb), 3.2bb (20-25bb), 3.5bb (25bb+)."><span data-es="ROL de la BB">BB raise over limp</span><input data-key="bb-opens" data-def="" placeholder="3bb+1bb"></label>
+        <label title="Generic: a single open size for the remaining positions (BTN, CO, HJ, UTG...). By position: size (and whether limping is allowed) for each one separately -- more precise, but more to fill in." data-es-title="Genérico: un único tamaño de open para el resto de posiciones (BTN, CO, HJ, UTG...). Por posición: tamaño (y si pueden limpear) de cada una por separado -- más preciso, pero hay que rellenar más."><span data-es="Modo">Mode</span><select id="wz-bet-mode"><option value="generic" selected data-es="Genérico">Generic</option><option value="position" data-es="Por posición">By position</option></select></label>
+        <label class="bet-generic"><span data-es="Opens (resto de posiciones)">Opens (other positions)</span><input data-key="opens" data-def="2.1bb+1bb" placeholder="2.1bb+1bb"></label>
+        <label class="bet-generic chk" style="margin-top:16px"><input type="checkbox" id="wz-open-limp" data-key="limp"> <span data-es="Open-limp desde cualquier posición">Open-limp from any position</span></label>
       </div>
       <table id="wz-bet-seats" class="bet-position" style="display:none;margin-top:4px"></table>
-      <h3>Por nivel</h3>
+      <h3 data-es="Por nivel">By level</h3>
       <table id="wz-levels">
-        <tr><th>Nivel</th><th>Tamaños</th><th>En posición</th><th>Fuera de posición</th></tr>
-        <tr><td>Open</td><td colspan="3" class="note">tamaños arriba (genérico, SB, BB, o por posición)</td></tr>
-        <tr><td>3-bet</td><td><input data-key="3bet" data-def="" placeholder="3x,ai"></td><td><input data-key="3bet-ip" data-def="" placeholder="2.5x,ai (<30bb) / 3x,ai" title="Por defecto: 2.5x con menos de 30bb efectivos, 3x con más."></td><td><input data-key="3bet-oop" data-def="" placeholder="3.2x,ai (<30bb) / 4x,ai" title="Por defecto: 3.2x con menos de 30bb efectivos, 4x con más."></td></tr>
+        <tr><th data-es="Nivel">Level</th><th data-es="Tamaños">Sizes</th><th data-es="En posición">In position</th><th data-es="Fuera de posición">Out of position</th></tr>
+        <tr><td>Open</td><td colspan="3" class="note" data-es="tamaños arriba (genérico, SB, BB, o por posición)">sizes above (generic, SB, BB, or by position)</td></tr>
+        <tr><td>3-bet</td><td><input data-key="3bet" data-def="" placeholder="3x,ai"></td><td><input data-key="3bet-ip" data-def="" placeholder="2.5x,ai (<30bb) / 3x,ai" title="Default: 2.5x below 30bb effective, 3x above." data-es-title="Por defecto: 2.5x con menos de 30bb efectivos, 3x con más."></td><td><input data-key="3bet-oop" data-def="" placeholder="3.2x,ai (<30bb) / 4x,ai" title="Default: 3.2x below 30bb effective, 4x above." data-es-title="Por defecto: 3.2x con menos de 30bb efectivos, 4x con más."></td></tr>
         <tr><td>4-bet</td><td><input data-key="4bet" data-def="" placeholder="2.2x,ai"></td><td><input data-key="4bet-ip" data-def="2x,ai" placeholder="2x,ai"></td><td><input data-key="4bet-oop" data-def="2.5x,ai" placeholder="2.5x,ai"></td></tr>
         <tr><td>5-bet</td><td><input data-key="5bet" data-def="ai" placeholder="ai"></td><td><input data-key="5bet-ip" data-def="" placeholder="ai"></td><td><input data-key="5bet-oop" data-def="" placeholder="ai"></td></tr>
       </table>
-      <p class="note">Sin tamaño en un nivel se usa el re-raise por defecto (<code>3x</code>). Dar tamaños a un nivel permite llegar a él (5-bet ⇒ hasta 4 raises). Tamaños: <code>2.5bb</code>, <code>3x</code>, <code>75%</code>, <code>ai</code>, <code>2.5bb+1bb</code> (por limper), <code>3x+1x</code> (por caller); varios separados por comas. Cada jugador más en el bote multiplica el árbol.</p>
+      <p class="note" data-es="Sin tamaño en un nivel se usa el re-raise por defecto (&lt;code&gt;3x&lt;/code&gt;). Dar tamaños a un nivel permite llegar a él (5-bet ⇒ hasta 4 raises). Tamaños: &lt;code&gt;2.5bb&lt;/code&gt;, &lt;code&gt;3x&lt;/code&gt;, &lt;code&gt;75%&lt;/code&gt;, &lt;code&gt;ai&lt;/code&gt;, &lt;code&gt;2.5bb+1bb&lt;/code&gt; (por limper), &lt;code&gt;3x+1x&lt;/code&gt; (por caller); varios separados por comas. Cada jugador más en el bote multiplica el árbol.">A level without sizes uses the default re-raise (<code>3x</code>). Giving a level sizes allows reaching it (5-bet ⇒ up to 4 raises). Sizes: <code>2.5bb</code>, <code>3x</code>, <code>75%</code>, <code>ai</code>, <code>2.5bb+1bb</code> (per limper), <code>3x+1x</code> (per caller); several separated by commas. Each extra player in the pot multiplies the tree.</p>
       <details>
-        <summary class="note" style="cursor:pointer">⚙ Avanzado (flats / cold calls)</summary>
-        <p class="note" style="margin:8px 0">Por defecto: sin límite de limps/overlimps ni de cold calls en el open, pero ninguno extra en 3-bet o más allá -- ahí solo paga quien cierra la acción (closing flats, ver abajo), sin añadir cold-callers nuevos. Permitir más apenas cambia el EV y hace el árbol bastante más grande. Sube estos números solo si de verdad quieres estudiar más cold calls en algún nivel.</p>
+        <summary class="note" style="cursor:pointer" data-es="⚙ Avanzado (flats / cold calls)">⚙ Advanced (flats / cold calls)</summary>
+        <p class="note" style="margin:8px 0" data-es="Por defecto: sin límite de limps/overlimps ni de cold calls en el open, pero ninguno extra en 3-bet o más allá -- ahí solo paga quien cierra la acción (closing flats, ver abajo), sin añadir cold-callers nuevos. Permitir más apenas cambia el EV y hace el árbol bastante más grande. Sube estos números solo si de verdad quieres estudiar más cold calls en algún nivel.">Default: no limit on limps/overlimps or on cold calls against the open, but none extra against 3-bets or beyond -- there only whoever closes the action calls (closing flats, see below), without new cold callers. Allowing more barely changes the EV and makes the tree much larger. Only raise these numbers if you really want to study more cold calls at some level.</p>
         <table id="wz-flats">
-          <tr><th>Nivel</th><th title="Cuántos jugadores como máximo pueden pagar (sin subir) en este nivel. En blanco = sin límite (Limps/Open) o 0 (3-bet/4-bet/5-bet). La BB cuenta como uno más.">Flats máx.</th></tr>
-          <tr><td>Limps</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="limps" placeholder="sin límite" title="Cuántos pueden limpear/overlimpear como máximo, antes de que nadie suba. Quién puede limpear (qué posiciones) se controla arriba, en 'Open-limp desde cualquier posición' / modo por posición."></td></tr>
-          <tr><td>Open</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="open" placeholder="sin límite"></td></tr>
+          <tr><th data-es="Nivel">Level</th><th title="Maximum number of players who may call (without raising) at this level. Blank = no limit (Limps/Open) or 0 (3-bet/4-bet/5-bet). The BB counts as one more." data-es-title="Cuántos jugadores como máximo pueden pagar (sin subir) en este nivel. En blanco = sin límite (Limps/Open) o 0 (3-bet/4-bet/5-bet). La BB cuenta como uno más." data-es="Flats máx.">Max flats</th></tr>
+          <tr><td>Limps</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="limps" placeholder="no limit" data-es-ph="sin límite" title="Maximum number of players who may limp/overlimp before anyone raises. Who may limp (which positions) is set above, in 'Open-limp from any position' / by-position mode." data-es-title="Cuántos pueden limpear/overlimpear como máximo, antes de que nadie suba. Quién puede limpear (qué posiciones) se controla arriba, en 'Open-limp desde cualquier posición' / modo por posición."></td></tr>
+          <tr><td>Open</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="open" placeholder="no limit" data-es-ph="sin límite"></td></tr>
           <tr><td>3-bet</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="3bet" placeholder="0"></td></tr>
           <tr><td>4-bet</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="4bet" placeholder="0"></td></tr>
           <tr><td>5-bet</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="5bet" placeholder="0"></td></tr>
         </table>
-        <label class="chk" style="margin-top:8px"><input type="checkbox" data-key="no-closing-flats" title="Closing flats (activado por defecto): quien cierra la acción -- nadie más queda por responder a la subida vigente -- siempre puede pagar un 3-bet o más allá, aunque Flats máx. ya esté agotado en ese nivel. Desmarcar esta casilla lo desactiva: con Flats máx. bajo, quien cierre se vería forzado a jugar solo raise-or-fold, nada realista."> Sin closing flats (quien cierra la acción no se salta Flats máx.)</label>
+        <label class="chk" style="margin-top:8px"><input type="checkbox" data-key="no-closing-flats" title="Closing flats (on by default): whoever closes the action -- nobody else left to respond to the current raise -- can always call a 3-bet or more, even if Max flats is used up at that level. Ticking this box disables it: with low Max flats, whoever closes would be forced to raise or fold, which is unrealistic." data-es-title="Closing flats (activado por defecto): quien cierra la acción -- nadie más queda por responder a la subida vigente -- siempre puede pagar un 3-bet o más allá, aunque Flats máx. ya esté agotado en ese nivel. Marcar esta casilla lo desactiva: con Flats máx. bajo, quien cierre se vería forzado a jugar solo raise-or-fold, nada realista."> <span data-es="Sin closing flats (quien cierra la acción no se salta Flats máx.)">No closing flats (whoever closes the action does not bypass Max flats)</span></label>
       </details>
     </div>
     <div class="wpage" style="display:none">
       <div class="cols">
-        <label title="Completo: el postflop se juega con apuestas y raises (lo normal). Check-down: nadie apuesta tras el flop; mucho más rápido pero valora peor ver flops.">Postflop<select id="wz-post"><option value="mccfr">Completo</option><option value="checkdown">Check-down (más rápido, menos preciso)</option></select></label>
-        <label title="Cuántos grupos de manos distingue el postflop en cada calle. Normal = 256. Alta = 1024: algo más precisa (sobre todo en PKO profundo), más lenta y con más memoria.">Precisión postflop<select id="wz-precision"><option value="256" selected>Normal</option><option value="1024">Alta (más lenta)</option></select></label>
+        <label title="Full: postflop is played with bets and raises (the normal choice). Check-down: nobody bets after the flop; much faster but values seeing flops less accurately." data-es-title="Completo: el postflop se juega con apuestas y raises (lo normal). Check-down: nadie apuesta tras el flop; mucho más rápido pero valora peor ver flops.">Postflop<select id="wz-post"><option value="mccfr" data-es="Completo">Full</option><option value="checkdown" data-es="Check-down (más rápido, menos preciso)">Check-down (faster, less accurate)</option></select></label>
+        <label title="How many hand groups the postflop game distinguishes on each street. Normal = 256. High = 1024: somewhat more accurate (especially in deep PKO), slower and uses more memory." data-es-title="Cuántos grupos de manos distingue el postflop en cada calle. Normal = 256. Alta = 1024: algo más precisa (sobre todo en PKO profundo), más lenta y con más memoria."><span data-es="Precisión postflop">Postflop precision</span><select id="wz-precision"><option value="256" selected>Normal</option><option value="1024" data-es="Alta (más lenta)">High (slower)</option></select></label>
       </div>
       <details>
-        <summary class="note" style="cursor:pointer">⚙ Avanzado</summary>
+        <summary class="note" style="cursor:pointer" data-es="⚙ Avanzado">⚙ Advanced</summary>
         <div class="cols" style="margin-top:8px">
-          <label title="Tamaño de las apuestas postflop: el geométrico más cercano a este % del bote.">Tamaño geométrico %<input data-key="geo-size" data-def="" placeholder="0.66"></label>
-          <label title="Apuestas y raises como máximo por mano postflop.">Apuestas máximas<input data-key="pf-max-bets" data-def="" placeholder="3"></label>
-          <label title="Raises postflop: vacío = geométricos; un número = a ese múltiplo de la apuesta; 0 = sin raises.">Raise postflop (m×)<input data-key="pf-raise" data-def="" placeholder="geométrico"></label>
-          <label class="chk"><input type="checkbox" data-key="no-pf-raise-multiway"> Sin raises en botes a 3</label>
+          <label title="Postflop bet size: the geometric size closest to this % of the pot." data-es-title="Tamaño de las apuestas postflop: el geométrico más cercano a este % del bote."><span data-es="Tamaño geométrico %">Geometric size %</span><input data-key="geo-size" data-def="" placeholder="0.66"></label>
+          <label title="Maximum bets and raises per postflop hand." data-es-title="Apuestas y raises como máximo por mano postflop."><span data-es="Apuestas máximas">Maximum bets</span><input data-key="pf-max-bets" data-def="" placeholder="3"></label>
+          <label title="Postflop raises: blank = geometric; a number = that multiple of the bet; 0 = no raises." data-es-title="Raises postflop: vacío = geométricos; un número = a ese múltiplo de la apuesta; 0 = sin raises."><span data-es="Raise postflop (m×)">Postflop raise (m×)</span><input data-key="pf-raise" data-def="" placeholder="geometric" data-es-ph="geométrico"></label>
+          <label class="chk"><input type="checkbox" data-key="no-pf-raise-multiway"> <span data-es="Sin raises en botes a 3">No raises in 3-way pots</span></label>
         </div>
       </details>
-      <h3>Cálculo</h3>
+      <h3 data-es="Cálculo">Calculation</h3>
       <div class="cols">
-        <label title="El cálculo sigue hasta que el CI (cuánto cambia todavía la estrategia) baja del objetivo. Puedes pararlo antes con ■ Parar y seguir luego con ⏩ Continuar.">Calidad<select id="wz-quality">
-          <option value="20">Rápido (CI 20): una idea en poco tiempo</option>
-          <option value="10" selected>Estudio (CI 10): estrategia estable</option>
-          <option value="3">Referencia (CI 3): mezclas y manos marginales</option>
+        <label title="The calculation runs until the CI (how much the strategy is still changing) drops below the target. You can stop it earlier with ■ Stop and resume later with ⏩ Continue." data-es-title="El cálculo sigue hasta que el CI (cuánto cambia todavía la estrategia) baja del objetivo. Puedes pararlo antes con ■ Parar y seguir luego con ⏩ Continuar."><span data-es="Calidad">Quality</span><select id="wz-quality">
+          <option value="20" data-es="Rápido (CI 20): una idea en poco tiempo">Quick (CI 20): a rough idea, fast</option>
+          <option value="10" selected data-es="Estudio (CI 10): estrategia estable">Study (CI 10): stable strategy</option>
+          <option value="3" data-es="Referencia (CI 3): mezclas y manos marginales">Reference (CI 3): mixes and marginal hands</option>
         </select></label>
         <input type="hidden" data-key="report-every" data-def="25">
       </div>
-      <h3>Resumen</h3>
+      <h3 data-es="Resumen">Summary</h3>
       <div id="wz-sum" class="note"></div>
-      <h3>Vista previa del árbol</h3>
-      <div class="note">Mira la estructura del árbol (tamaños, ramas) antes de resolver, y
-        quita acciones concretas de un nodo concreto sin
-        tener que esperar a ver el resultado raro después.</div>
-      <button id="wz-preview-btn" type="button">🌳 Previsualizar árbol</button>
+      <h3 data-es="Vista previa del árbol">Tree preview</h3>
+      <div class="note" data-es="Mira la estructura del árbol (tamaños, ramas) antes de resolver, y quita acciones concretas de un nodo concreto sin tener que esperar a ver el resultado raro después.">Check the structure of the tree (sizes, branches) before solving, and remove specific actions from a specific node without waiting to see a strange result afterwards.</div>
+      <button id="wz-preview-btn" type="button" data-es="🌳 Previsualizar árbol">🌳 Preview tree</button>
       <span id="wz-prune-note" class="note" style="margin-left:8px"></span>
     </div>
   </div>
-  <div class="dlg-f"><span id="wz-err" class="err" style="margin-right:auto"></span><button id="wz-cancel">Cancelar</button><button id="wz-prev">‹ Anterior</button><button id="wz-next" class="primary">Siguiente ›</button><button id="wz-ok" class="primary">Aceptar</button></div>
+  <div class="dlg-f"><span id="wz-err" class="err" style="margin-right:auto"></span><button id="wz-cancel" data-es="Cancelar">Cancel</button><button id="wz-prev" data-es="‹ Anterior">‹ Back</button><button id="wz-next" class="primary" data-es="Siguiente ›">Next ›</button><button id="wz-ok" class="primary" data-es="Aceptar">Accept</button></div>
 </div></div>
 <div class="modal" id="preview"><div class="dlg" style="width:720px">
-  <h2>Vista previa del árbol</h2>
-  <div class="note">El mismo árbol desplegable que verás al resolver, pero antes de
-    lanzar el cálculo: clic en una rama para desplegarla, ✕ la quita (poda)
-    — no hace falta esperar a ver un resultado raro para darte cuenta de que el tamaño o la
-    rama no era la que querías.</div>
-  <div class="treebox" style="margin-top:8px;width:100%;max-height:55vh;position:static"><div class="th"><b>Árbol</b><button id="pv-all" title="Desplegar todo el árbol">＋</button><button id="pv-none" title="Plegar todo">－</button></div>
+  <h2 data-es="Vista previa del árbol">Tree preview</h2>
+  <div class="note" data-es="El mismo árbol desplegable que verás al resolver, pero antes de lanzar el cálculo: clic en una rama para desplegarla, ✕ la quita (poda) — no hace falta esperar a ver un resultado raro para darte cuenta de que el tamaño o la rama no era la que querías.">The same expandable tree you will see when solving, but before starting the calculation: click a branch to expand it, ✕ removes it (prune) — no need to wait for a strange result to notice that a size or branch was not what you wanted.</div>
+  <div class="treebox" style="margin-top:8px;width:100%;max-height:55vh;position:static"><div class="th"><b data-es="Árbol">Tree</b><button id="pv-all" title="Expand the whole tree" data-es-title="Desplegar todo el árbol">＋</button><button id="pv-none" title="Collapse everything" data-es-title="Plegar todo">－</button></div>
     <div id="pv-stats" class="note" style="padding:4px 8px;border-bottom:1px solid var(--line)"></div>
     <div class="tree" id="pv-tree"></div></div>
-  <div class="dlg-f"><span id="pv-err" class="err" style="margin-right:auto"></span><button id="pv-close" class="primary">Cerrar</button></div>
+  <div class="dlg-f"><span id="pv-err" class="err" style="margin-right:auto"></span><button id="pv-close" class="primary" data-es="Cerrar">Close</button></div>
 </div></div>
 <div class="modal" id="colors"><div class="dlg" style="width:420px">
-  <div class="dlg-h"><b>Colores de las acciones</b><button id="col-close">✕</button></div>
-  <div class="dlg-b"><table id="col-table"></table><p class="note">Los raises que no son all-in usan una escala entre «raise pequeño» y «raise grande» según su tamaño en cada nodo.</p></div>
-  <div class="dlg-f"><button id="col-reset">Restablecer</button><button id="col-ok" class="primary">Aceptar</button></div>
+  <div class="dlg-h"><b data-es="Colores de las acciones">Action colors</b><button id="col-close">✕</button></div>
+  <div class="dlg-b"><table id="col-table"></table><p class="note" data-es="Los raises que no son all-in usan una escala entre «raise pequeño» y «raise grande» según su tamaño en cada nodo.">Raises that are not all-in use a scale between «small raise» and «large raise» according to their size at each node.</p></div>
+  <div class="dlg-f"><button id="col-reset" data-es="Restablecer">Reset</button><button id="col-ok" class="primary" data-es="Aceptar">Accept</button></div>
 </div></div>
 <div class="tip" id="tip"></div>
 <script>
@@ -428,6 +410,21 @@ function color(label,k){
 const api=async(path,opt={})=>{const r=await fetch(path,opt);const j=await r.json();if(!r.ok)throw new Error(j.error||r.statusText);return j};
 const post=(path,body)=>api(path,{method:"POST",headers:{"X-Solver":"1","Content-Type":"text/plain"},body});
 const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+// Idioma: la interfaz está escrita en inglés; cada texto lleva su versión española al lado
+// (data-es / data-es-title / data-es-ph en el HTML, L(en, es) en el código). Cambiar de
+// idioma recarga la página.
+const LANG=store.get("lang","en")==="es"?"es":"en",ES=LANG==="es";
+const L=(en,es)=>ES?es:en;
+document.documentElement.lang=LANG;
+if(ES){
+  document.querySelectorAll("[data-es]").forEach(e=>e.innerHTML=e.dataset.es);
+  document.querySelectorAll("[data-es-title]").forEach(e=>e.title=e.dataset.esTitle);
+  document.querySelectorAll("[data-es-ph]").forEach(e=>e.placeholder=e.dataset.esPh);
+}
+$("lang").textContent=ES?"EN":"ES";
+$("lang").onclick=()=>{store.set("lang",ES?"en":"es");location.reload()};
+$("guide-link").href=ES?"/guia":"/guide";
 
 // Tema
 {const t=store.get("theme",null);if(t)document.documentElement.dataset.theme=t}
@@ -465,7 +462,7 @@ function pairs(){
   return out;
 }
 const args=()=>pairs().flatMap(([k,v])=>v===null?["--"+k]:["--"+k,v]);
-const spotText=()=>"# spot guardado desde la interfaz\n"+pairs().map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n")+"\n";
+const spotText=()=>"# spot saved from the interface\n"+pairs().map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n")+"\n";
 function applySpot(text){
   FIELDS.forEach(f=>{if(f!=="profile"&&f!=="maxpot"&&f!=="fgs")$(f).value=""});CHECKS.forEach(f=>$(f).checked=false);
   $("profile").value="standard";$("maxpot").value="3";$("fgs").value="";$("ante").value="0";
@@ -498,16 +495,16 @@ function applySpot(text){
 let locksAtLastSolve=null;
 function renderLocks(){
   const box=$("locks");
-  if(!locks.length){box.innerHTML='<span class="note">Ninguno.</span>';}
+  if(!locks.length){box.innerHTML=`<span class="note">${L("None.","Ninguno.")}</span>`;}
   else{
     box.innerHTML="";locks.forEach((l,k)=>{const d=document.createElement("div");
-      d.innerHTML=`<span>${l.kind==="freq"?"frec.":"rango"} ${esc(l.path||"(raíz)")} · ${esc(l.label)} = ${esc(l.value.length>60?l.value.slice(0,60)+"…":l.value)}</span>`;
-      const b=document.createElement("button");b.textContent="×";b.title="Quitar";b.onclick=()=>{locks.splice(k,1);saveForm();renderLocks()};d.appendChild(b);box.appendChild(d)});
+      d.innerHTML=`<span>${l.kind==="freq"?L("freq.","frec."):L("range","rango")} ${esc(l.path||L("(root)","(raíz)"))} · ${esc(l.label)} = ${esc(l.value.length>60?l.value.slice(0,60)+"…":l.value)}</span>`;
+      const b=document.createElement("button");b.textContent="×";b.title=L("Remove","Quitar");b.onclick=()=>{locks.splice(k,1);saveForm();renderLocks()};d.appendChild(b);box.appendChild(d)});
   }
   const warn=$("locks-warn");
   if(locks.length&&locksAtLastSolve!==null&&locksAtLastSolve!==JSON.stringify(locks)){
     warn.style.display="";
-    warn.textContent="Bloqueos cambiados desde la última resolución: si pulsas Continuar, los nodos por debajo del bloqueo tardan unas iteraciones en \"olvidar\" la media de antes (se diluye solo con avg-power 3, el de serie). Para una lectura limpia ya mismo, pulsa ▶ Resolver (empieza de cero) en vez de Continuar.";
+    warn.textContent=L("Locks changed since the last solve: if you press Continue, the nodes below the lock take a few iterations to \"forget\" the previous average. For a clean reading right away, press ▶ Solve (starts from scratch) instead of Continue.","Bloqueos cambiados desde la última resolución: si pulsas Continuar, los nodos por debajo del bloqueo tardan unas iteraciones en \"olvidar\" la media de antes. Para una lectura limpia ya mismo, pulsa ▶ Resolver (empieza de cero) en vez de Continuar.");
   }else warn.style.display="none";
 }
 function addLock(kind,path,label,value){
@@ -522,7 +519,7 @@ let from=0,polling=null,points=[],lastIter=0,haveBin=false,lastError=null;
 function setCi(v,estimated){const e=$("s-ci"),x=parseFloat(v);e.textContent=(estimated?"≈":"")+(isNaN(x)?v:x.toFixed(2));
   e.style.color=isNaN(x)?"":x<=3?"#5fd08a":x<10?"#f0c050":"#ff8a80";
   e.style.opacity=estimated?.75:1;
-  e.title=isNaN(x)?"":(estimated?"estimado entre informes reales -- ":"")+(x<=3?"CI ≤ 3: calidad de referencia":x<10?"CI < 10: estrategia estable; ≤ 3 para material de referencia":"CI ≥ 10: todavía cambiando; sigue iterando")}
+  e.title=isNaN(x)?"":(estimated?L("estimated between real reports -- ","estimado entre informes reales -- "):"")+(x<=3?L("CI ≤ 3: reference quality","CI ≤ 3: calidad de referencia"):x<10?L("CI < 10: stable strategy; ≤ 3 for reference material","CI < 10: estrategia estable; ≤ 3 para material de referencia"):L("CI ≥ 10: still changing; keep iterating","CI ≥ 10: todavía cambiando; sigue iterando"))}
 // "iter" y "resolviendo…" solo se movían cuando llegaba un informe completo (cada
 // --report-every iteraciones) — con árboles grandes eso puede tardar minutos y parecía
 // colgado (no lo estaba: la CPU seguía activa). ticker() interpola
@@ -555,10 +552,10 @@ function tick(){
   $("s-iter").textContent=iterText(shown);
   if(ciTarget>0){
     const eta=ciEta(shown);
-    $("s-state").textContent=`resolviendo hasta CI ${ciTarget}…`+(eta!==null?` ETA ≈ ${fmtTime(eta)}`:"");
+    $("s-state").textContent=L(`solving to CI ${ciTarget}…`,`resolviendo hasta CI ${ciTarget}…`)+(eta!==null?` ETA ≈ ${fmtTime(eta)}`:"");
   }else if(msPerIter>0&&itersTarget>shown){
-    $("s-state").textContent=`resolviendo… ETA ≈ ${fmtTime((itersTarget-shown)*msPerIter/1000)} (al tope de iteraciones)`;
-  }else $("s-state").textContent="resolviendo…";
+    $("s-state").textContent=L(`solving… ETA ≈ ${fmtTime((itersTarget-shown)*msPerIter/1000)} (to the iteration cap)`,`resolviendo… ETA ≈ ${fmtTime((itersTarget-shown)*msPerIter/1000)} (al tope de iteraciones)`);
+  }else $("s-state").textContent=L("solving…","resolviendo…");
   if(lastCi!==null&&shown>lastReportIter){
     // Entre informes: la curva CI ≈ c·t^(−a) de los dos últimos (como el ETA); con un solo
     // informe, el ritmo lineal sin bajar de la mitad del último CI.
@@ -576,7 +573,7 @@ async function launch(cont,subtree){
     if(t>=0&&lastCi!==null&&lastCi<=+a[t+1]*1.05)a[t+1]=String(+(lastCi/2).toFixed(2));}
   if(cont){const i=a.indexOf("--iters"),more=+($("iters").value||100);if(i>=0)a[i+1]=String(lastIter+more);else a.push("--iters",String(lastIter+more));a.push("--continue");if(hands[hi].job)a.push(String(hands[hi].job));if(subtree!==undefined)a.push("--subtree",subtree)}
   runningHand=hi;store.set("runningHand",hi);saveCurrentHand();
-  $("run").disabled=$("cont").disabled=true;$("s-state").textContent="resolviendo…";
+  $("run").disabled=$("cont").disabled=true;$("s-state").textContent=L("solving…","resolviendo…");
   try{await post("/api/solve",a.join("\n"))}catch(e){$("s-state").textContent=e.message;$("run").disabled=false;$("cont").disabled=!haveBin;return}
   locksAtLastSolve=JSON.stringify(locks);renderLocks();
   from=0;if(!cont)points=[];$("log").textContent="";$("stop").disabled=false;
@@ -612,9 +609,9 @@ async function poll(){
       // Árbol y estrategia en vivo: cada informe acaba de reescribir el export (ver
       // write_export en solve.rs), así que ya hay algo nuevo que mostrar.
       if((runningHand??hi)===hi)loadTree(true);}
-    const c=l.match(/solución cargada: .* \(iteración (\d+)\)/);if(c)lastIter=+c[1];
+    const c=l.match(/solution loaded: .* \(iteration (\d+)\)/);if(c)lastIter=+c[1];
     const er=l.match(/^error: (.*)/);if(er)lastError=er[1];
-    const se=l.match(/^EV por asiento: \[(.*)\]/),sc=l.match(/^EV por asiento en fichas \(bb netas\): \[(.*)\]/);
+    const se=l.match(/^EV per seat: \[(.*)\]/),sc=l.match(/^EV per seat in chips \(net bb\): \[(.*)\]/);
     if(se||sc){const h=hands[runningHand??hi];if(h){if(se)h.seatEv=se[1].split(",").map(Number);if(sc)h.seatChips=sc[1].split(",").map(Number);store.set("hands",hands)}if((runningHand??hi)===hi)seatEvLine()}
   }
   if(p.lines.length)$("log").scrollTop=1e9;
@@ -622,7 +619,7 @@ async function poll(){
     clearInterval(polling);clearInterval(ticker);$("run").disabled=false;$("stop").disabled=true;
     if(lastCi!==null)setCi(lastCi.toFixed(2));
     $("s-iter").textContent=iterText(lastIter);
-    $("s-state").textContent=p.exit===0?"resuelto":(lastError?`error: ${lastError}`:`terminado (código ${p.exit})`);
+    $("s-state").textContent=p.exit===0?L("solved","resuelto"):(lastError?`error: ${lastError}`:L(`finished (code ${p.exit})`,`terminado (código ${p.exit})`));
     $("s-state").classList.toggle("err",p.exit!==0&&!!lastError);lastError=null;
     if(p.exit===0&&p.job){const h=hands[runningHand??hi];if(h){h.job=p.job;h.iter=lastIter;h.solved=true;store.set("hands",hands)}
       if((runningHand??hi)===hi){haveBin=true;loadTree();dlLinks()}renderHands()}
@@ -680,7 +677,7 @@ function treeNode(path){
     if(has)r.querySelector(".cv").onclick=e=>{e.stopPropagation();open?treeOpen.delete(child):treeOpen.add(child);renderTree()};
     r.onclick=()=>{treeSel=child;show(p)};
     if(has)r.ondblclick=()=>{open?treeOpen.delete(child):treeOpen.add(child);renderTree()};
-    r.title=has?"Clic: rango de "+n.seat+" en este nodo · doble clic o ▸: respuestas":"lleva a un nodo terminal (flop, showdown…)";
+    r.title=has?L(`Click: ${n.seat}'s range at this node · double-click or ▸: responses`,`Clic: rango de ${n.seat} en este nodo · doble clic o ▸: respuestas`):L("leads to a terminal node (flop, showdown…)","lleva a un nodo terminal (flop, showdown…)");
     w.appendChild(r);
     if(open){const kids=document.createElement("div");kids.className="tn-k";kids.appendChild(treeNode(child));w.appendChild(kids)}
   });
@@ -700,8 +697,8 @@ $("side-btn").onclick=()=>{const m=document.querySelector(".main");m.classList.t
 if(store.get("noside",false))document.querySelector(".main").classList.add("noside");
 document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll("#modes button").forEach(x=>x.classList.toggle("on",x===b));drawGrid()});
 const NOTES={strat:"",
-  ev:"EV de la mano con la estrategia del nodo (media de las acciones ponderada por su frecuencia): en $ con ICM/PKO (equity de premios) o en fichas, bb netas ganadas o perdidas en la mano (misma estrategia medida en fichas). Color: de peor (rojo) a mejor (verde) dentro del nodo.",
-  evdiff:"Diferencia entre la mejor acción y la mejor de las otras. Cerca de 0: indiferencia (mezclas). El color es el de la mejor acción."};
+  ev:L("EV of the hand with the node's strategy (average of the actions weighted by frequency): in $ with ICM/PKO (prize equity) or in chips, net bb won or lost in the hand (same strategy measured in chips). Color: from worst (red) to best (green) within the node.","EV de la mano con la estrategia del nodo (media de las acciones ponderada por su frecuencia): en $ con ICM/PKO (equity de premios) o en fichas, bb netas ganadas o perdidas en la mano (misma estrategia medida en fichas). Color: de peor (rojo) a mejor (verde) dentro del nodo."),
+  evdiff:L("Difference between the best action and the best of the others. Close to 0: indifference (mixes). The color is that of the best action.","Diferencia entre la mejor acción y la mejor de las otras. Cerca de 0: indiferencia (mezclas). El color es el de la mejor acción.")};
 // Unidad del EV: $ (tabla del modelo) o fichas netas. Con chip EV el modelo ya son fichas
 // (stack final), así que se usan las netas.
 let evUnit=store.get("evUnit","ev");
@@ -722,7 +719,7 @@ function drawGrid(){
   const g=$("grid");g.innerHTML="";if(!node)return;
   const infos=[];for(let idx=0;idx<169;idx++)infos.push(cellInfo(idx));
   const noEv=mode!=="strat"&&infos.every(x=>x.evs===null);
-  if(noEv)$("mode-note").textContent="Esta solución no tiene EV por mano: vuelve a resolver.";
+  if(noEv)$("mode-note").textContent=L("This solution has no per-hand EV: solve again.","Esta solución no tiene EV por mano: vuelve a resolver.");
   const inRange=idx=>!node.reach||node.reach[idx]>=0.02;
   const mixedVals=infos.map((x,idx)=>inRange(idx)?x.mixed:null).filter(x=>x!==null),lo=Math.min(...mixedVals),hi=Math.max(...mixedVals);
   const dmax=Math.max(1e-9,...infos.map((x,idx)=>inRange(idx)?(x.diff??0):0));
@@ -750,9 +747,9 @@ function drawGrid(){
       const e$=$("payouts").value.trim()?evsOf(idx,"ev"):null,ec=evsOf(idx,"ev_chips");
       const fmt=k=>[e$?`${e$[k].toFixed(3)} $`:null,ec?`${ec[k]>=0?"+":""}${ec[k].toFixed(2)} bb`:null,(!e$&&!ec&&inf.evs)?inf.evs[k].toFixed(3):null].filter(Boolean).join(" · ");
       const rh=node.reach?node.reach[idx]:1;
-      tip.innerHTML=`<div class="tip-head">${cname(i,j)} <span class="note">(${(combos(i,j)*rh).toFixed(rh<1?1:0)} de ${combos(i,j)} combos llegan)</span></div>`+
+      tip.innerHTML=`<div class="tip-head">${cname(i,j)} <span class="note">(${L(`${(combos(i,j)*rh).toFixed(rh<1?1:0)} of ${combos(i,j)} combos reach`,`${(combos(i,j)*rh).toFixed(rh<1?1:0)} de ${combos(i,j)} combos llegan`)})</span></div>`+
         node.actions.map((a,k)=>`<div class="tip-row"><i style="background:${color(a.label,k)}"></i><span>${esc(actName(a.label,cur))}</span><b>${(a.grid[idx]*100).toFixed(1)} %</b>${fmt(k)?`<span class="note">${fmt(k)}</span>`:""}</div>`).join("")+
-        (inf.mixed!==null?`<div class="tip-row tip-total"><span>EV mano</span><b>${inf.mixed.toFixed(3)} ${unitLabel(unitKey())}</b></div>`:"");
+        (inf.mixed!==null?`<div class="tip-row tip-total"><span>${L("Hand EV","EV mano")}</span><b>${inf.mixed.toFixed(3)} ${unitLabel(unitKey())}</b></div>`:"");
       $("hand").innerHTML=tip.innerHTML};
     d.onmouseleave=()=>$("tip").style.display="none";
     d.onmousedown=e=>{if(paint.on){e.preventDefault();painting=true;paintCell(idx,d)}};
@@ -765,12 +762,12 @@ async function show(path){
   let n;try{n=await api("/api/node?path="+encodeURIComponent(path)+"&"+jq())}catch(e){$("detail").innerHTML=`<span class="err">${esc(e.message)}</span>`;return}
   node=n;if(paint.path!==path){paint.grid.fill(-1);paint.path=path}paintBar();
   const c=$("crumbs");c.innerHTML="";const s=segs(path);
-  for(let k=0;k<=s.length;k++){const a=document.createElement("a"),p=s.slice(0,k).join(" ");a.textContent=k?segName(s[k-1],s.slice(0,k-1).join(" ")):"Inicio";if(k===s.length)a.className="cur";a.onclick=()=>show(p);c.appendChild(a)}
-  const L=$("legend");L.innerHTML="";
+  for(let k=0;k<=s.length;k++){const a=document.createElement("a"),p=s.slice(0,k).join(" ");a.textContent=k?segName(s[k-1],s.slice(0,k-1).join(" ")):L("Start","Inicio");if(k===s.length)a.className="cur";a.onclick=()=>show(p);c.appendChild(a)}
+  const leg=$("legend");leg.innerHTML="";
   n.actions.forEach((a,k)=>{const b=document.createElement("button"),child=(path?path+" ":"")+n.seat+":"+a.label;
     b.innerHTML=`<i style="background:${color(a.label,k)}"></i>${esc(n.seat)} ${esc(actName(a.label,path))} · ${(a.freq*100).toFixed(1)} %`;
-    if(byPath[child])b.onclick=()=>show(child);else{b.disabled=true;b.title="nodo terminal"}L.appendChild(b);
-    if(flops.has(child)){const x=document.createElement("a");x.href="/api/pio?path="+encodeURIComponent(child)+"&"+jq();x.download="pio_"+child.replace(/[^A-Za-z0-9]+/g,"_")+".txt";x.className="note";x.textContent="flop → Pio";x.title="Rangos, bote y stack de este flop heads-up como script de PioSolver";L.appendChild(x)}});
+    if(byPath[child])b.onclick=()=>show(child);else{b.disabled=true;b.title=L("terminal node","nodo terminal")}leg.appendChild(b);
+    if(flops.has(child)){const x=document.createElement("a");x.href="/api/pio?path="+encodeURIComponent(child)+"&"+jq();x.download="pio_"+child.replace(/[^A-Za-z0-9]+/g,"_")+".txt";x.className="note";x.textContent="flop → Pio";x.title=L("Ranges, pot and stack of this heads-up flop as a PioSolver script","Rangos, bote y stack de este flop heads-up como script de PioSolver");leg.appendChild(x)}});
   drawGrid();
   // Detalles y bloqueo
   const det=$("detail");
@@ -779,19 +776,19 @@ async function show(path){
   const avgEv=(a,key)=>{if(!a[key])return null;let num=0,den=0;for(let idx=0;idx<169;idx++){const v=a[key][idx];if(v===null||v===undefined)continue;const w=a.grid[idx]*(node.reach?node.reach[idx]:1)*combos(Math.floor(idx/13),idx%13);num+=w*v;den+=w}return den>0?num/den:null};
   const fmtEv=a=>{const d=icmNow?avgEv(a,"ev"):null,c=avgEv(a,"ev_chips");return [d!==null?`${d.toFixed(2)} $`:null,c!==null?`${c>=0?"+":""}${c.toFixed(2)} bb`:null].filter(Boolean).join("<br>")||"–"};
   const rc=n.reach_combos??1326;
-  det.innerHTML=`<div>Actúa <b>${esc(n.seat)}</b> · rango ${rc.toFixed(0)} combos (${(rc/13.26).toFixed(1)} %)</div><table><tr><th>Acción</th><th>Frec.</th><th>Combos</th><th>EV</th></tr>`+
+  det.innerHTML=`<div>${L("To act:","Actúa")} <b>${esc(n.seat)}</b> · ${L("range","rango")} ${rc.toFixed(0)} combos (${(rc/13.26).toFixed(1)} %)</div><table><tr><th>${L("Action","Acción")}</th><th>${L("Freq.","Frec.")}</th><th>Combos</th><th>EV</th></tr>`+
     n.actions.map((a,k)=>`<tr><td><i style="display:inline-block;width:10px;height:10px;background:${color(a.label,k)};margin-right:6px"></i>${esc(actName(a.label,path))}</td><td>${(a.freq*100).toFixed(1)} %</td><td>${(a.combos??a.freq*1326).toFixed(0)}</td><td>${fmtEv(a)}</td></tr>`).join("")+"</table>";
   // Muestreo de subárbol: sigue iterando solo este spot.
-  if(haveBin&&$("stop").disabled){const sb=document.createElement("button");sb.textContent="🎯 Afinar este spot";
-    sb.title="Continúa el cálculo iterando solo el subárbol de este nodo: mucho más rápido para estudiar un spot concreto. El resto del árbol no cambia.";
+  if(haveBin&&$("stop").disabled){const sb=document.createElement("button");sb.textContent=L("🎯 Refine this spot","🎯 Afinar este spot");
+    sb.title=L("Continues the calculation iterating only this node's subtree: much faster to study a specific spot. The rest of the tree does not change.","Continúa el cálculo iterando solo el subárbol de este nodo: mucho más rápido para estudiar un spot concreto. El resto del árbol no cambia.");
     sb.style.margin="8px 0";sb.onclick=()=>launch(true,path);det.appendChild(sb)}
   const more=document.createElement("details");more.open=store.get("rangesOpen",false);
   more.ontoggle=()=>store.set("rangesOpen",more.open);
-  more.innerHTML=`<summary class="note" style="cursor:pointer;margin:8px 0 4px">Rangos y bloqueo por acción</summary>`;det.appendChild(more);
+  more.innerHTML=`<summary class="note" style="cursor:pointer;margin:8px 0 4px">${L("Ranges and locking per action","Rangos y bloqueo por acción")}</summary>`;det.appendChild(more);
   n.actions.forEach((a,k)=>{
     const box=document.createElement("div");box.className="lockbox";
-    box.innerHTML=`<i style="display:inline-block;width:10px;height:10px;background:${color(a.label,k)};margin-right:6px;border-radius:2px;vertical-align:middle"></i><b>${esc(actName(a.label,path))}</b>`+(k===0?` <span class="note">(recibe el resto al bloquear las demás)</span><div class="range">${esc(a.range||"—")}</div>`:
-      `<textarea spellcheck="false">${esc(a.range)}</textarea><div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap"><button data-k="lock">Bloquear rango</button><input type="number" min="0" max="100" step="1" placeholder="%" style="width:64px" value="${(a.freq*100).toFixed(0)}"><button data-k="freq">Bloquear frecuencia</button></div>`);
+    box.innerHTML=`<i style="display:inline-block;width:10px;height:10px;background:${color(a.label,k)};margin-right:6px;border-radius:2px;vertical-align:middle"></i><b>${esc(actName(a.label,path))}</b>`+(k===0?` <span class="note">(${L("gets the rest when the others are locked","recibe el resto al bloquear las demás")})</span><div class="range">${esc(a.range||"—")}</div>`:
+      `<textarea spellcheck="false">${esc(a.range)}</textarea><div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap"><button data-k="lock">${L("Lock range","Bloquear rango")}</button><input type="number" min="0" max="100" step="1" placeholder="%" style="width:64px" value="${(a.freq*100).toFixed(0)}"><button data-k="freq">${L("Lock frequency","Bloquear frecuencia")}</button></div>`);
     if(k>0){
       box.querySelector('[data-k=lock]').onclick=()=>addLock("lock",path,a.label,box.querySelector("textarea").value.trim()||"");
       box.querySelector('[data-k=freq]').onclick=()=>{const v=+box.querySelector("input").value;if(v>=0&&v<=100)addLock("freq",path,a.label,String(v/100))};
@@ -805,18 +802,18 @@ let icmLast=null;
 $("icm-go").onclick=async()=>{
   saveForm();$("icm-err").textContent="";
   const body=`stacks=${$("stacks").value}\npayouts=${$("payouts").value}\nofftable=${$("offtable").value}\nfgs=${$("fgs").value}\nante=${$("ante").value}\nbb-ante=${$("bbante").checked?1:0}`;
-  $("icm-err").textContent="calculando…";
+  $("icm-err").textContent=L("calculating…","calculando…");
   let r;try{r=await post("/api/icm",body)}catch(e){$("icm-err").textContent=e.message;return}
   icmLast=r;
   const names=r.seats.slice(0,r.table).map(s=>s.name);
   $("icm-err").textContent="";
   $("icm-detail").style.display="none";
   const F=r.fgs>0;
-  let h=`<table><tr><th>Asiento</th><th>Stack</th><th>% fichas</th><th>ICM</th>${F?`<th>FGS-${r.fgs}</th><th>Δ</th>`:""}</tr>`+r.seats.map(s=>`<tr><td>${s.name}</td><td>${s.stack}</td><td>${(s.chips*100).toFixed(2)} %</td><td>${s.icm.toFixed(3)}</td>${F?`<td>${s.fgs.toFixed(3)}</td><td>${(s.fgs-s.icm>=0?"+":"")+(s.fgs-s.icm).toFixed(3)}</td>`:""}</tr>`).join("")+"</table>"+(F?`<p class="note">Las matrices usan el modelo FGS-${r.fgs}.</p>`:"");
+  let h=`<table><tr><th>${L("Seat","Asiento")}</th><th>Stack</th><th>${L("% chips","% fichas")}</th><th>ICM</th>${F?`<th>FGS-${r.fgs}</th><th>Δ</th>`:""}</tr>`+r.seats.map(s=>`<tr><td>${s.name}</td><td>${s.stack}</td><td>${(s.chips*100).toFixed(2)} %</td><td>${s.icm.toFixed(3)}</td>${F?`<td>${s.fgs.toFixed(3)}</td><td>${(s.fgs-s.icm>=0?"+":"")+(s.fgs-s.icm).toFixed(3)}</td>`:""}</tr>`).join("")+"</table>"+(F?`<p class="note">${L(`The matrices use the FGS-${r.fgs} model.`,`Las matrices usan el modelo FGS-${r.fgs}.`)}</p>`:"");
   const mat=(title,m,fmt,lo,max)=>`<h3>${title}</h3><table><tr><th></th>${names.map(n=>`<th>${n}</th>`).join("")}</tr>`+m.map((row,i)=>`<tr><td>${names[i]}</td>`+row.map((v,j)=>v===null?"<td>—</td>":`<td style="cursor:pointer;background:color-mix(in srgb,var(--err) ${Math.round(Math.min(1,Math.max(0,(v-lo)/(max-lo)))*55)}%,transparent)" onclick="icmDetail(${i},${j})">${fmt(v)}</td>`).join("")+"</tr>").join("")+"</table>";
   const bmax=Math.max(2,...r.bubble.flat().filter(v=>v!==null)),rmax=Math.max(0.25,...r.risk.flat().filter(v=>v!==null));
-  h+=mat("Bubble factor (fila decide, columna rival)",r.bubble,v=>v.toFixed(2),1,bmax)+mat("Risk premium",r.risk,v=>(v*100).toFixed(1)+" %",0,rmax);
-  h+=`<p class="note">Clic en una celda para ver el desglose (EV ahora / ganando / perdiendo el all-in).</p>`;
+  h+=mat(L("Bubble factor (row decides, column opponent)","Bubble factor (fila decide, columna rival)"),r.bubble,v=>v.toFixed(2),1,bmax)+mat("Risk premium",r.risk,v=>(v*100).toFixed(1)+" %",0,rmax);
+  h+=`<p class="note">${L("Click a cell to see the breakdown (EV now / winning / losing the all-in).","Clic en una celda para ver el desglose (EV ahora / ganando / perdiendo el all-in).")}</p>`;
   $("icm-out").innerHTML=h;
 };
 function icmDetail(i,j){
@@ -826,21 +823,21 @@ function icmDetail(i,j){
   if(base===null||bf===null){$("icm-detail").style.display="none";return}
   const gain=win-base,loss=base-lose,tEq=(rp+0.5)*100;
   $("icm-detail").style.display="";
-  $("icm-detail").innerHTML=`<h3 style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">${esc(names[i])} contra ${esc(names[j])}</h3><table>
-    <tr><td>EV ahora</td><td>${base.toFixed(4)}</td></tr>
-    <tr><td>EV si ${esc(names[i])} gana el all-in</td><td>${win.toFixed(4)} <span class="note">(+${gain.toFixed(4)})</span></td></tr>
-    <tr><td>EV si ${esc(names[i])} pierde el all-in</td><td>${lose.toFixed(4)} <span class="note">(−${loss.toFixed(4)})</span></td></tr>
-    <tr><td>cEq (equity necesaria en chip EV)</td><td>50,0 %</td></tr>
-    <tr><td>tEq (equity real necesaria para pagar)</td><td>${tEq.toFixed(1)} %</td></tr>
+  $("icm-detail").innerHTML=`<h3 style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">${esc(names[i])} ${L("vs","contra")} ${esc(names[j])}</h3><table>
+    <tr><td>${L("EV now","EV ahora")}</td><td>${base.toFixed(4)}</td></tr>
+    <tr><td>${L(`EV if ${esc(names[i])} wins the all-in`,`EV si ${esc(names[i])} gana el all-in`)}</td><td>${win.toFixed(4)} <span class="note">(+${gain.toFixed(4)})</span></td></tr>
+    <tr><td>${L(`EV if ${esc(names[i])} loses the all-in`,`EV si ${esc(names[i])} pierde el all-in`)}</td><td>${lose.toFixed(4)} <span class="note">(−${loss.toFixed(4)})</span></td></tr>
+    <tr><td>${L("cEq (equity needed in chip EV)","cEq (equity necesaria en chip EV)")}</td><td>${L("50.0 %","50,0 %")}</td></tr>
+    <tr><td>${L("tEq (real equity needed to call)","tEq (equity real necesaria para pagar)")}</td><td>${tEq.toFixed(1)} %</td></tr>
     <tr><td>Risk premium (tEq − cEq)</td><td>${(rp*100).toFixed(1)} %</td></tr>
-    <tr><td>Bubble factor (pérdida / ganancia)</td><td>${bf.toFixed(3)}</td></tr>
-  </table><p class="note">Todo en la unidad de ${F_last()?"FGS":"ICM"} (fracción del pozo), no en fichas: por eso "ganar" y "perder" no son simétricos cerca de la burbuja.</p>`;
+    <tr><td>${L("Bubble factor (loss / gain)","Bubble factor (pérdida / ganancia)")}</td><td>${bf.toFixed(3)}</td></tr>
+  </table><p class="note">${L(`Everything in ${F_last()?"FGS":"ICM"} units (share of the prize pool), not in chips: that is why "winning" and "losing" are not symmetric near the bubble.`,`Todo en la unidad de ${F_last()?"FGS":"ICM"} (fracción del pozo), no en fichas: por eso "ganar" y "perder" no son simétricos cerca de la burbuja.`)}</p>`;
 }
 function F_last(){return icmLast&&icmLast.fgs>0}
 
 // ---------------------------------------------------------------- manos abiertas
 let hands=store.get("hands",null),hi=store.get("hand",0),runningHand=null,liveJob=null;
-if(!Array.isArray(hands)||!hands.length)hands=[{name:"Mano 1",spot:null,job:0,iter:0}];
+if(!Array.isArray(hands)||!hands.length)hands=[{name:L("Hand 1","Mano 1"),spot:null,job:0,iter:0}];
 if(hi>=hands.length)hi=0;
 // Mientras se resuelve la mano que se está viendo, el árbol/estrategia se lee del cálculo en
 // curso (liveJob, el `job` que ya devuelve /api/progress) en vez de esperar a que termine.
@@ -850,19 +847,19 @@ function saveCurrentHand(){hands[hi].spot=spotText();store.set("hands",hands);st
 function renderHands(){
   const box=$("hands");box.innerHTML="";
   hands.forEach((h,k)=>{const d=document.createElement("div");d.className=k===hi?"on":"";
-    d.innerHTML=`<span>${esc(h.name)}<span class="st">${h.job?`✓ ${h.iter||""}`:"sin resolver"}</span></span>`;
-    d.title="Clic: abrir · doble clic: renombrar";d.onclick=()=>switchHand(k);
-    d.ondblclick=()=>{const n=prompt("Nombre de la mano:",h.name);if(n){h.name=n;store.set("hands",hands);renderHands()}};
-    if(hands.length>1){const x=document.createElement("span");x.className="x";x.textContent="×";x.title="Cerrar";
+    d.innerHTML=`<span>${esc(h.name)}<span class="st">${h.job?`✓ ${h.iter||""}`:L("not solved","sin resolver")}</span></span>`;
+    d.title=L("Click: open · double-click: rename","Clic: abrir · doble clic: renombrar");d.onclick=()=>switchHand(k);
+    d.ondblclick=()=>{const n=prompt(L("Hand name:","Nombre de la mano:"),h.name);if(n){h.name=n;store.set("hands",hands);renderHands()}};
+    if(hands.length>1){const x=document.createElement("span");x.className="x";x.textContent="×";x.title=L("Close","Cerrar");
       x.onclick=e=>{e.stopPropagation();if(runningHand===k)return;hands.splice(k,1);if(hi>=k&&hi>0)hi--;const h2=hands[hi];if(h2.spot)applySpot(h2.spot);showHand();store.set("hands",hands)};d.appendChild(x)}
     box.appendChild(d)});
 }
-function clearView(){nodes=[];byPath={};node=null;$("tree").innerHTML='<div class="note">Resuelve la mano para ver el árbol.</div>';$("grid").innerHTML="";$("legend").innerHTML="";$("crumbs").innerHTML="";$("detail").textContent="Sin nodo seleccionado."}
+function clearView(){nodes=[];byPath={};node=null;$("tree").innerHTML=`<div class="note">${L("Solve the hand to see the tree.","Resuelve la mano para ver el árbol.")}</div>`;$("grid").innerHTML="";$("legend").innerHTML="";$("crumbs").innerHTML="";$("detail").textContent=L("No node selected.","Sin nodo seleccionado.")}
 // EV por asiento de la mano actual ($ y bb netas), del registro de su último cálculo.
 function seatEvLine(){const h=hands[hi],names=SEATS[(h.seatChips||h.seatEv||[]).length]||[];
   if(!h.seatEv&&!h.seatChips){$("seat-ev").textContent="";return}
   const icm=$("payouts").value.trim()!=="";
-  $("seat-ev").innerHTML="EV por asiento: "+names.map((n,k)=>`<b>${n}</b> `+[icm&&h.seatEv?`${h.seatEv[k].toFixed(2)} $`:null,h.seatChips?`${h.seatChips[k]>=0?"+":""}${h.seatChips[k].toFixed(2)} bb`:null].filter(Boolean).join(" / ")).join(" · ")}
+  $("seat-ev").innerHTML=L("EV per seat: ","EV por asiento: ")+names.map((n,k)=>`<b>${n}</b> `+[icm&&h.seatEv?`${h.seatEv[k].toFixed(2)} $`:null,h.seatChips?`${h.seatChips[k]>=0?"+":""}${h.seatChips[k].toFixed(2)} bb`:null].filter(Boolean).join(" / ")).join(" · ")}
 function showHand(){const h=hands[hi];lastIter=h.iter||0;haveBin=!!h.job;$("cont").disabled=!haveBin||!$("stop").disabled;cur="";points=[];chart();
   $("s-iter").textContent=h.iter||"–";$("s-nc").textContent="–";
   $("s-ci").textContent="–";$("s-ci").style.opacity=1;$("s-ci").title="";lastCi=null;ciPerIter=0;
@@ -872,7 +869,7 @@ function showHand(){const h=hands[hi];lastIter=h.iter||0;haveBin=!!h.job;$("cont
   else clearView();
   dlLinks();renderHands();seatEvLine();store.set("hand",hi)}
 function switchHand(k){if(k===hi)return;saveCurrentHand();hi=k;const h=hands[k];if(h.spot)applySpot(h.spot);showHand()}
-function newHand(dup){saveCurrentHand();hands.push({name:dup?hands[hi].name+" (copia)":`Mano ${hands.length+1}`,spot:dup?spotText():null,job:0,iter:0});hi=hands.length-1;showHand();store.set("hands",hands)}
+function newHand(dup){saveCurrentHand();hands.push({name:dup?hands[hi].name+L(" (copy)"," (copia)"):L(`Hand ${hands.length+1}`,`Mano ${hands.length+1}`),spot:dup?spotText():null,job:0,iter:0});hi=hands.length-1;showHand();store.set("hands",hands)}
 $("hand-dup").onclick=()=>newHand(true);
 renderHands();dlLinks();
 // El asistente y abrir spot nombran la mano actual si aún no está resuelta.
@@ -882,26 +879,26 @@ function nameHand(n){const h=hands[hi];if(!h.job){h.name=n;store.set("hands",han
 function pushRecent(n){const r=store.get("recent",[]).filter(x=>x!==n);r.unshift(n);store.set("recent",r.slice(0,8))}
 async function listSpots(){
   try{const names=await api("/api/spots"),rec=store.get("recent",[]).filter(n=>names.includes(n));
-    $("spot-list").innerHTML='<option value="">Abrir spot…</option>'+(rec.length?`<optgroup label="Recientes">${rec.map(n=>`<option>${esc(n)}</option>`).join("")}</optgroup>`:"")+`<optgroup label="Todos">${names.map(n=>`<option>${esc(n)}</option>`).join("")}</optgroup>`}catch(e){}
+    $("spot-list").innerHTML=`<option value="">${L("Open spot…","Abrir spot…")}</option>`+(rec.length?`<optgroup label="${L("Recent","Recientes")}">${rec.map(n=>`<option>${esc(n)}</option>`).join("")}</optgroup>`:"")+`<optgroup label="${L("All","Todos")}">${names.map(n=>`<option>${esc(n)}</option>`).join("")}</optgroup>`}catch(e){}
 }
 $("spot-list").onchange=async e=>{const n=e.target.value;if(!n)return;
-  try{const r=await api("/api/spot?name="+encodeURIComponent(n));applySpot(r.text);pushRecent(n);nameHand(n);$("s-state").textContent="spot cargado: "+n;listSpots()}catch(err){$("s-state").textContent=err.message}
+  try{const r=await api("/api/spot?name="+encodeURIComponent(n));applySpot(r.text);pushRecent(n);nameHand(n);$("s-state").textContent=L("spot loaded: ","spot cargado: ")+n;listSpots()}catch(err){$("s-state").textContent=err.message}
   e.target.value=""};
-$("spot-save").onclick=async()=>{const n=prompt("Nombre del spot (letras, dígitos, _ y -):",store.get("lastSpot",""));if(!n)return;
-  try{await post("/api/spot?name="+encodeURIComponent(n),spotText());store.set("lastSpot",n);pushRecent(n);nameHand(n);$("s-state").textContent="spot guardado: "+n;listSpots()}catch(err){$("s-state").textContent=err.message}};
+$("spot-save").onclick=async()=>{const n=prompt(L("Spot name (letters, digits, _ and -):","Nombre del spot (letras, dígitos, _ y -):"),store.get("lastSpot",""));if(!n)return;
+  try{await post("/api/spot?name="+encodeURIComponent(n),spotText());store.set("lastSpot",n);pushRecent(n);nameHand(n);$("s-state").textContent=L("spot saved: ","spot guardado: ")+n;listSpots()}catch(err){$("s-state").textContent=err.message}};
 listSpots();
 
 // ---------------------------------------------------------------- pintar bloqueo en el grid
 let paint={on:false,sel:1,grid:new Array(169).fill(-1),path:null};
 function paintBar(){
   const bar=$("paintbar");if(!paint.on||!node){bar.style.display="none";return}
-  bar.style.display="flex";bar.innerHTML='<span class="note">Pinta con:</span>';
+  bar.style.display="flex";bar.innerHTML=`<span class="note">${L("Paint with:","Pinta con:")}</span>`;
   node.actions.forEach((a,k)=>{const b=document.createElement("button");b.innerHTML=`<i style="display:inline-block;width:10px;height:10px;background:${color(a.label,k)};margin-right:5px"></i>${esc(actName(a.label,cur))}`;
     if(k===paint.sel)b.className="sel";b.onclick=()=>{paint.sel=k;paintBar()};bar.appendChild(b)});
   const n=paint.grid.filter(x=>x>=0).length;
-  bar.insertAdjacentHTML("beforeend",`<span class="note"><span id="paint-n">${n}</span> clases pintadas</span>`);
-  const ok=document.createElement("button");ok.className="primary";ok.textContent="Bloquear nodo";ok.title="Bloquea el nodo entero: las clases pintadas con su acción, el resto con la estrategia actual";ok.onclick=applyPaint;bar.appendChild(ok);
-  const no=document.createElement("button");no.textContent="Descartar";no.onclick=()=>{paint.grid.fill(-1);drawGrid();paintBar()};bar.appendChild(no);
+  bar.insertAdjacentHTML("beforeend",`<span class="note"><span id="paint-n">${n}</span> ${L("classes painted","clases pintadas")}</span>`);
+  const ok=document.createElement("button");ok.className="primary";ok.textContent=L("Lock node","Bloquear nodo");ok.title=L("Locks the whole node: painted classes with their action, the rest with the current strategy","Bloquea el nodo entero: las clases pintadas con su acción, el resto con la estrategia actual");ok.onclick=applyPaint;bar.appendChild(ok);
+  const no=document.createElement("button");no.textContent=L("Discard","Descartar");no.onclick=()=>{paint.grid.fill(-1);drawGrid();paintBar()};bar.appendChild(no);
 }
 function applyPaint(){
   if(!node)return;const idxs=[...Array(169).keys()];
@@ -910,7 +907,7 @@ function applyPaint(){
       if(w>0.0005)parts.push(w>0.9995?cname(i,j):`${cname(i,j)}:${w.toFixed(3)}`)}
     addLock("lock",cur,a.label,parts.join(",")||"")});
   paint.grid.fill(-1);paint.on=false;$("paint").classList.remove("on");drawGrid();paintBar();
-  $("s-state").textContent="nodo bloqueado: resuelve para aplicarlo";
+  $("s-state").textContent=L("node locked: solve to apply it","nodo bloqueado: resuelve para aplicarlo");
 }
 $("paint").onclick=()=>{paint.on=!paint.on;$("paint").classList.toggle("on",paint.on);if(paint.on&&mode!=="strat"){document.querySelector('#modes [data-m=strat]').click()}drawGrid();paintBar()};
 let painting=false;window.addEventListener("mouseup",()=>painting=false,true);
@@ -928,16 +925,16 @@ $("img").onclick=()=>{
   if(!node)return;const W=60,H=46,top=56,pad=8,cv=document.createElement("canvas");cv.width=13*W+2*pad;cv.height=13*H+top+pad;
   const g=cv.getContext("2d"),bg=cssColor("var(--panel)"),cellbg=cssColor("var(--grid-bg)"),fg=cssColor("var(--fg)");
   g.fillStyle=bg;g.fillRect(0,0,cv.width,cv.height);g.fillStyle=fg;g.font="bold 15px system-ui,sans-serif";
-  g.fillText(`${cur||"(raíz)"} — actúa ${node.seat}`,pad,22);g.font="13px system-ui,sans-serif";
+  g.fillText(`${cur||L("(root)","(raíz)")} — ${L("to act:","actúa")} ${node.seat}`,pad,22);g.font="13px system-ui,sans-serif";
   let x=pad;node.actions.forEach((a,k)=>{g.fillStyle=cssColor(color(a.label,k));g.fillRect(x,32,12,12);g.fillStyle=fg;const t=`${a.label} ${(a.freq*100).toFixed(1)} %`;g.fillText(t,x+16,43);x+=g.measureText(t).width+34});
   for(let i=0;i<13;i++)for(let j=0;j<13;j++){const idx=i*13+j,cx=pad+j*W,cy=top+i*H;g.fillStyle=cellbg;g.fillRect(cx+1,cy+1,W-2,H-2);
     let off=0;node.actions.forEach((a,k)=>{const f=a.grid[idx];if(f>0.001){g.fillStyle=cssColor(color(a.label,k));const w=(W-2)*f;g.fillRect(cx+1+off,cy+1,w,H-2);off+=w}});
     g.fillStyle="#fff";g.font="bold 13px system-ui,sans-serif";g.shadowColor="rgba(0,0,0,.7)";g.shadowBlur=2;const t=cname(i,j);g.fillText(t,cx+(W-g.measureText(t).width)/2,cy+H/2+5);g.shadowBlur=0}
-  cv.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`grid_${(cur||"raiz").replace(/[^A-Za-z0-9]+/g,"_")}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)},"image/png");
+  cv.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`grid_${(cur||"root").replace(/[^A-Za-z0-9]+/g,"_")}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)},"image/png");
 };
 
 // ---------------------------------------------------------------- colores
-const COLOR_KEYS=[["--fold","Fold"],["--check","Check"],["--call","Call"],["--raise-lo","Raise pequeño (p. ej. 3-bet mínimo)"],["--raise-hi","Raise grande"],["--allin","All-in"]];
+const COLOR_KEYS=[["--fold","Fold"],["--check","Check"],["--call","Call"],["--raise-lo",L("Small raise (e.g. minimum 3-bet)","Raise pequeño (p. ej. 3-bet mínimo)")],["--raise-hi",L("Large raise","Raise grande")],["--allin","All-in"]];
 function applyColors(){const c=store.get("colors",{});COLOR_KEYS.forEach(([k])=>{if(c[k])document.documentElement.style.setProperty(k,c[k]);else document.documentElement.style.removeProperty(k)})}
 applyColors();
 $("colors-btn").onclick=()=>{
@@ -965,13 +962,13 @@ const expand=v=>(v||"").split(",").map(t=>t.trim()).filter(Boolean).flatMap(t=>{
 function wzSeats(stacks,bounties){
   const n=+$("wz-n").value,names=SEATS[n],pko=$("wz-bounty").value!=="off",tb=$("wz-seats");
   const isIcm=$("wz-model").value==="icm"||$("wz-model").value==="icm-field";
-  const bountyUnit=isIcm?"$":"fichas";
+  const bountyUnit=isIcm?"$":L("chips","fichas");
   const old=[...tb.querySelectorAll("tr[data-k]")].map(r=>({stack:r.querySelector(".st").value,bounty:r.querySelector(".bo").value}));
   // Con "BB en fichas" puesto, como en la tabla "Chips | BB": esta columna es la
   // ficha real del torneo y "≈ bb" (siguiente) es la derivada. Sin él, sigue siendo bb
   // directo (nuestro modo por defecto, más simple para quien no tiene el reloj a mano).
   const stackHeader=(+$("wz-bbchips").value||0)>0?"Chips":"Stack (bb)";
-  tb.innerHTML=`<tr><th>Posición</th><th id="wz-stack-th">${stackHeader}</th><th class="note" style="font-weight:400">≈ bb</th><th class="pko">Bounty (${bountyUnit})</th></tr>`;
+  tb.innerHTML=`<tr><th>${L("Position","Posición")}</th><th id="wz-stack-th">${stackHeader}</th><th class="note" style="font-weight:400">≈ bb</th><th class="pko">Bounty (${bountyUnit})</th></tr>`;
   const keep=old.length===n;
   names.forEach((s,k)=>{const o=keep?old[k]||{}:{},tr=document.createElement("tr");tr.dataset.k=k;
     const st=stacks?stacks[k]??"":o.stack??"20",bo=bounties?bounties[k]??"":o.bounty??"";
@@ -982,7 +979,7 @@ function wzSeats(stacks,bounties){
   $("wz-field-panel").style.display=$("wz-model").value==="icm-field"?"":"none";
   $("wz-offbounty-unit").textContent=pko?` (${bountyUnit})`:"";
   const note=$("wz-bounty-note");
-  if(pko&&!isIcm){note.style.display="";note.textContent="Bounties en fichas, sin ICM: se suman directo al stack final en vez de convertirse a $.";}
+  if(pko&&!isIcm){note.style.display="";note.textContent=L("Bounties in chips, without ICM: they are added straight to the final stack instead of being converted to $.","Bounties en fichas, sin ICM: se suman directo al stack final en vez de convertirse a $.");}
   else note.style.display="none";
   wzUpdateHints();
   wzUpdateField();
@@ -999,12 +996,12 @@ function wzBetSeats(){
   const names=SEATS[+$("wz-n").value].filter(s=>s!=="SB"&&s!=="BB");
   const old=[...tb.querySelectorAll("tr[data-k]")].map(r=>({open:r.querySelector(".op").value,limp:r.querySelector(".lp").checked}));
   const keep=old.length===names.length;
-  let h="<tr><th>Posición</th><th>Open</th><th title=\"Open-limp permitido desde esta posición\">Limp</th></tr>";
+  let h=`<tr><th>${L("Position","Posición")}</th><th>Open</th><th title="${L("Open-limp allowed from this position","Open-limp permitido desde esta posición")}">Limp</th></tr>`;
   names.forEach((s,k)=>{
     const o=keep?old[k]||{}:{};
     const op=wzOpensBy[s]??o.open??"";
     const checked=(wzLimpBy?wzLimpBy.has(s):o.limp)?"checked":"";
-    h+=`<tr data-k="${k}" data-s="${s}"><td>${s}</td><td><input class="op" placeholder="por defecto" value="${esc(op)}"></td><td><input type="checkbox" class="lp" ${checked}></td></tr>`;
+    h+=`<tr data-k="${k}" data-s="${s}"><td>${s}</td><td><input class="op" placeholder="${L("default","por defecto")}" value="${esc(op)}"></td><td><input type="checkbox" class="lp" ${checked}></td></tr>`;
   });
   tb.innerHTML=h;
 }
@@ -1055,7 +1052,7 @@ function wzUpdateHints(){
 function wzUpdateField(){
   const stats=$("wz-field-stats"),svg=$("wz-field-chart");
   const bbc0=+$("wz-bbchips").value||0;
-  const gu=$("wz-gen-unit");if(gu)gu.textContent=bbc0>0?" (fichas)":" (bb)";
+  const gu=$("wz-gen-unit");if(gu)gu.textContent=bbc0>0?L(" (chips)"," (fichas)"):" (bb)";
   if(!stats||$("wz-model").value!=="icm-field"){if(stats)stats.innerHTML="";if(svg)svg.innerHTML="";return}
   const bbc=bbc0;
   const toBb=x=>{const v=+x;if(!(v>0))return 0;return bbc>0?v/bbc:v};
@@ -1064,10 +1061,10 @@ function wzUpdateField(){
   const nA=active.length,nO=other.length,n=nA+nO;
   const sum=a=>a.reduce((x,y)=>x+y,0),chipsA=sum(active),chipsO=sum(other),chipsT=chipsA+chipsO;
   const avg=(s,k)=>k?(s/k).toFixed(2)+" bb":"—";
-  stats.innerHTML=n?`<tr><th></th><th>Otras mesas</th><th>Tu mesa</th><th>Total</th></tr>
-    <tr><td>Jugadores</td><td>${nO}</td><td>${nA}</td><td>${n}</td></tr>
-    <tr><td>Fichas (bb)</td><td>${chipsO.toFixed(1)}</td><td>${chipsA.toFixed(1)}</td><td>${chipsT.toFixed(1)}</td></tr>
-    <tr><td>bb media</td><td>${avg(chipsO,nO)}</td><td>${avg(chipsA,nA)}</td><td>${avg(chipsT,n)}</td></tr>`:"<tr><td class=\"note\">Mete al menos tu mesa y las otras mesas del torneo.</td></tr>";
+  stats.innerHTML=n?`<tr><th></th><th>${L("Other tables","Otras mesas")}</th><th>${L("Your table","Tu mesa")}</th><th>Total</th></tr>
+    <tr><td>${L("Players","Jugadores")}</td><td>${nO}</td><td>${nA}</td><td>${n}</td></tr>
+    <tr><td>${L("Chips (bb)","Fichas (bb)")}</td><td>${chipsO.toFixed(1)}</td><td>${chipsA.toFixed(1)}</td><td>${chipsT.toFixed(1)}</td></tr>
+    <tr><td>${L("average bb","bb media")}</td><td>${avg(chipsO,nO)}</td><td>${avg(chipsA,nA)}</td><td>${avg(chipsT,n)}</td></tr>`:`<tr><td class="note">${L("Enter at least your table and the tournament's other tables.","Mete al menos tu mesa y las otras mesas del torneo.")}</td></tr>`;
   if(n<2){svg.innerHTML="";return}
   const all=other.map(v=>({v,a:false})).concat(active.map(v=>({v,a:true}))).sort((p,q)=>q.v-p.v);
   const ymax=all[0].v||1,x=k=>10+k/(n-1)*580,y=v=>10+(1-v/ymax)*140,bottom=155;
@@ -1094,7 +1091,7 @@ function wzGenStacks(n,avg,sigma){
 }
 $("wz-gen-go").onclick=()=>{
   const n=Math.round(+$("wz-gen-n").value),avg=+$("wz-gen-avg").value;
-  if(!(n>0)||!(avg>0)){$("wz-err").textContent="Pon jugadores y media del torneo, los dos mayores que 0.";return}
+  if(!(n>0)||!(avg>0)){$("wz-err").textContent=L("Enter players and tournament average, both greater than 0.","Pon jugadores y media del torneo, los dos mayores que 0.");return}
   $("wz-err").textContent="";
   $("wz-offtable").value=wzGenStacks(n,avg,0.7).join(",");
   $("wz-offtable").dispatchEvent(new Event("input"));
@@ -1112,18 +1109,18 @@ function wzPrizesToHidden(){
 }
 function wzRenderPrizes(){
   const tb=$("wz-prizes");
-  let h="<tr><th>Puesto</th><th>Premio ($)</th><th>%</th><th></th></tr>";
+  const head=`<tr><th>${L("Place","Puesto")}</th><th>${L("Prize ($)","Premio ($)")}</th><th>%</th><th></th></tr>`;let h=head;
   wzPrizesArr.forEach((v,k)=>{
     h+=`<tr><td>${k+1}</td><td><input class="wz-pz" data-k="${k}" value="${v}" style="width:90px"></td><td class="wz-pct" data-k="${k}">—</td><td><button type="button" class="wz-pz-x" data-k="${k}">×</button></td></tr>`;
   });
-  tb.innerHTML=wzPrizesArr.length?h:'<tr><th>Puesto</th><th>Premio ($)</th><th>%</th><th></th></tr><tr><td colspan="4" class="note">Sin premios todavía: añade un puesto, o Chip EV si no quieres ICM.</td></tr>';
+  tb.innerHTML=wzPrizesArr.length?h:head+`<tr><td colspan="4" class="note">${L("No prizes yet: add a place, or choose Chip EV if you don't want ICM.","Sin premios todavía: añade un puesto, o Chip EV si no quieres ICM.")}</td></tr>`;
   wzPrizesUpdateSummary();
 }
 function wzPrizesUpdateSummary(){
   const total=wzPrizesArr.reduce((a,b)=>a+(+b||0),0);
   document.querySelectorAll("#wz-prizes .wz-pct").forEach(e=>{const k=+e.dataset.k,v=+wzPrizesArr[k]||0;e.textContent=total>0?(v/total*100).toFixed(2)+" %":"—"});
   const totalChips=[...document.querySelectorAll("#wz-seats .st")].reduce((s,e)=>s+(+e.value||0),0);
-  $("wz-prizes-sum").textContent=wzPrizesArr.length?`Puestos pagados: ${wzPrizesArr.length} · Premios: ${total.toFixed(2)} · Fichas totales: ${totalChips.toFixed(0)}`:"";
+  $("wz-prizes-sum").textContent=wzPrizesArr.length?L(`Paid places: ${wzPrizesArr.length} · Prizes: ${total.toFixed(2)} · Total chips: ${totalChips.toFixed(0)}`,`Puestos pagados: ${wzPrizesArr.length} · Premios: ${total.toFixed(2)} · Fichas totales: ${totalChips.toFixed(0)}`):"";
 }
 $("wz-prizes").addEventListener("input",e=>{
   if(e.target.classList.contains("wz-pz")){wzPrizesArr[+e.target.dataset.k]=+e.target.value||0;wzPrizesToHidden();wzPrizesUpdateSummary()}
@@ -1142,7 +1139,7 @@ function wzOpen(){
   // si se quedara puesto de una mano a otra, reinterpretaría mal los stacks de la
   // siguiente. Cada mano empieza en modo bb; quien quiera fichas lo vuelve a poner.
   $("wz-bbchips").value="";
-  loadPrunedFromExtra();$("wz-prune-note").textContent=wzPruned.length?`${wzPruned.length} acción(es) podada(s) antes de resolver`:"";
+  loadPrunedFromExtra();$("wz-prune-note").textContent=wzPruned.length?L(`${wzPruned.length} action(s) pruned before solving`,`${wzPruned.length} acción(es) podada(s) antes de resolver`):"";
   $("wz-template").value="";$("wz-template-note").textContent="";
   wzLoad(spotMap(spotText()));
   wzStep=0;wzGo(0);$("wizard").style.display="flex";
@@ -1182,18 +1179,18 @@ function wzLoad(m){
 // Plantillas: spots típicos en bb, con las mismas claves que un fichero de spot. Solo
 // rellenan el asistente; la configuración que no nombran vuelve a su valor por defecto.
 const TEMPLATES=[
-  ["Mesa final de MTT, 9 jugadores (ICM)",{stacks:"25,40,18,60,32,15,22,28,12",payouts:"30,20,14,10,8,6,5,4,3",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
-  ["SNG 6 jugadores, 20 bb (ICM 65/35)",{stacks:"20,20,20,20,20,20",payouts:"65,35",profile:"standard","max-in-pot":"3",fgs:"auto","target-ci":"10"}],
-  ["Final de SNG, 3 jugadores push/fold (ICM 50/30/20)",{stacks:"12,8,10",payouts:"50,30,20",profile:"pushfold",fgs:"auto","target-ci":"10"}],
-  ["Mesa final PKO, 8 jugadores (ICM + bounties)",{stacks:"30,25,40,20,35,18,28,22",payouts:"25,17,12,9,7,5.5,4.5,3.5",bounties:"20,15,30,10,25,12,18,15",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
+  [L("MTT final table, 9 players (ICM)","Mesa final de MTT, 9 jugadores (ICM)"),{stacks:"25,40,18,60,32,15,22,28,12",payouts:"30,20,14,10,8,6,5,4,3",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
+  [L("6-player SNG, 20 bb (ICM 65/35)","SNG 6 jugadores, 20 bb (ICM 65/35)"),{stacks:"20,20,20,20,20,20",payouts:"65,35",profile:"standard","max-in-pot":"3",fgs:"auto","target-ci":"10"}],
+  [L("SNG endgame, 3 players push/fold (ICM 50/30/20)","Final de SNG, 3 jugadores push/fold (ICM 50/30/20)"),{stacks:"12,8,10",payouts:"50,30,20",profile:"pushfold",fgs:"auto","target-ci":"10"}],
+  [L("PKO final table, 8 players (ICM + bounties)","Mesa final PKO, 8 jugadores (ICM + bounties)"),{stacks:"30,25,40,20,35,18,28,22",payouts:"25,17,12,9,7,5.5,4.5,3.5",bounties:"20,15,30,10,25,12,18,15",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
   ["Heads-up 25 bb (chip EV)",{stacks:"25,25",profile:"standard","target-ci":"10"}],
-  ["6-max 40 bb, primeras fases (chip EV)",{stacks:"40,40,40,40,40,40",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
+  [L("6-max 40 bb, early stages (chip EV)","6-max 40 bb, primeras fases (chip EV)"),{stacks:"40,40,40,40,40,40",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
 ];
 TEMPLATES.forEach(([name],k)=>$("wz-template").add(new Option(name,String(k))));
 $("wz-template").onchange=e=>{const t=TEMPLATES[+e.target.value];if(!e.target.value||!t)return;
   wzPruned=[];$("wz-prune-note").textContent="";$("wz-bbchips").value="";
   wzLoad(t[1]);wzGo(0);
-  $("wz-template-note").textContent="Plantilla aplicada: cambia stacks y premios a los de tu mano.";
+  $("wz-template-note").textContent=L("Template applied: change the stacks and prizes to those of your hand.","Plantilla aplicada: cambia stacks y premios a los de tu mano.");
 };
 function wzGo(k){wzStep=k;document.querySelectorAll("#wizard .wpage").forEach((p,i)=>p.style.display=i===k?"":"none");
   document.querySelectorAll("#wz-steps span").forEach((s,i)=>s.classList.toggle("on",i===k));
@@ -1208,13 +1205,13 @@ const STD_ONLY=k=>["opens","sb-opens","bb-opens","opens-by","reraise","reraise-i
 function wzPairs(){
   const out=[],rows=[...document.querySelectorAll("#wz-seats tr[data-k]")],names=SEATS[+$("wz-n").value],model=$("wz-model").value,bounty=$("wz-bounty").value;
   const stacks=rows.map(r=>r.querySelector(".st").value.trim());
-  if(stacks.some(s=>!(+s>0)))throw new Error("Todos los stacks deben ser números positivos.");
+  if(stacks.some(s=>!(+s>0)))throw new Error(L("All stacks must be positive numbers.","Todos los stacks deben ser números positivos."));
   out.push(["stacks",stacks.join(",")]);
   document.querySelectorAll("#wizard [data-key]").forEach(e=>{const k=e.dataset.key,cls=e.closest(".icm,.pko,.icm-field,.bet-generic");
     if(cls&&cls.style.display==="none")return;
     if(e.type==="checkbox"){if(e.checked)out.push([k,null])}else if(e.value.trim()!==""&&e.value.trim()!==(e.dataset.omit??"\u0000"))out.push([k,e.value.trim()])});
-  if((model==="icm"||model==="icm-field")&&!out.some(p=>p[0]==="payouts"))throw new Error("ICM necesita la lista de premios.");
-  if(model==="icm-field"&&!out.some(p=>p[0]==="offtable"))throw new Error("ICM multimesa necesita los stacks de las otras mesas.");
+  if((model==="icm"||model==="icm-field")&&!out.some(p=>p[0]==="payouts"))throw new Error(L("ICM needs the list of prizes.","ICM necesita la lista de premios."));
+  if(model==="icm-field"&&!out.some(p=>p[0]==="offtable"))throw new Error(L("Multi-table ICM needs the stacks of the other tables.","ICM multimesa necesita los stacks de las otras mesas."));
   if(bounty!=="off"){const b=rows.map(r=>r.querySelector(".bo").value.trim()||"0"),off=expand($("wz-offtable").value).length;
     let ob=$("wz-offbounty").value.trim();
     if(!ob){
@@ -1270,13 +1267,13 @@ function fmtTime(sec){return sec<90?`${Math.round(sec)} s`:sec<5400?`${Math.roun
 function wzSummary(){
   try{const p=wzPairs(),n=+$("wz-n").value,mp=Math.min(3,+$("wz-maxpot").value),std=$("wz-profile").value==="standard",cd=$("wz-post").value==="checkdown";
     let cost;
-    if(!std)cost="bajo (push/fold: segundos)";
-    else{const t=SEC_PER_ITER[n][mp]*(cd?0.04:1);cost=`≈ ${t<1?t.toFixed(2):t.toFixed(1)} s por iteración con 4 núcleos (menos con más); para al llegar a CI ${$("wz-quality").value}`;
-      if(n>=6&&mp>=3&&!cd)cost+=`. <b>Con ${n} jugadores, “máx. 2 jugadores activos” es unas ${Math.round(SEC_PER_ITER[n][3]/SEC_PER_ITER[n][2])} veces más rápido</b> (sin cold calls ni botes a 3)`;}
+    if(!std)cost=L("low (push/fold: seconds)","bajo (push/fold: segundos)");
+    else{const t=SEC_PER_ITER[n][mp]*(cd?0.04:1);cost=L(`≈ ${t<1?t.toFixed(2):t.toFixed(1)} s per iteration with 4 cores (less with more); stops when it reaches CI ${$("wz-quality").value}`,`≈ ${t<1?t.toFixed(2):t.toFixed(1)} s por iteración con 4 núcleos (menos con más); para al llegar a CI ${$("wz-quality").value}`);
+      if(n>=6&&mp>=3&&!cd)cost+=L(`. <b>With ${n} players, “max 2 active players” is about ${Math.round(SEC_PER_ITER[n][3]/SEC_PER_ITER[n][2])} times faster</b> (no cold calls or 3-way pots)`,`. <b>Con ${n} jugadores, “máx. 2 jugadores activos” es unas ${Math.round(SEC_PER_ITER[n][3]/SEC_PER_ITER[n][2])} veces más rápido</b> (sin cold calls ni botes a 3)`);}
     const mixed=!std&&p.filter(([k])=>STD_ONLY(k)).map(([k])=>k);
-    const warn=mixed&&mixed.length?`<div class="err" style="margin-bottom:6px">⚠ Perfil en Push/fold pero con ${mixed.join(", ")} puestos (son de perfil Estándar): en Push/fold solo se foldea o se va all-in, esos tamaños no se usan — probablemente quieras poner Perfil en Estándar.</div>`:"";
+    const warn=mixed&&mixed.length?`<div class="err" style="margin-bottom:6px">${L(`⚠ Push/fold profile but with ${mixed.join(", ")} set (Standard profile options): in Push/fold you only fold or go all-in, so those sizes are not used — you probably want the Standard profile.`,`⚠ Perfil en Push/fold pero con ${mixed.join(", ")} puestos (son de perfil Estándar): en Push/fold solo se foldea o se va all-in, esos tamaños no se usan — probablemente quieras poner Perfil en Estándar.`)}</div>`:"";
     const bountyTxt=$("wz-bounty").value!=="off"?`, bounty ${$("wz-bounty").selectedOptions[0].text}`:"";
-    $("wz-sum").innerHTML=`${warn}<b>${n} jugadores</b>, modelo ${$("wz-model").selectedOptions[0].text}${bountyTxt}, perfil ${$("wz-profile").selectedOptions[0].text}, postflop ${$("wz-post").selectedOptions[0].text}. Coste: ${cost}.<pre class="range">${esc(p.map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n"))}</pre>`}
+    $("wz-sum").innerHTML=`${warn}<b>${L(`${n} players`,`${n} jugadores`)}</b>, ${L("model","modelo")} ${$("wz-model").selectedOptions[0].text}${bountyTxt}, ${L("profile","perfil")} ${$("wz-profile").selectedOptions[0].text}, postflop ${$("wz-post").selectedOptions[0].text}. ${L("Cost","Coste")}: ${cost}.<pre class="range">${esc(p.map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n"))}</pre>`}
   catch(e){$("wz-sum").innerHTML=`<span class="err">${esc(e.message)}</span>`}
 }
 // Vista previa del árbol (sin resolver) y poda: una acción de un nodo
@@ -1301,8 +1298,8 @@ function pvPruned(path,label){return wzPruned.some(x=>x.path===path&&x.label===l
 // RAM del sistema (si el solve pudo leerla — no en todas las plataformas).
 function statsHtml(s){
   const mb=x=>x<1024?`${x.toFixed(x<10?2:1)} MB`:`${(x/1024).toFixed(2)} GB`;
-  const ram=s.ram_total_mb!=null?` · RAM libre: ${mb(s.ram_avail_mb)} / ${mb(s.ram_total_mb)}`:"";
-  return `<b>${s.action_nodes}</b> nodos de acción, ${s.terminals} terminales, ${s.flop_leaves} hojas de flop (${s.postflop_nodes} nodos postflop) · árbol: ${mb(s.arena_mb)}${ram}`;
+  const ram=s.ram_total_mb!=null?` · ${L("free RAM","RAM libre")}: ${mb(s.ram_avail_mb)} / ${mb(s.ram_total_mb)}`:"";
+  return L(`<b>${s.action_nodes}</b> action nodes, ${s.terminals} terminals, ${s.flop_leaves} flop leaves (${s.postflop_nodes} postflop nodes) · tree: ${mb(s.arena_mb)}${ram}`,`<b>${s.action_nodes}</b> nodos de acción, ${s.terminals} terminales, ${s.flop_leaves} hojas de flop (${s.postflop_nodes} nodos postflop) · árbol: ${mb(s.arena_mb)}${ram}`);
 }
 // Como color(), pero el degradado de tamaños de subida se calcula con las acciones del
 // propio nodo de la vista previa, no con el `node` global del árbol ya resuelto.
@@ -1363,9 +1360,9 @@ function pvTreeNode(path){
     if(has){
       const cv=r.querySelector(".cv");cv.onclick=e=>{e.stopPropagation();open?pvOpen.delete(child):pvOpen.add(child);renderPvTree()};
       r.onclick=()=>{open?pvOpen.delete(child):pvOpen.add(child);renderPvTree()};
-    }else r.title="nodo terminal (flop, showdown…)";
+    }else r.title=L("terminal node (flop, showdown…)","nodo terminal (flop, showdown…)");
     if(live.length>1){const x=document.createElement("button");x.textContent="✕";x.className="f";x.style.marginLeft="auto";
-      x.title="Quita esta acción de este nodo antes de resolver";
+      x.title=L("Remove this action from this node before solving","Quita esta acción de este nodo antes de resolver");
       x.onclick=e=>{e.stopPropagation();wzPruned.push({path:p,label});commitPruned();renderPvTree()};r.appendChild(x)}
     w.appendChild(r);
     if(open){const kids=document.createElement("div");kids.className="tn-k";kids.appendChild(pvTreeNode(child));w.appendChild(kids)}
@@ -1376,7 +1373,7 @@ $("wz-preview-btn").onclick=openPreview;
 $("pv-all").onclick=()=>{Object.keys(pvNodes).forEach(p=>pvOpen.add(p));renderPvTree()};
 $("pv-none").onclick=()=>{pvOpen=new Set([""]);renderPvTree()};
 $("pv-close").onclick=()=>{$("preview").style.display="none";
-  $("wz-prune-note").textContent=wzPruned.length?`${wzPruned.length} acción(es) podada(s) antes de resolver`:""};
+  $("wz-prune-note").textContent=wzPruned.length?L(`${wzPruned.length} action(s) pruned before solving`,`${wzPruned.length} acción(es) podada(s) antes de resolver`):""};
 // Si la mano activa ya está resuelta, abre el asistente sobre una mano nueva (para no
 // pisar una solución); si todavía no se ha resuelto, reutiliza ese hueco en blanco en vez
 // de acumular manos vacías cada vez que se pulsa. Único punto de entrada para configurar:
@@ -1396,7 +1393,7 @@ function wzHhList(){
   sel.innerHTML=hs.map((t,i)=>{const id=(t.match(/Hand #([^:\s]+)/)||t.match(/HandId: #(\S+)/)||[])[1]||"",cards=(t.match(/Dealt to .*? \[([^\]]+)\]/)||[])[1]||"";
     return `<option value="${i}">${i+1} · #${esc(id)}${cards?" · "+esc(cards):""}</option>`}).join("");
   sel.value=String(Math.max(0,hs.length-1));
-  $("wz-hh-note").textContent=hs.length?`${hs.length} mano(s) en el historial`:($("wz-hh-text").value.trim()?"no se reconoce ninguna mano de PokerStars, GGPoker ni Winamax":"");
+  $("wz-hh-note").textContent=hs.length?L(`${hs.length} hand(s) in the history`,`${hs.length} mano(s) en el historial`):($("wz-hh-text").value.trim()?L("no PokerStars, GGPoker or Winamax hand recognized","no se reconoce ninguna mano de PokerStars, GGPoker ni Winamax"):"");
 }
 const num4=x=>String(+(+x).toFixed(4));
 $("wz-hh-btn").onclick=()=>{const d=$("wz-hh");d.style.display=d.style.display==="none"?"":"none"};
@@ -1404,10 +1401,10 @@ $("wz-hh-text").addEventListener("input",wzHhList);
 $("wz-hh-file").onchange=async e=>{const f=e.target.files[0];if(!f)return;$("wz-hh-text").value=await f.text();wzHhList()};
 $("wz-hh-go").onclick=async()=>{
   const t=wzHhHands()[+$("wz-hh-hand").value];
-  if(!t){$("wz-hh-note").textContent="no hay ninguna mano que importar";return}
+  if(!t){$("wz-hh-note").textContent=L("there is no hand to import","no hay ninguna mano que importar");return}
   let h;try{h=await post("/api/hh",t)}catch(e){$("wz-hh-note").textContent=e.message;return}
   const n=h.players.length;
-  if(n<2||n>10){$("wz-hh-note").textContent=`${n} jugadores: entre 2 y 10`;return}
+  if(n<2||n>10){$("wz-hh-note").textContent=L(`${n} players: must be between 2 and 10`,`${n} jugadores: entre 2 y 10`);return}
   $("wz-n").value=String(n);$("wz-bbchips").value="";wzLimpBy=null;
   const q=k=>document.querySelector(`#wizard [data-key="${k}"]`);
   q("sb").value=h.sb===0.5?"":num4(h.sb);q("ante").value=h.ante>0?num4(h.ante):"";q("bb-ante").checked=h.bb_ante;
@@ -1416,8 +1413,8 @@ $("wz-hh-go").onclick=async()=>{
   else $("wz-bounty").value="off";
   wzSeats(h.players.map(p=>num4(p.bb)),bounties);
   if(h.hero!==null){const td=document.querySelector(`#wz-seats tr[data-k="${h.hero}"] td`);if(td)td.textContent+=` ★ ${h.hero_cards}`}
-  const need=$("wz-model").value!=="chip"&&!$("wz-payouts-hidden").value?" — añade los premios restantes":"";
-  $("wz-hh-note").textContent=`${h.site} #${h.id}: ${n} jugadores, ciegas ${num4(h.sb)}/1 bb${h.ante?", ante "+num4(h.ante)+" bb"+(h.bb_ante?" (de BB)":""):""}${bounties?", con bounties":""}${need}`;
+  const need=$("wz-model").value!=="chip"&&!$("wz-payouts-hidden").value?L(" — add the remaining prizes"," — añade los premios restantes"):"";
+  $("wz-hh-note").textContent=`${h.site} #${h.id}: ${L(`${n} players, blinds`,`${n} jugadores, ciegas`)} ${num4(h.sb)}/1 bb${h.ante?", ante "+num4(h.ante)+" bb"+(h.bb_ante?L(" (big blind ante)"," (de BB)"):""):""}${bounties?L(", with bounties",", con bounties"):""}${need}`;
   $("wz-hh").style.display="none";
 };
 $("wz-bet-mode").onchange=wzBetModeUpdate;
@@ -1442,8 +1439,8 @@ $("wz-bounty").onchange=()=>{
 // Al aceptar: solo se construye el árbol (vista previa, sin CFR) y se enseña ya en la
 // pestaña Estrategia, lista para seguir podando ahí mismo — resolver es un paso aparte y
 // explícito (botón "Resolver"), nunca automático al salir del asistente.
-$("wz-ok").onclick=()=>{try{const p=wzPairs();locks=[];applySpot(p.map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n"));$("wizard").style.display="none";$("s-state").textContent="mano configurada: revisa el árbol, poda si quieres y pulsa Resolver";
-  nameHand(`${$("wz-n").value} jug. ${$("wz-model").selectedOptions[0].text}`);haveBin=false;showPreviewInMainTree();
+$("wz-ok").onclick=()=>{try{const p=wzPairs();locks=[];applySpot(p.map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n"));$("wizard").style.display="none";$("s-state").textContent=L("hand set up: review the tree, prune if you want and press Solve","mano configurada: revisa el árbol, poda si quieres y pulsa Resolver");
+  nameHand(`${$("wz-n").value} ${L("pl.","jug.")} ${$("wz-model").selectedOptions[0].text}`);haveBin=false;showPreviewInMainTree();
   // Sin esto, la configuración solo vivía en los campos en vivo: si se reabría el
   // asistente (o se cambiaba de mano) antes de pulsar Resolver, se perdía y volvía a lo
   // último guardado de verdad -- saveCurrentHand() solo corría al lanzar el cálculo.

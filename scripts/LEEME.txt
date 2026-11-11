@@ -16,5 +16,5 @@ ventana, el programa se cierra solo en menos de un minuto.
 English
 -------
 Double-click PreflopSolver.exe: the interface opens in its own window (Chrome or Edge in
-app mode; otherwise the default browser). The interface is in Spanish; USER_GUIDE.md
-explains every screen in English, and README.md describes the program.
+app mode; otherwise the default browser). The interface is in English (ES button
+for Spanish); USER_GUIDE.md explains every screen, and README.md describes the program.

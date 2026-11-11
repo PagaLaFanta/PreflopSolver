@@ -7,8 +7,8 @@ choose, how to read the results and what to do when something looks wrong. The g
 overview and build instructions are in the [README](../README.md); the full feature list is
 in [FEATURES.md](../FEATURES.md).
 
-> The application's interface is in Spanish. This guide names each button by its exact
-> on-screen label, followed by an English translation in parentheses.
+> The interface is in English by default. The **ES** button in the top bar switches it to
+> Spanish (and **EN** back to English).
 
 ## Contents
 
@@ -79,7 +79,7 @@ Double-click `PreflopSolver.exe`. **The first time**, the engine computes and st
   200+ players; only the first time for that structure).
 
 After that everything comes from the cache. If a first calculation seems "stuck" in the
-preparation phase, this is almost always why: check the **Registro** (Log) tab.
+preparation phase, this is almost always why: check the **Log** tab.
 
 When you close the window, the program exits on its own within a minute. If a calculation
 is running, it waits until it finishes.
@@ -88,65 +88,63 @@ is running, it waits until it finishes.
 
 ## 3. Workflow in the interface
 
-The normal cycle is: **＋ Nueva mano** (New hand) → wizard → review the tree →
-**▶ Resolver** (Solve) → read the results.
+The normal cycle is: **＋ New hand** → wizard → review the tree →
+**▶ Solve** → read the results.
 
 ### 3.1 Creating the hand: the wizard
 
-**＋ Nueva mano** (New hand) opens the three-step wizard. It is the only place where a hand
+**＋ New hand** opens the three-step wizard. It is the only place where a hand
 is configured.
 
-**Step 1 · Juego y equidad (Game and equity)**
+**Step 1 · Game and equity**
 
-- **Plantilla** (Template): fills the wizard with a typical spot (MTT final table, SNG,
+- **Template**: fills the wizard with a typical spot (MTT final table, SNG,
   push/fold SNG endgame, PKO final table, heads-up, chip EV 6-max). Then change the stacks
   and prizes to those of your hand. It is the fastest way to start.
-- **📋 Importar historial** (Import hand history): paste or open a PokerStars, GGPoker or
+- **📋 Import hand history**: paste or open a PokerStars, GGPoker or
   Winamax hand history, pick the hand, and players, stacks in bb, SB, ante (including big
   blind ante) and bounties are filled in. Your seat is marked with ★ and your cards.
-- **Jugadores** (Players) and **stacks**, in bb and in action order (UTG … BTN, SB, BB).
-  If you prefer to type chips as shown by the tournament clock, fill in **BB en fichas**
-  (BB in chips) and type the stacks in chips: they are converted to bb when you accept.
-- **Modelo de equidad** (Equity model): Chip EV, ICM or multi-table ICM. With ICM, add the
-  **remaining prizes** (+ Puesto adds a place). With multi-table ICM, the **stacks of the
-  other tables** (individually or as `NxS`, e.g. `16x25,2x40`), or **🎲 Generar stacks**
-  (Generate stacks) from the tournament average.
+- **Players** and **stacks**, in bb and in action order (UTG … BTN, SB, BB).
+  If you prefer to type chips as shown by the tournament clock, fill in **BB in chips** and type the stacks in chips: they are converted to bb when you accept.
+- **Equity model**: Chip EV, ICM or multi-table ICM. With ICM, add the
+  **remaining prizes** (+ Place). With multi-table ICM, the **stacks of the
+  other tables** (individually or as `NxS`, e.g. `16x25,2x40`), or **🎲 Generate stacks** from the tournament average.
 - **Bounty**: Off, PKO or SKO, with each player's bounty (and the average of other tables).
   With Chip EV, bounties are valued in chips (useful to isolate the bounty effect without
   ICM pressure).
 - **FGS**: no, 1, 2, 3 or auto. See §4.4.
 
-**Step 2 · Betting preflop**
+**Step 2 · Preflop betting**
 
-- **Perfil** (Profile): *Push/fold* (all-in or fold) or *Estándar* (Standard: opens,
+- **Profile**: *Push/fold* (all-in or fold) or *Standard* (opens,
   3-bets, 4-bets…).
 - **Open sizes by position**, **BB raise over limp**, SB opens.
-- **Por nivel** (By level): 3-bet/4-bet/5-bet sizes in and out of position.
+- **By level**: 3-bet/4-bet/5-bet sizes in and out of position.
   Grammar: `2.5bb`, `3x` (of the last raise), `75%` (of the pot after calling), `ai`,
   `2.5bb+1bb` (+1 bb per limper/caller).
-- **Umbral de all-in** (All-in threshold): a raise that commits more than this % of the
+- **All-in threshold**: a raise that commits more than this % of the
   effective stack becomes an all-in.
-- **⚙ Avanzado** (Advanced): *flats* per level (how many players may call without raising),
+- **⚙ Advanced**: *flats* per level (how many players may call without raising),
   *closing flats* (whoever closes the action can always call) and *cold calls*. The
   defaults are good; only change them to reproduce a specific tree.
 
-**Step 3 · Postflop y cálculo (Postflop and calculation)**
+**Step 3 · Postflop and calculation**
 
-- **Postflop**: *Completo* (Full, the normal choice) or *Check-down* (nobody bets after the
+- **Postflop**: *Full* (the normal choice) or *Check-down* (nobody bets after the
   flop: faster, less accurate).
-- **Precisión postflop** (Postflop precision): *Normal* (256 hand groups per street) or
-  *Alta* (High: 1024, slower). See §4.3.
-- **⚙ Avanzado** (Advanced): geometric size, maximum bets, postflop raises and raises in
+- **Postflop precision**: *Normal* (256 hand groups per street) or
+  *High* (1024, slower). See §4.3.
+- **⚙ Advanced**: geometric size, maximum bets, postflop raises and raises in
   3-way pots. Only to reproduce a specific tree.
-- **Máx. jugadores activos** (Max active players): how many players can reach a flop or an
+- **Max active players**: how many players can reach a flop or an
   all-in together (2-6).
-- **Calidad** (Quality): *Rápido* (Quick, CI 20), *Estudio* (Study, CI 10, recommended) or
-  *Referencia* (Reference, CI 3). There is no iteration count to choose: the calculation
+- **Quality**: *Quick* (CI 20), *Study* (CI 10, recommended) or
+  *Reference* (CI 3). There is no iteration count to choose: the calculation
   runs until the CI drops below the target (see §4.5).
-- **🌳 Previsualizar árbol** (Preview tree): builds the tree without solving (instant),
+- **🌳 Preview tree**: builds the tree without solving (instant),
   with action nodes, flop leaves, postflop nodes, size and estimated RAM.
 
-**Aceptar** (Accept) saves the hand and shows its tree in the **Estrategia** (Strategy) tab,
+**Accept** saves the hand and shows its tree in the **Strategy** tab,
 not solved yet.
 
 ### 3.2 Reviewing and pruning the tree before solving
@@ -165,42 +163,42 @@ The last action of a node cannot be pruned. Prunes are saved with the hand.
 
 ### 3.3 Solving, stopping and continuing
 
-- **▶ Resolver** (Solve) starts the calculation. The top bar shows the **CI** live, colored
+- **▶ Solve** starts the calculation. The top bar shows the **CI** live, colored
   by threshold (red ≥ 10, amber < 10, green ≤ 3), and an estimate of the time left to reach
   the chosen quality.
-- **■ Parar** (Stop) stops the calculation within a second and keeps what was computed.
-- **⏩ Continuar** (Continue) loads the previous solution and keeps iterating on the same
+- **■ Stop** stops the calculation within a second and keeps what was computed.
+- **⏩ Continue** loads the previous solution and keeps iterating on the same
   tree: up to the chosen quality if you stopped early; if it had already got there, down to
   half of its CI.
-- **Guardar spot** (Save spot) saves the configuration in `spots/` for reuse.
-- **Duplicar** (Duplicate, hands panel ☰) copies the current hand without its solution:
+- **Save spot** saves the configuration in `spots/` for reuse.
+- **Duplicate** (hands panel ☰) copies the current hand without its solution:
   the quick way to study variants (another stack, another prize). Double-click a hand to
   rename it.
-- **descargar** (download, top bar, when finished): ranges as TSV and the solution as JSON.
+- **download** (top bar, when finished): ranges as TSV and the solution as JSON.
 
-### 3.4 Reading the solution (Estrategia tab)
+### 3.4 Reading the solution (Strategy tab)
 
 - **Tree**: folds are flattened, so the root directly shows every position's open. Click a
   row to see that player's range at that node; ▸ or double-click shows the responses. With
   the tree focused: ← parent node, → enter, ↑↓ sibling action.
 - **13×13 grid**: color by action and frequency per hand. Each cell's height is the share of
   that hand reaching the node (empty: it was already folded). Modes:
-  - **Estrategia** (Strategy): frequencies.
+  - **Strategy**: frequencies.
   - **EV**: EV of each action relative to folding, in $ with ICM or in bb (unit selector).
-  - **EV vs mejor otra** (EV vs best alternative): how much the chosen action gains over the
+  - **EV vs best other**: how much the chosen action gains over the
     best alternative. This is the view that actually tells you whether a decision matters.
 - **Node panel**: per action, frequency, combos and average EV of the combos that play it.
   You can also lock an action's range or frequency from here.
-- **✎ Pintar bloqueo** (Paint lock): paint actions onto the grid and lock the node to that
+- **✎ Paint lock**: paint actions onto the grid and lock the node to that
   strategy (*node locking*). Locks apply when you solve again; see §6.4.
-- **🎯 Afinar este spot** (Refine this spot, node panel, with a saved solution): keeps
+- **🎯 Refine this spot** (node panel, with a saved solution): keeps
   iterating only that node's subtree; see §6.5.
-- **Imagen** (Image): downloads the node's grid as a PNG.
+- **Image**: downloads the node's grid as a PNG.
 
 ### 3.5 Other tabs
 
 - **ICM**: ICM (and FGS) calculator for the stacks, without solving anything.
-- **Registro** (Log): the engine's output. The first place to look if something is slow or
+- **Log**: the engine's output. The first place to look if something is slow or
   fails.
 
 Lab options (iterations, threads, update scheme, report interval, periodic NashConv,
@@ -249,7 +247,7 @@ to pay the big blind next hand is not overvalued.
 - Use it at **final tables and SNGs with short stacks** (below ~20 bb), where future
   position changes decisions.
 - **auto** applies the rules: 2-4 players → 3 hands; 5-7 → 2; otherwise → 1.
-- **Subida de nivel en el FGS** (Blind level increase in FGS): if blinds go up soon, enter
+- **Blind level increase in FGS**: if blinds go up soon, enter
   from which simulated hand and with which blinds (in bb of the current level), e.g.
   `2@0.75/1.5/0.2`.
 - Only has an effect with ICM.
@@ -261,9 +259,9 @@ The solver does not ask how many iterations to run: it continues until the **CI*
 
 | Quality | CI | Meaning | Use |
 |---|---|---|---|
-| Rápido (Quick) | 20 | Still changing somewhat | A quick idea of the spot. |
-| Estudio (Study) | 10 | Stable: opens, flats and 3-bets settled | Normal study. Recommended. |
-| Referencia (Reference) | 3 | Mixes and marginal hands settled | In-depth review or sharing. |
+| Quick | 20 | Still changing somewhat | A quick idea of the spot. |
+| Study | 10 | Stable: opens, flats and 3-bets settled | Normal study. Recommended. |
+| Reference | 3 | Mixes and marginal hands settled | In-depth review or sharing. |
 
 Approximate times to CI 10 with 16 threads:
 
@@ -308,7 +306,7 @@ never reached and does not converge), not to a solver problem.
 ### 5.2 Mixed frequencies
 
 A hand that comes out 50/50 between two actions is almost always **indifferent**: both
-actions are worth the same. Check **EV vs mejor otra** (EV vs best alternative): if the
+actions are worth the same. Check **EV vs best other**: if the
 difference is cents or hundredths of a bb, either action is correct. Do not memorize exact
 mixes of indifferent hands; memorize the thresholds where the EV difference is large.
 
@@ -341,7 +339,7 @@ probability of reaching the node.
 
 ### 6.1 Reviewing a hand you played
 
-1. ＋ Nueva mano → **📋 Importar historial** (Import hand history) → pick the hand.
+1. ＋ New hand → **📋 Import hand history** → pick the hand.
 2. Add the remaining prizes (and other tables for an MTT).
 3. Profile according to the effective stack (§4.1). Preview the tree and prune unused sizes.
 4. Solve to CI < 10.
@@ -353,7 +351,7 @@ probability of reaching the node.
 To find out whether a decision depends on a detail (an opponent's stack, a prize):
 
 1. Solve the base hand.
-2. **Duplicar** (Duplicate), change only that parameter and solve.
+2. **Duplicate**, change only that parameter and solve.
 3. Compare both grids at the same node.
 
 ### 6.3 Bubble and ICM pressure
@@ -365,7 +363,7 @@ it gives you.
 ### 6.4 Exploiting an opponent (node locking)
 
 1. Solve the equilibrium.
-2. At the opponent's node, use **✎ Pintar bloqueo** (Paint lock) with what you think they
+2. At the opponent's node, use **✎ Paint lock** with what you think they
    do (e.g. call only QQ+), or use `--freq` to lock only their frequency and let the solver
    choose the combos.
 3. Solve again: your strategy in the following nodes is the maximal response against that
@@ -375,7 +373,7 @@ Lock with care: exploiting a wrong read loses more than playing the equilibrium.
 
 ### 6.5 Refining a specific node
 
-If an important node does not quite converge, **🎯 Afinar este spot** (Refine this spot) in
+If an important node does not quite converge, **🎯 Refine this spot** in
 the node panel (on the command line, `--subtree "CO:R2 BTN:F"` with `--load`) iterates only
 that subtree with the solution's incoming ranges, much faster than the whole tree.
 
@@ -383,7 +381,7 @@ that subtree with the solution's incoming ranges, much faster than the whole tre
 
 ## 7. Command line
 
-`solve.exe --help` lists every option (help text in Spanish). Common recipes:
+`solve.exe --help` lists every option. Common recipes:
 
 ```bash
 # Heads-up push/fold, chip EV
@@ -454,13 +452,13 @@ iters = 3000
 | The first calculation takes minutes "without progress" | Building the cache (§2) | Check the Log; it only happens once. |
 | CPU at 20-25 % | Windows put the process on the E-cores | See §8. |
 | Very strange ranges in a long line | Improbable node not converged | Normal (§5.4). If it matters, `--subtree`. |
-| The tree lacks an action you expected | All-in threshold, flats or a prune | Check ⚙ Avanzado (Advanced) and the prunes; the preview shows them. |
+| The tree lacks an action you expected | All-in threshold, flats or a prune | Check ⚙ Advanced and the prunes; the preview shows them. |
 | Every open becomes an all-in | All-in threshold too low for the stack | Raise the threshold or review the sizes. |
 | The profile switches back to Push/fold | An old value stored in the browser | Change it once by hand; it stays saved. |
 | "Failed to fetch" when browsing the tree | The server closed (window closed for a long time) | Reopen `PreflopSolver.exe` and load the hand. |
 | FGS changes nothing | You are in Chip EV | FGS only acts with ICM. |
 
-If a problem persists, save the full **Registro** (Log) before closing: it shows which
+If a problem persists, save the full **Log** before closing: it shows which
 phase the calculation is in (preparation, iterations or final evaluation).
 
 ---

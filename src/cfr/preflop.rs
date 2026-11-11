@@ -228,7 +228,7 @@ impl<E: PostflopEstimator> Solver<E> {
         for seg in path.split(' ').filter(|s| !s.is_empty()) {
             let idx = cur.index();
             let label = seg.split_once(':').map_or(seg, |(_, l)| l);
-            let a = self.tree.labels[idx].iter().position(|l| l == label).expect("ruta del subárbol");
+            let a = self.tree.labels[idx].iter().position(|l| l == label).expect("subtree path");
             let sigma = self.average_strategy(idx);
             let p = self.tree.actions[idx].player as usize;
             for (x, &y) in reach[p].iter_mut().zip(&sigma[a * HAND_STRIDE..(a + 1) * HAND_STRIDE]) {
@@ -243,7 +243,7 @@ impl<E: PostflopEstimator> Solver<E> {
     pub fn set_subtree(&mut self, path: Option<&str>) -> Result<(), String> {
         self.subtree = match path {
             None => None,
-            Some(p) => Some(self.tree.find(p).ok_or_else(|| format!("nodo no encontrado: {p:?}"))?),
+            Some(p) => Some(self.tree.find(p).ok_or_else(|| format!("node not found: {p:?}"))?),
         };
         Ok(())
     }
@@ -494,19 +494,19 @@ impl<E: PostflopEstimator> Solver<E> {
         let n = match b.get(..8) {
             Some(b"PFSOL001") => 3,
             Some(b"PFSOL002") => 4,
-            _ => return Err("no es un fichero de solución".into()),
+            _ => return Err("not a solution file".into()),
         };
         if b.len() < 20 {
-            return Err("fichero truncado".into());
+            return Err("truncated file".into());
         }
         let fp = u64::from_le_bytes(b[8..16].try_into().unwrap());
         let iteration = u32::from_le_bytes(b[16..20].try_into().unwrap());
         let mut off = 20;
         let mut parts = Vec::new();
         for _ in 0..n {
-            let len = u64::from_le_bytes(b.get(off..off + 8).ok_or("fichero truncado")?.try_into().unwrap()) as usize;
+            let len = u64::from_le_bytes(b.get(off..off + 8).ok_or("truncated file")?.try_into().unwrap()) as usize;
             off += 8;
-            parts.push(b.get(off..off + len).ok_or("fichero truncado")?);
+            parts.push(b.get(off..off + len).ok_or("truncated file")?);
             off += len;
         }
         Ok((fp, iteration, parts))
@@ -517,7 +517,7 @@ impl<E: PostflopEstimator> Solver<E> {
         let b = std::fs::read(path).map_err(|e| e.to_string())?;
         let (fp, iteration, parts) = Self::read_parts(&b)?;
         if fp != self.fingerprint() {
-            return Err("la solución corresponde a otro árbol (stacks, premios o acciones distintos)".into());
+            return Err("the solution belongs to another tree (different stacks, prizes or actions)".into());
         }
         self.regrets.load_bytes(parts[0])?;
         self.strategy.load_bytes(parts[1])?;
@@ -543,15 +543,15 @@ impl<E: PostflopEstimator> Solver<E> {
     pub fn warm_start_file(&mut self, path: &std::path::Path) -> Result<usize, String> {
         let b = std::fs::read(path).map_err(|e| e.to_string())?;
         let (_, iteration, parts) = Self::read_parts(&b)?;
-        let text = std::str::from_utf8(parts.get(3).ok_or("solución sin índice de nodos (guárdala de nuevo con esta versión)")?).map_err(|e| e.to_string())?;
+        let text = std::str::from_utf8(parts.get(3).ok_or("solution without a node index (save it again with this version)")?).map_err(|e| e.to_string())?;
         let mut index = std::collections::HashMap::new();
         for line in text.lines() {
             let c: Vec<&str> = line.split('\t').collect();
             if c.len() != 5 {
-                return Err("índice de nodos inválido".into());
+                return Err("invalid node index".into());
             }
             let labels: Vec<String> = if c[1].is_empty() { Vec::new() } else { c[1].split(',').map(String::from).collect() };
-            let num = |s: &str| s.parse::<u32>().map_err(|_| "índice de nodos inválido".to_string());
+            let num = |s: &str| s.parse::<u32>().map_err(|_| "invalid node index".to_string());
             let node = crate::tree::nodes::CFRNode { row: num(c[2])?, exp_base: num(c[3])?, num_actions: num(c[4])? as u8, ..Default::default() };
             index.insert((c[0].to_string(), labels), node);
         }
@@ -584,7 +584,7 @@ impl<E: PostflopEstimator> Solver<E> {
     /// se reescalan.
     pub fn lock(&mut self, idx: usize, action: usize, freq_of_action: &[f32]) {
         let na = self.tree.actions[idx].num_actions as usize;
-        assert!(action < na && action > 0, "la acción bloqueada debe ser distinta de la 0");
+        assert!(action < na && action > 0, "the locked action must not be action 0");
         let mut s = self.locks.remove(&idx).unwrap_or_else(|| vec![0.0f32; na * HAND_STRIDE]);
         for h in 0..NUM_COMBOS {
             s[action * HAND_STRIDE + h] = freq_of_action[h].clamp(0.0, 1.0);
@@ -710,7 +710,7 @@ impl<E: PostflopEstimator> Solver<E> {
     /// [`crate::tree::builder::chip_utils`] sobre una solución ICM): mide la misma
     /// estrategia en otras unidades. Restaura la tabla original al terminar.
     pub fn with_utils<T>(&mut self, utils: Vec<f32>, f: impl FnOnce(&Self) -> T) -> T {
-        assert_eq!(utils.len(), self.tree.utils.len(), "tabla de utilidades de otro árbol");
+        assert_eq!(utils.len(), self.tree.utils.len(), "utility table from another tree");
         let old = std::mem::replace(&mut self.tree.utils, utils);
         let r = f(self);
         self.tree.utils = old;
@@ -812,7 +812,7 @@ impl<E: PostflopEstimator> Solver<E> {
         match node.kind() {
             NodeKind::Action => self.walk_action(node.index(), i, reach, mode, depth, seed, pool),
             NodeKind::Terminal => self.walk_terminal(node.index(), i, reach, mode, seed, pool),
-            k => unreachable!("nodo {k:?} en árbol preflop"),
+            k => unreachable!("node {k:?} in a preflop tree"),
         }
     }
 
@@ -1038,7 +1038,7 @@ impl<E: PostflopEstimator> Solver<E> {
         match node.kind() {
             NodeKind::Action => self.walk_all_action(node.index(), reach, depth, seed, pool),
             NodeKind::Terminal => self.terminal_all(node.index(), reach, StrategyMode::Current, seed, pool),
-            k => unreachable!("nodo {k:?} en árbol preflop"),
+            k => unreachable!("node {k:?} in a preflop tree"),
         }
     }
 

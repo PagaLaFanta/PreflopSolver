@@ -220,8 +220,8 @@ impl NextLevel {
     /// `"at@sb/bb[/ante]"`, p. ej. `2@0.75/1.5/0.2`.
     pub fn parse(v: &str) -> Result<NextLevel, String> {
         let (at, rest) = v.split_once('@').ok_or("formato at@sb/bb[/ante]")?;
-        let at: u32 = at.trim().parse().map_err(|_| format!("profundidad inválida: {at}"))?;
-        let x: Vec<f64> = rest.split('/').map(|t| t.trim().parse::<f64>().map_err(|_| format!("número inválido: {t}"))).collect::<Result<_, _>>()?;
+        let at: u32 = at.trim().parse().map_err(|_| format!("invalid depth: {at}"))?;
+        let x: Vec<f64> = rest.split('/').map(|t| t.trim().parse::<f64>().map_err(|_| format!("invalid number: {t}"))).collect::<Result<_, _>>()?;
         match x[..] {
             [sb, bb] => Ok(NextLevel { at, sb, bb, ante: 0.0 }),
             [sb, bb, ante] => Ok(NextLevel { at, sb, bb, ante }),
@@ -794,7 +794,7 @@ impl ThreeWayTable {
         let bytes: Vec<u8> = t.cells.iter().flat_map(|c| c.iter().flat_map(|x| x.to_le_bytes())).collect();
         let _ = std::fs::create_dir_all(dir);
         if let Err(e) = std::fs::write(&path, bytes) {
-            eprintln!("aviso: no se pudo guardar {}: {e}", path.display());
+            eprintln!("warning: could not save {}: {e}", path.display());
         }
         t
     }

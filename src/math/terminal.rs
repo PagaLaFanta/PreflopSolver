@@ -117,7 +117,7 @@ pub fn terminal_dollar_ev_with(inp: &TerminalInput<'_>, prize_model: PrizeModel<
     let mut busted = [0u8; MAX_TERMINAL_PLAYERS];
     let (mut m, mut b) = (0usize, 0usize);
     for i in 0..n {
-        debug_assert!(inp.pre_stacks[i] > 0.0, "jugador {i} ya estaba eliminado antes de la mano");
+        debug_assert!(inp.pre_stacks[i] > 0.0, "player {i} was already eliminated before the hand");
         if inp.post_stacks[i] > 0.0 {
             alive_idx[m] = i as u8;
             alive_stacks[m] = inp.post_stacks[i];
@@ -168,7 +168,7 @@ pub fn terminal_dollar_ev_with(inp: &TerminalInput<'_>, prize_model: PrizeModel<
     heads[..n].copy_from_slice(inp.bounties);
     for el in inp.eliminations {
         let v = el.victim as usize;
-        debug_assert!(inp.post_stacks[v] == 0.0, "la víctima {v} sigue viva");
+        debug_assert!(inp.post_stacks[v] == 0.0, "victim {v} is still alive");
         debug_assert!(el.winner_mask != 0 && el.winner_mask & (1 << v) == 0);
         let head = heads[v];
         heads[v] = 0.0;

@@ -414,7 +414,7 @@ fn par_map<T: Send, U: Send>(items: Vec<T>, threads: usize, f: impl Fn(T) -> U +
     std::thread::scope(|s| {
         let f = &f;
         let hs: Vec<_> = chunks.into_iter().map(|c| s.spawn(move || c.into_iter().map(f).collect::<Vec<U>>())).collect();
-        hs.into_iter().flat_map(|h| h.join().expect("hilo del pool")).collect()
+        hs.into_iter().flat_map(|h| h.join().expect("pool thread")).collect()
     })
 }
 
@@ -572,7 +572,7 @@ impl BoardPool {
         let p = Self::build(cfg);
         let _ = std::fs::create_dir_all(dir);
         if let Err(e) = p.save(&path, cfg) {
-            eprintln!("aviso: no se pudo guardar la caché del pool {}: {e}", path.display());
+            eprintln!("warning: could not save the pool cache {}: {e}", path.display());
         }
         p
     }
@@ -601,17 +601,17 @@ impl BoardPool {
     pub fn load(path: &std::path::Path, cfg: &PoolConfig) -> Result<Self, String> {
         let b = std::fs::read(path).map_err(|e| e.to_string())?;
         if b.len() < 26 || &b[..8] != POOL_MAGIC {
-            return Err("no es una caché de pool".into());
+            return Err("not a pool cache".into());
         }
         let rd64 = |o: usize| u64::from_le_bytes(b[o..o + 8].try_into().unwrap());
         if rd64(8) != cfg.fingerprint() {
-            return Err("caché de otra configuración".into());
+            return Err("cache from another configuration".into());
         }
         let n = u32::from_le_bytes(b[16..20].try_into().unwrap()) as usize;
         let num_buckets = [0, 1, 2].map(|s| u16::from_le_bytes([b[20 + 2 * s], b[21 + 2 * s]]));
         let per = 5 + 3 * NUM_COMBOS * 2;
         if b.len() != 26 + n * per {
-            return Err("caché truncada".into());
+            return Err("truncated cache".into());
         }
         let raw: Vec<&[u8]> = (0..n).map(|k| &b[26 + k * per..26 + (k + 1) * per]).collect();
         let boards = par_map(raw, cfg.threads, |r| {

@@ -197,7 +197,7 @@ impl BuilderM<'_> {
     /// Cadena binaria de tamaños (el menor frente al resto).
     fn size_chain(&mut self, player: u8, street: Street, key: u64, facing: bool, kids: &[u32]) -> u32 {
         match kids {
-            [] => unreachable!("sin tamaños"),
+            [] => unreachable!("no sizes"),
             [x] => *x,
             [x, rest @ ..] => {
                 let idx = self.reserve();
@@ -337,7 +337,7 @@ impl BuilderM<'_> {
 /// cada posición (`cap`, en orden postflop) y la posición del agresor preflop (donk).
 pub fn build_leaf_tree_multi(pot: f64, cap: &[f64], geo: &GeometricConfig, pay: &LeafPayoffM<'_>, utils: &mut Vec<f32>, aggressor: Option<u8>) -> Vec<PfNode3> {
     let k = cap.len();
-    assert!((3..=MAX_MULTI).contains(&k) && pay.k == k, "hoja multiway de 3 o 4 jugadores");
+    assert!((3..=MAX_MULTI).contains(&k) && pay.k == k, "multiway leaf with 3 or 4 players");
     let geo = &GeometricConfig { max_bets: geo.max_bets.min(geo.max_bets_multiway), geo_size: geo.geo_size_multiway.or(geo.geo_size), ..geo.clone() };
     let mut c = [0.0; MAX_MULTI];
     c[..k].copy_from_slice(cap);
@@ -464,7 +464,7 @@ impl Builder<'_> {
     /// el menor frente al resto.
     fn chain(&mut self, role: u8, street: Street, key: u64, facing: bool, kids: &[(u32, f64)]) -> u32 {
         match kids {
-            [] => unreachable!("sin tamaños"),
+            [] => unreachable!("no sizes"),
             [(x, _)] => *x,
             [(x, ax), rest @ ..] => {
                 let idx = self.reserve();
@@ -479,7 +479,7 @@ impl Builder<'_> {
     /// resto, y así sucesivamente.
     fn size_chain(&mut self, role: u8, street: Street, key: u64, kids: &[(u32, f64)]) -> u32 {
         match kids {
-            [] => unreachable!("sin tamaños"),
+            [] => unreachable!("no sizes"),
             [(x, _)] => *x,
             [(x, ax), rest @ ..] => {
                 let idx = self.reserve();

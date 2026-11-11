@@ -9,7 +9,7 @@ preflop strategy knows how much seeing a flop is really worth with each hand.
 
 Written from scratch in Rust. Portable: unzip and run, nothing to install.
 
-![SB strategy in a 25 bb heads-up](docs/img/estrategia.png)
+![SB strategy in a 25 bb heads-up](docs/img/en/estrategia.png)
 
 ## Features
 
@@ -25,6 +25,7 @@ Written from scratch in Rust. Portable: unzip and run, nothing to install.
   runs until the strategy stops changing.
 - **Hand review**: imports PokerStars, GGPoker and Winamax hand histories, with every
   seat's stack, antes and bounty.
+- **English and Spanish** interface and guides.
 - **Templates** for typical spots, tree preview with pruning before solving, node locking,
   an ICM calculator with bubble factors and range export.
 
@@ -32,28 +33,27 @@ The detailed list is in [FEATURES.md](FEATURES.md).
 
 | Wizard with templates | Tree preview |
 |---|---|
-| ![Wizard](docs/img/asistente.png) | ![Tree](docs/img/arbol.png) |
+| ![Wizard](docs/img/en/asistente.png) | ![Tree](docs/img/en/arbol.png) |
 
 | EV vs best alternative | ICM calculator |
 |---|---|
-| ![EV](docs/img/ev.png) | ![ICM](docs/img/icm.png) |
+| ![EV](docs/img/en/ev.png) | ![ICM](docs/img/en/icm.png) |
 
-> The application's interface is in Spanish. The [user guide](docs/USER_GUIDE.md) names
-> every button by its on-screen label with an English translation.
+> The interface is in English, with a Spanish version one click away (**ES** button in the
+> top bar).
 
 ## Download and use
 
 1. Download `PreflopSolver.zip` from the
    [Releases](https://github.com/PagaLaFanta/PreflopSolver/releases) page and unzip it.
 2. Run `PreflopSolver.exe`. The interface opens in its own window.
-3. **＋ Nueva mano** (New hand), pick a template or import a hand history, and press
-   **▶ Resolver** (Solve).
+3. **＋ New hand**, pick a template or import a hand history, and press **▶ Solve**.
 
 The first run takes a few extra minutes: it computes the exact equity and other tables and
 stores them in `.cache/` for later runs.
 
 All usage documentation is in the **[user guide](docs/USER_GUIDE.md)**
-([en español](docs/GUIA_DE_USO.md), also available from the «Guía» button in the app).
+([en español](docs/GUIA_DE_USO.md), also available from the «Guide» button in the app).
 
 ## Requirements
 
@@ -108,7 +108,7 @@ src/
 ui/               interface (dependency-free HTML and JavaScript) and in-app guide
 ```
 
-Code comments and the in-app texts are in Spanish.
+Code comments are in Spanish.
 
 ## License
 

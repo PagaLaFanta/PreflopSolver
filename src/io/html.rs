@@ -42,7 +42,7 @@ pub fn render<E: PostflopEstimator>(s: &Solver<E>, title: &str, max_depth: usize
     let nash_conv: f64 = eval.iter().map(|(e, b)| b - e).sum();
     let mut h = String::new();
     h.push_str(&format!(
-        r#"<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        r#"<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{}</title><style>
 :root{{--bg:#fafaf7;--fg:#1d1d1b;--muted:#6b6b66;--card:#fff;--line:#e3e2dc}}
 @media (prefers-color-scheme:dark){{:root{{--bg:#161615;--fg:#ecebe6;--muted:#9a9993;--card:#1f1f1d;--line:#34332f}}}}
@@ -56,23 +56,23 @@ table.ev{{border-collapse:collapse}} table.ev td,table.ev th{{padding:4px 10px;b
 .legend{{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}} .legend i{{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}}
 nav a{{margin-right:10px;white-space:nowrap}} a{{color:inherit}}
 </style></head><body><main>
-<h1>{}</h1><p class="muted">{} jugadores · iteraciones: {} · NashConv preflop: {:.5}</p>"#,
+<h1>{}</h1><p class="muted">{} players · iterations: {} · NashConv preflop: {:.5}</p>"#,
         escape(title),
         escape(title),
         s.tree.n,
         s.iteration,
         nash_conv
     ));
-    h.push_str(r#"<div class="card"><h2>EV por asiento</h2><table class="ev"><tr><th style="text-align:left">Asiento</th><th>Stack</th><th>EV</th><th>Ganancia por desviarse</th></tr>"#);
+    h.push_str(r#"<div class="card"><h2>EV per seat</h2><table class="ev"><tr><th style="text-align:left">Seat</th><th>Stack</th><th>EV</th><th>Gain from deviating</th></tr>"#);
     for (k, (ev, br)) in eval.iter().enumerate() {
         h.push_str(&format!("<tr><td style=\"text-align:left\">{}</td><td>{:.2}</td><td>{:.4}</td><td>{:.5}</td></tr>", names[k], s.tree.cfg.stacks[k], ev, br - ev));
     }
     h.push_str("</table></div>");
 
     let nodes: Vec<usize> = (0..s.tree.actions.len()).filter(|&k| s.tree.paths[k].split(' ').filter(|x| !x.is_empty()).count() <= max_depth).collect();
-    h.push_str("<div class=\"card\"><h2>Nodos</h2><nav>");
+    h.push_str("<div class=\"card\"><h2>Nodes</h2><nav>");
     for &k in &nodes {
-        let p = if s.tree.paths[k].is_empty() { "(raíz)".to_string() } else { s.tree.paths[k].clone() };
+        let p = if s.tree.paths[k].is_empty() { "(root)".to_string() } else { s.tree.paths[k].clone() };
         h.push_str(&format!("<a href=\"#n{k}\">{}</a> ", escape(&p)));
     }
     h.push_str("</nav></div>");
@@ -93,8 +93,8 @@ nav a{{margin-right:10px;white-space:nowrap}} a{{color:inherit}}
             })
             .collect();
         let who = names[s.tree.actions[k].player as usize];
-        let path = if s.tree.paths[k].is_empty() { "(raíz)".to_string() } else { s.tree.paths[k].clone() };
-        h.push_str(&format!("<div class=\"card\" id=\"n{k}\"><h2>{} → decide {who}</h2><div class=\"legend\">", escape(&path)));
+        let path = if s.tree.paths[k].is_empty() { "(root)".to_string() } else { s.tree.paths[k].clone() };
+        h.push_str(&format!("<div class=\"card\" id=\"n{k}\"><h2>{} → {who} to act</h2><div class=\"legend\">", escape(&path)));
         for (a, l) in labels.iter().enumerate() {
             h.push_str(&format!("<span><i style=\"background:{}\"></i>{} {:.1}%</span>", colors[a], label_name(l), overall_frequency(&strat, a) * 100.0));
         }

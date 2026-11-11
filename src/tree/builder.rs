@@ -96,7 +96,7 @@ impl RaiseSize {
             } else {
                 (s, None)
             };
-            num.parse::<f64>().map(|v| (v, u)).map_err(|_| format!("tamaño inválido: {text}"))
+            num.parse::<f64>().map(|v| (v, u)).map_err(|_| format!("invalid size: {text}"))
         };
         if head == "ai" || head == "all-in" || head == "allin" {
             return Ok(RaiseSize { base: SizeBase::AllIn, per_caller: 0.0 });
@@ -343,7 +343,7 @@ impl PreflopTree {
     pub fn pot_players(&self, t: &TerminalNode) -> Vec<usize> {
         match t.kind {
             TerminalKind::MultiwayN => self.pots[t.leaf as usize].iter().map(|&p| p as usize).collect(),
-            TerminalKind::FlopLeaf if t.players[2] != 255 => self.leaves[t.leaf as usize].multi.as_ref().expect("hoja multiway").seats.iter().map(|&p| p as usize).collect(),
+            TerminalKind::FlopLeaf if t.players[2] != 255 => self.leaves[t.leaf as usize].multi.as_ref().expect("multiway leaf").seats.iter().map(|&p| p as usize).collect(),
             TerminalKind::Fold => vec![],
             _ => t.players.iter().filter(|&&p| p != 255).map(|&p| p as usize).collect(),
         }
@@ -665,7 +665,7 @@ impl B {
     /// dos tiene un equivalente sin ICM, así que se avisa claro en vez de ignorarlos en
     /// silencio.
     fn dollar_chip(&self, post: &[f64], elims: &[Elimination], bounties: &[f64], params: PkoParams) -> Vec<f32> {
-        debug_assert!(self.field.is_none(), "field_for() debe devolver None para PkoChipEv (no hay campo ICM sin ICM)");
+        debug_assert!(self.field.is_none(), "field_for() must return None for PkoChipEv (no ICM field without ICM)");
         // Como la rama sin campo de `dollar`: las otras mesas entran en pre/post (cuentan
         // para repartir bounties) aunque no actúen ni tengan ICM que calcular.
         let pre: Vec<f64> = self.cfg.stacks.iter().chain(&self.cfg.offtable_stacks).copied().collect();
@@ -1013,7 +1013,7 @@ impl B {
                 };
                 !self.cfg.pruned.iter().any(|(path, lbl)| *path == st.path && *lbl == label)
             });
-            assert!(!opts.is_empty(), "--prune deja el nodo {:?} sin ninguna acción", if st.path.is_empty() { "(raíz)" } else { &st.path });
+            assert!(!opts.is_empty(), "--prune leaves node {:?} without any action", if st.path.is_empty() { "(root)" } else { &st.path });
         }
         if opts.len() == 1 {
             let s2 = self.apply(&st, p, opts[0]);
@@ -1091,7 +1091,7 @@ fn path_keys(len: usize, idx: usize, h: u64, kids: &mut dyn FnMut(usize) -> Opti
 
 pub fn build_tree(cfg: PreflopConfig) -> PreflopTree {
     let n = cfg.stacks.len();
-    assert!((2..=MAX_PLAYERS).contains(&n), "entre 2 y 10 jugadores");
+    assert!((2..=MAX_PLAYERS).contains(&n), "between 2 and 10 players");
     assert!((2..=6).contains(&cfg.max_players_in_pot), "max_players_in_pot entre 2 y 6");
     let sb_seat = if n == 2 { 0 } else { n - 2 };
     let bb_seat = n - 1;
@@ -1482,7 +1482,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "--prune deja el nodo")]
+    #[should_panic(expected = "--prune leaves node")]
     fn prune_all_actions_at_a_node_panics() {
         let mut cfg = PreflopConfig::standard(vec![40.0; 3], Payoff::ChipEv);
         cfg.pruned = vec![("".to_string(), "F".to_string()), ("".to_string(), "R2".to_string()), ("".to_string(), "R2.5".to_string()), ("".to_string(), "A".to_string())];

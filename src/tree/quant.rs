@@ -97,7 +97,7 @@ impl QuantArena {
         let rd = |o: usize| -> Result<u64, String> { Ok(u64::from_le_bytes(b.get(o..o + 8).ok_or("volcado truncado")?.try_into().unwrap())) };
         let (nl, ne) = (rd(0)? as usize, rd(8)? as usize);
         if nl % HAND_STRIDE != 0 {
-            return Err("volcado con filas incompletas".into());
+            return Err("dump with incomplete rows".into());
         }
         let a = QuantArena::new(nl / HAND_STRIDE, ne);
         a.load_bytes(b)?;

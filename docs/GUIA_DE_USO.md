@@ -7,6 +7,9 @@ leer los resultados y qué hacer cuando algo no cuadra. La descripción general 
 compilación están en el [README](../README.es.md); la lista de funciones, en
 [FEATURES.es.md](../FEATURES.es.md).
 
+> La interfaz está en inglés por defecto. El botón **ES** de la barra superior la pasa a
+> español (y **EN** la devuelve al inglés). Esta guía usa los textos en español.
+
 ## Índice
 
 1. [Qué es y qué no es](#1-qué-es-y-qué-no-es)

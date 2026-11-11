@@ -70,6 +70,7 @@ postflop, CFR+) está escrito a mano.
 
 ## Interfaz
 
+- Interfaz y guías de uso en inglés y en español (botón ES/EN).
 - Asistente en tres pasos, con **plantillas** de spots típicos, importación de
   **historiales de PokerStars, GGPoker y Winamax** (stacks, ante, ante de BB y bounties) y
   stacks en fichas o en bb.

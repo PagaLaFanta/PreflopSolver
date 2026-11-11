@@ -219,7 +219,7 @@ pub const PATTERNS3: [[u8; 3]; 13] = [
 /// Índice en [`PATTERNS3`] de un vector de puestos.
 #[inline]
 pub fn pattern3_index(ranks: [u8; 3]) -> usize {
-    PATTERNS3.iter().position(|p| *p == ranks).expect("patrón de 3 jugadores")
+    PATTERNS3.iter().position(|p| *p == ranks).expect("3-player pattern")
 }
 
 /// Nodo terminal: una línea de caché. **No contiene utilidades**: contiene el índice a la

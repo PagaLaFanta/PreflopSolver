@@ -60,7 +60,7 @@ impl<'a> Pool<'a> {
                 }
             });
         }
-        slots.into_iter().map(|r| r.expect("rayon::scope no esperó a una tarea de join_all")).collect()
+        slots.into_iter().map(|r| r.expect("rayon::scope did not wait for a join_all task")).collect()
     }
 }
 
@@ -76,7 +76,7 @@ macro_rules! with_pool {
             let $pool = $crate::cfr::pool::Pool::new(false);
             $body
         } else {
-            let rp = rayon::ThreadPoolBuilder::new().num_threads(n).build().expect("construir el pool de rayon");
+            let rp = rayon::ThreadPoolBuilder::new().num_threads(n).build().expect("build the rayon pool");
             rp.install(|| {
                 let $pool = $crate::cfr::pool::Pool::new(true);
                 $body

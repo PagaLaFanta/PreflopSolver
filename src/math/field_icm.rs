@@ -132,7 +132,7 @@ impl FieldIcm {
                     })
                 })
                 .collect();
-            hs.into_iter().flat_map(|h| h.join().expect("hilo de ICM de campo")).collect()
+            hs.into_iter().flat_map(|h| h.join().expect("field ICM thread")).collect()
         });
         FieldIcm { total, n_off: off_stacks.len(), payouts: payouts.to_vec(), nodes, off_poly, threads }
     }
@@ -192,7 +192,7 @@ impl FieldIcm {
                 let hs: Vec<_> = (0..threads).map(|c| (c * chunk, ((c + 1) * chunk).min(self.nodes.len()))).filter(|(lo, hi)| lo < hi).map(|(lo, hi)| sc.spawn(move || partial(lo, hi))).collect();
                 let mut acc = vec![0.0f64; tn];
                 for h in hs {
-                    for (x, y) in acc.iter_mut().zip(h.join().expect("hilo de ICM de campo")) {
+                    for (x, y) in acc.iter_mut().zip(h.join().expect("field ICM thread")) {
                         *x += y;
                     }
                 }

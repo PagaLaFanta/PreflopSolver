@@ -66,7 +66,7 @@ pub fn sample_ranked_boards(n: usize, seed: u64, threads: usize) -> Vec<RankedBo
     let chunk = n.div_ceil(threads).max(1);
     std::thread::scope(|s| {
         let hs: Vec<_> = masks.chunks(chunk).map(|c| s.spawn(move || c.iter().map(|&m| RankedBoard::new(m)).collect::<Vec<_>>())).collect();
-        hs.into_iter().flat_map(|h| h.join().expect("hilo de boards")).collect()
+        hs.into_iter().flat_map(|h| h.join().expect("boards thread")).collect()
     })
 }
 

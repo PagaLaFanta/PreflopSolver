@@ -149,7 +149,7 @@ pub fn load_or_build_nash_ranking(dir: &Path, eq: Arc<EquityMatrix>, spec: &Char
     let _ = std::fs::create_dir_all(dir);
     let bytes: Vec<u8> = r.iter().flat_map(|x| x.to_le_bytes()).collect();
     if let Err(e) = std::fs::write(&path, bytes) {
-        eprintln!("aviso: no se pudo guardar {}: {e}", path.display());
+        eprintln!("warning: could not save {}: {e}", path.display());
     }
     r
 }
@@ -164,7 +164,7 @@ pub fn load_or_build_charts(dir: &Path, eq: Arc<EquityMatrix>, spec: &ChartSpec)
     let c = build_pushfold_charts(eq, spec);
     let _ = std::fs::create_dir_all(dir);
     if let Err(e) = std::fs::write(&path, c.to_bytes()) {
-        eprintln!("aviso: no se pudo guardar {}: {e}", path.display());
+        eprintln!("warning: could not save {}: {e}", path.display());
     }
     c
 }

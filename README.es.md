@@ -10,7 +10,7 @@ mano.
 
 Escrito desde cero en Rust. Portable: se descomprime y se abre, sin instalar nada.
 
-![Estrategia de la SB en un heads-up de 25 bb](docs/img/estrategia.png)
+![Estrategia de la SB en un heads-up de 25 bb](docs/img/es/estrategia.png)
 
 ## Qué hace
 
@@ -26,6 +26,7 @@ Escrito desde cero en Rust. Portable: se descomprime y se abre, sin instalar nad
   sigue hasta que la estrategia deja de cambiar.
 - **Revisión de manos**: importa historiales de PokerStars, GGPoker y Winamax, con stacks,
   antes y bounties de cada asiento.
+- **Interfaz y guías en inglés y en español** (botón ES/EN).
 - **Plantillas** de spots típicos, vista previa del árbol con poda antes de resolver,
   node locking, calculadora ICM con bubble factors y exportación de rangos.
 
@@ -33,18 +34,19 @@ La lista detallada está en [FEATURES.es.md](FEATURES.es.md).
 
 | Asistente con plantillas | Vista previa del árbol |
 |---|---|
-| ![Asistente](docs/img/asistente.png) | ![Árbol](docs/img/arbol.png) |
+| ![Asistente](docs/img/es/asistente.png) | ![Árbol](docs/img/es/arbol.png) |
 
 | EV frente a la mejor alternativa | Calculadora ICM |
 |---|---|
-| ![EV](docs/img/ev.png) | ![ICM](docs/img/icm.png) |
+| ![EV](docs/img/es/ev.png) | ![ICM](docs/img/es/icm.png) |
 
 ## Descarga y uso
 
 1. Descarga `PreflopSolver.zip` de la página de
    [Releases](https://github.com/PagaLaFanta/PreflopSolver/releases) y descomprímelo.
 2. Abre `PreflopSolver.exe`. La interfaz se abre en una ventana propia.
-3. **＋ Nueva mano**, elige una plantilla o importa un historial, y pulsa **▶ Resolver**.
+3. La interfaz se abre en inglés: pulsa **ES** en la barra superior para pasarla a español.
+4. **＋ Nueva mano**, elige una plantilla o importa un historial, y pulsa **▶ Resolver**.
 
 La primera vez tarda unos minutos más en arrancar: calcula la equity exacta y otras tablas
 y las guarda en `.cache/` para las siguientes.

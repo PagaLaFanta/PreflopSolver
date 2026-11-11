@@ -349,7 +349,7 @@ impl PostflopEngine {
     pub fn joint_values(&self, tree: &PreflopTree, leaf: usize, reaches: &[&RangeVec], mode: StrategyMode, upd: u8, want: u8, seed: u64, obs: &[usize], folded: &[&RangeVec], pool: super::pool::Pool<'_>) -> Vec<Vec<Box<RangeVec>>> {
         let l = &tree.leaves[leaf];
         let k = reaches.len();
-        assert!((k == 2 && l.multi.is_none() && !l.nodes.is_empty()) || (k >= 3 && l.multi.as_ref().is_some_and(|m| m.seats.len() == k)), "hoja incompatible con PostflopEngine");
+        assert!((k == 2 && l.multi.is_none() && !l.nodes.is_empty()) || (k >= 3 && l.multi.as_ref().is_some_and(|m| m.seats.len() == k)), "leaf incompatible with PostflopEngine");
         let mut rng = SplitMix64::new(seed);
         // Solo hace falta cubrir los combos de los jugadores cuyos valores se piden.
         let wanted: Vec<&RangeVec> = (0..k).filter(|&p| want & (1 << p) != 0).map(|p| reaches[p]).collect();
@@ -519,7 +519,7 @@ impl PostflopEngine {
             pool.join_all(tasks)
         };
         let mut parts = parts.into_iter();
-        let first = parts.next().expect("al menos un trozo");
+        let first = parts.next().expect("at least one chunk");
         let (mut num, mut den, mut obs_num, mut obs_den, mut bstat) = (first.num, first.den, first.obs_num, first.obs_den, first.bstat);
         for pt in parts {
             for (a, b) in bstat.iter_mut().zip(&pt.bstat) {
@@ -1263,7 +1263,7 @@ impl PostflopEstimator for PostflopEngine {
         seats: &[usize],
         pool: super::pool::Pool<'_>,
     ) -> Vec<Box<RangeVec>> {
-        assert!(pos == 0 || seats.len() == 1, "observadores solo desde la posición 0");
+        assert!(pos == 0 || seats.len() == 1, "observers only from position 0");
         let upd = if update { 1u8 << pos } else { 0 };
         let mut v = self.joint_values(tree, leaf, &reaches, mode, upd, 1 << pos, seed, &seats[1..], &[], pool);
         v.swap_remove(pos)
@@ -1286,7 +1286,7 @@ impl PostflopEstimator for PostflopEngine {
         let items: Result<Vec<(u64, u64)>, String> = (0..n).map(|i| Ok((rd(8 + 16 * i)?, rd(16 + 16 * i)?))).collect();
         match self.table.import(&items?) {
             0 => Ok(()),
-            lost => Err(format!("{lost} infosets postflop no cupieron en la tabla")),
+            lost => Err(format!("{lost} postflop infosets did not fit in the table")),
         }
     }
 

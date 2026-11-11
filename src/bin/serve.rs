@@ -78,17 +78,17 @@ fn main() {
     let opt = |k: &str| argv.iter().position(|a| a == k).and_then(|p| argv.get(p + 1)).cloned();
     if argv.iter().any(|a| a == "--help" || a == "-h") {
         println!(
-            "uso: serve [--app] [--port 8765] [--ui directorio] [--spots directorio] [--host 127.0.0.1]\n  \
-             --app   modo aplicación (Windows): puerto libre, abre la interfaz en su propia ventana\n          \
-             (Chrome o Edge en modo app, o el navegador) y se cierra al cerrar la ventana"
+            "usage: serve [--app] [--port 8765] [--ui directory] [--spots directory] [--host 127.0.0.1]\n  \
+             --app   application mode (Windows): free port, opens the interface in its own window\n          \
+             (Chrome or Edge in app mode, or the browser) and exits when the window is closed"
         );
         return;
     }
     let app_mode = argv.iter().any(|a| a == "--app");
-    let exe = std::env::current_exe().expect("ruta del ejecutable");
+    let exe = std::env::current_exe().expect("executable path");
     let solve = solve_exe(&exe);
     if !solve.exists() {
-        eprintln!("aviso: no se encuentra {} (compila con `cargo build --release`)", solve.display());
+        eprintln!("warning: {} not found (build it with `cargo build --release`)", solve.display());
     }
     // Carpeta de la aplicación (la que contiene `ui/`): junto al ejecutable (paquete),
     // dos niveles por encima (`target/release` del repositorio) o el directorio actual.
@@ -104,17 +104,17 @@ fn main() {
     let spots = opt("--spots").map(PathBuf::from).unwrap_or_else(|| base.join("spots"));
     let _ = std::fs::create_dir_all(&spots);
     let work = std::env::temp_dir().join(format!("preflop_serve_{}", std::process::id()));
-    std::fs::create_dir_all(&work).expect("directorio de trabajo");
+    std::fs::create_dir_all(&work).expect("work directory");
     let app = Arc::new(App { ui, solve, work, spots, job: Mutex::new(Job::default()), last_ping: Mutex::new(None) });
     let port = opt("--port").unwrap_or_else(|| if app_mode { "0".into() } else { "8765".into() });
     let addr = format!("{}:{port}", opt("--host").unwrap_or_else(|| "127.0.0.1".into()));
     let listener = TcpListener::bind(&addr).unwrap_or_else(|e| panic!("no se pudo abrir {addr}: {e}"));
-    let local = listener.local_addr().expect("dirección local");
+    let local = listener.local_addr().expect("local address");
     let url = format!("http://{local}/");
-    eprintln!("interfaz en {url}");
+    eprintln!("interface at {url}");
     if app_mode {
         if !open_window(&url, &app.work) {
-            eprintln!("no se pudo abrir una ventana: abre {url} en el navegador");
+            eprintln!("could not open a window: open {url} in your browser");
         }
         // Cierre automático: la interfaz hace ping cada 10 s; si deja de hacerlo (ventana
         // cerrada) y no hay cálculo en marcha, el servidor termina. Cualquier petición cuenta
@@ -137,7 +137,7 @@ fn main() {
         let app = app.clone();
         std::thread::spawn(move || {
             if let Err(e) = handle(&app, stream) {
-                eprintln!("petición fallida: {e}");
+                eprintln!("request failed: {e}");
             }
         });
     }
@@ -290,11 +290,12 @@ fn handle(app: &Arc<App>, mut stream: TcpStream) -> std::io::Result<()> {
     let req = read_request(&mut stream)?;
     *app.last_ping.lock().unwrap() = Some(std::time::Instant::now());
     if req.method == "POST" && !req.trusted {
-        return error(&mut stream, "403 Forbidden", "falta la cabecera X-Solver");
+        return error(&mut stream, "403 Forbidden", "missing X-Solver header");
     }
     match (req.method.as_str(), req.path.as_str()) {
         ("GET", "/") | ("GET", "/index.html") => file(app, &mut stream, "app.html"),
         ("GET", "/guia") => file(app, &mut stream, "guia.html"),
+        ("GET", "/guide") => file(app, &mut stream, "guide.html"),
         ("GET", "/api/ping") => {
             *app.last_ping.lock().unwrap() = Some(std::time::Instant::now());
             json(&mut stream, "{\"ok\":true}")
@@ -339,7 +340,7 @@ fn handle(app: &Arc<App>, mut stream: TcpStream) -> std::io::Result<()> {
                 }
                 let mut job = watch.job.lock().unwrap();
                 if job.generation == g && job.running {
-                    job.lines.push("no respondió a tiempo: forzando la parada (sin guardar)".into());
+                    job.lines.push("did not respond in time: forcing the stop (without saving)".into());
                     if let Some(c) = job.child.as_mut() {
                         let _ = c.kill();
                     }
@@ -393,14 +394,14 @@ fn handle(app: &Arc<App>, mut stream: TcpStream) -> std::io::Result<()> {
             let path = job_file(app, &req.query, "json");
             match path.and_then(|p| std::fs::read(p).ok()) {
                 Some(b) => respond(&mut stream, "200 OK", "application/json; charset=utf-8", &b),
-                None => error(&mut stream, "404 Not Found", "todavía no hay solución"),
+                None => error(&mut stream, "404 Not Found", "there is no solution yet"),
             }
         }
         ("GET", "/api/export") => {
             let path = job_file(app, &req.query, "export");
             match path.and_then(|p| std::fs::read(p).ok()) {
                 Some(b) => respond(&mut stream, "200 OK", "text/tab-separated-values; charset=utf-8", &b),
-                None => error(&mut stream, "404 Not Found", "todavía no hay solución"),
+                None => error(&mut stream, "404 Not Found", "there is no solution yet"),
             }
         }
         ("GET", "/api/spots") => {
@@ -418,14 +419,14 @@ fn handle(app: &Arc<App>, mut stream: TcpStream) -> std::io::Result<()> {
             Ok(()) => json(&mut stream, "{\"ok\":true}"),
             Err(e) => error(&mut stream, "400 Bad Request", &e),
         },
-        _ => error(&mut stream, "404 Not Found", "ruta desconocida"),
+        _ => error(&mut stream, "404 Not Found", "unknown route"),
     }
 }
 
 fn file(app: &App, stream: &mut TcpStream, name: &str) -> std::io::Result<()> {
     match std::fs::read(app.ui.join(name)) {
         Ok(b) => respond(stream, "200 OK", "text/html; charset=utf-8", &b),
-        Err(e) => error(stream, "404 Not Found", &format!("{}: {e} (¿--ui?)", app.ui.join(name).display())),
+        Err(e) => error(stream, "404 Not Found", &format!("{}: {e} (--ui?)", app.ui.join(name).display())),
     }
 }
 
@@ -446,16 +447,16 @@ fn body_args(body: &str) -> Vec<String> {
 fn start(app: &Arc<App>, body: &str) -> Result<u64, String> {
     let mut job = app.job.lock().unwrap();
     if job.running {
-        return Err("ya hay un cálculo en marcha".into());
+        return Err("a calculation is already running".into());
     }
     let mut args: Vec<String> = body_args(body);
     if args.iter().any(|a| matches!(a.as_str(), "icm" | "--export" | "--export-ev" | "--export-json" | "--export-pio" | "--save" | "--load" | "--warm" | "--stop-file")) {
-        return Err("argumento no permitido aquí: icm, --export*, --save, --load, --warm, --stop-file".into());
+        return Err("argument not allowed here: icm, --export*, --save, --load, --warm, --stop-file".into());
     }
     // `--warm-job g`: arranque en caliente desde la solución del cálculo `g` (otra mano).
     if let Some(k) = args.iter().position(|a| a == "--warm-job") {
-        let g: u64 = args.get(k + 1).and_then(|v| v.parse().ok()).ok_or("--warm-job necesita un número de cálculo")?;
-        let bin = Some(app.work.join(format!("sol_{g}.bin"))).filter(|p| p.exists()).ok_or("la mano de partida no tiene solución guardada")?;
+        let g: u64 = args.get(k + 1).and_then(|v| v.parse().ok()).ok_or("--warm-job needs a calculation number")?;
+        let bin = Some(app.work.join(format!("sol_{g}.bin"))).filter(|p| p.exists()).ok_or("the starting hand has no saved solution")?;
         args.splice(k..k + 2, ["--warm".to_string(), bin.display().to_string()]);
     }
     // `--continue [g]`: carga la solución del cálculo `g` (o la última) y sigue iterando.
@@ -465,7 +466,7 @@ fn start(app: &Arc<App>, body: &str) -> Result<u64, String> {
             Some(g) => Some(app.work.join(format!("sol_{g}.bin"))).filter(|p| p.exists()),
             None => job.bin.clone(),
         }
-        .ok_or("no hay solución anterior que continuar")?;
+        .ok_or("there is no previous solution to continue")?;
         let n = if g.is_some() { 2 } else { 1 };
         args.splice(k..k + n, ["--load".to_string(), bin.display().to_string()]);
     }
@@ -555,7 +556,7 @@ fn read_rows(text: &str) -> Rows {
         .filter(|l| !l.trim().is_empty() && !l.starts_with('#'))
         .filter_map(|l| {
             let c: Vec<&str> = l.split('\t').collect();
-            (c.len() >= 4).then(|| (if c[0] == "(raíz)" { String::new() } else { c[0].to_string() }, c[1].to_string(), c[2].to_string(), c[3].to_string()))
+            (c.len() >= 4).then(|| (if c[0] == "(root)" || c[0] == "(raíz)" { String::new() } else { c[0].to_string() }, c[1].to_string(), c[2].to_string(), c[3].to_string()))
         })
         .collect()
 }
@@ -586,7 +587,7 @@ fn job_file(app: &App, query: &str, kind: &str) -> Option<PathBuf> {
 }
 
 fn solution(app: &App, query: &str) -> Result<Rows, String> {
-    let path = job_file(app, query, "export").ok_or("no hay solución para esta mano (resuélvela)")?;
+    let path = job_file(app, query, "export").ok_or("there is no solution for this hand (solve it)")?;
     Ok(read_rows(&std::fs::read_to_string(&path).map_err(|e| e.to_string())?))
 }
 
@@ -607,7 +608,7 @@ fn solution_ev(app: &App, query: &str) -> Rows {
             t.lines()
                 .filter_map(|l| {
                     let c: Vec<&str> = l.split('\t').collect();
-                    (c.len() >= 4).then(|| (if c[0] == "(raíz)" { String::new() } else { c[0].to_string() }, c[2].to_string(), c[3].to_string(), c.get(4).unwrap_or(&"").to_string()))
+                    (c.len() >= 4).then(|| (if c[0] == "(root)" || c[0] == "(raíz)" { String::new() } else { c[0].to_string() }, c[2].to_string(), c[3].to_string(), c.get(4).unwrap_or(&"").to_string()))
                 })
                 .collect()
         })
@@ -689,7 +690,7 @@ fn nodes_json(rows: &Rows) -> String {
 fn node_json(rows: &Rows, evs: &Rows, path: &str) -> Result<String, String> {
     let sel: Vec<_> = rows.iter().filter(|r| r.0 == path).collect();
     if sel.is_empty() {
-        return Err(format!("nodo no encontrado: {path:?}"));
+        return Err(format!("node not found: {path:?}"));
     }
     let reach = reach_of(&range_index(rows), path, &sel[0].1);
     let mut actions = Vec::new();
@@ -731,7 +732,7 @@ fn solve_exe(exe: &std::path::Path) -> PathBuf {
 /// Fichero de spot a partir de un nombre sin rutas (letras, dígitos, `_`, `-`).
 fn spot_path(app: &App, name: &str) -> Result<PathBuf, String> {
     if name.is_empty() || name.len() > 64 || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-') {
-        return Err(format!("nombre de spot inválido: {name:?} (letras, dígitos, _ y -)"));
+        return Err(format!("invalid spot name: {name:?} (letters, digits, _ and -)"));
     }
     Ok(app.spots.join(format!("{name}.spot")))
 }
@@ -744,11 +745,11 @@ fn numbers(v: &str) -> Result<Vec<f64>, String> {
     for tok in v.split([',', ' ']).map(str::trim).filter(|t| !t.is_empty()) {
         match tok.split_once(['x', 'X']) {
             Some((n, s)) => {
-                let n: usize = n.trim().parse().map_err(|_| format!("grupo inválido {tok}"))?;
-                let s: f64 = s.trim().parse().map_err(|_| format!("grupo inválido {tok}"))?;
+                let n: usize = n.trim().parse().map_err(|_| format!("invalid group {tok}"))?;
+                let s: f64 = s.trim().parse().map_err(|_| format!("invalid group {tok}"))?;
                 out.extend(std::iter::repeat_n(s, n));
             }
-            None => out.push(tok.parse().map_err(|_| format!("número inválido {tok}"))?),
+            None => out.push(tok.parse().map_err(|_| format!("invalid number {tok}"))?),
         }
     }
     Ok(out)
@@ -762,13 +763,13 @@ fn icm_args(body: &str) -> Result<Vec<String>, String> {
     let payouts = numbers(&get("payouts"))?;
     let off = numbers(&get("offtable"))?;
     if stacks.len() < 2 || stacks.len() > 10 {
-        return Err("entre 2 y 10 stacks en la mesa".into());
+        return Err("between 2 and 10 stacks at the table".into());
     }
     if payouts.is_empty() {
-        return Err("faltan premios".into());
+        return Err("missing prizes".into());
     }
     if stacks.iter().chain(&off).any(|&s| s <= 0.0) {
-        return Err("los stacks deben ser positivos".into());
+        return Err("stacks must be positive".into());
     }
     let join = |v: &[f64]| v.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(",");
     let mut a: Vec<String> = vec!["icm".into(), "--json".into(), "--stacks".into(), join(&stacks), "--payouts".into(), join(&payouts)];
@@ -778,11 +779,11 @@ fn icm_args(body: &str) -> Result<Vec<String>, String> {
     match get("fgs").as_str() {
         "" | "0" => {}
         d @ ("1" | "2" | "3" | "auto") => a.extend(["--fgs".into(), d.to_string()]),
-        d => return Err(format!("FGS inválido: {d}")),
+        d => return Err(format!("invalid FGS: {d}")),
     }
     // Un solo número: la coma es decimal (`0,125`).
     let ante_s = get("ante").trim().replace(',', ".");
-    let ante: f64 = if ante_s.is_empty() { 0.0 } else { ante_s.parse().map_err(|_| format!("ante inválido: {}", get("ante")))? };
+    let ante: f64 = if ante_s.is_empty() { 0.0 } else { ante_s.parse().map_err(|_| format!("invalid ante: {}", get("ante")))? };
     if ante > 0.0 {
         let x = ante;
         a.extend(["--ante".into(), x.to_string()]);
@@ -798,7 +799,7 @@ fn icm(app: &App, body: &str) -> Result<String, String> {
     let out = no_console(&mut Command::new(&app.solve)).args(icm_args(body)?).stdin(Stdio::null()).output().map_err(|e| format!("no se pudo lanzar solve: {e}"))?;
     if !out.status.success() {
         let err = String::from_utf8_lossy(&out.stderr);
-        return Err(err.lines().rev().find(|l| l.contains("panicked") || !l.trim().is_empty()).unwrap_or("error en solve icm").to_string());
+        return Err(err.lines().rev().find(|l| l.contains("panicked") || !l.trim().is_empty()).unwrap_or("error in solve icm").to_string());
     }
     Ok(String::from_utf8_lossy(&out.stdout).trim().to_string())
 }
@@ -841,7 +842,7 @@ fn preview(app: &App, body: &str) -> Result<String, String> {
     let out = no_console(&mut Command::new(&app.solve)).args(&argv).stdin(Stdio::null()).output().map_err(|e| format!("no se pudo lanzar solve: {e}"))?;
     if !out.status.success() {
         let err = String::from_utf8_lossy(&out.stderr);
-        return Err(err.lines().rev().find(|l| l.contains("panicked") || !l.trim().is_empty()).unwrap_or("error al previsualizar el árbol").to_string());
+        return Err(err.lines().rev().find(|l| l.contains("panicked") || !l.trim().is_empty()).unwrap_or("error previewing the tree").to_string());
     }
     Ok(String::from_utf8_lossy(&out.stdout).trim().to_string())
 }

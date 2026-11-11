@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>User guide</title>
+<style>
+:root{--bg:#f3f3ef;--panel:#fff;--line:#d9d8d0;--fg:#1e1e1c;--muted:#6f6e68;--accent:#2f6fdb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--line:#34332f;--fg:#ecebe6;--muted:#9a9993}}
+:root[data-theme="dark"]{--bg:#161615;--panel:#1f1f1d;--line:#34332f;--fg:#ecebe6;--muted:#9a9993}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:28px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+h3{font-size:15px;margin:20px 0 6px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto}
+pre code{border:0;padding:0;background:none}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);text-transform:uppercase}
+blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--panel)}
+hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+a{color:var(--accent)}.muted{color:var(--muted)}
+ol li,ul li{margin:4px 0}
+</style>
+<script>try{const t=JSON.parse(localStorage.getItem("theme"));if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<main>
+<p class="muted"><a href="/">← Back to the solver</a></p>
+<h1 id="preflopsolver--user-guide">PreflopSolver — User guide</h1>
+<p>A practical guide to using the solver day to day: how to set up a spot, which settings to choose, how to read the results and what to do when something looks wrong. The general overview and build instructions are in the README; the full feature list is in FEATURES.md.</p>
+<blockquote>The interface is in English by default. The <b>ES</b> button in the top bar switches it to Spanish (and <b>EN</b> back to English).</blockquote>
+<h2 id="contents">Contents</h2>
+<ol>
+<li><a href="#1-what-it-is-and-what-it-is-not">What it is and what it is not</a></li>
+<li><a href="#2-installation-and-first-run">Installation and first run</a></li>
+<li><a href="#3-workflow-in-the-interface">Workflow in the interface</a></li>
+<li><a href="#4-choosing-the-settings">Choosing the settings</a></li>
+<li><a href="#5-reading-the-results">Reading the results</a></li>
+<li><a href="#6-study-recipes">Study recipes</a></li>
+<li><a href="#7-command-line">Command line</a></li>
+<li><a href="#8-performance">Performance</a></li>
+<li><a href="#9-troubleshooting">Troubleshooting</a></li>
+<li><a href="#10-glossary">Glossary</a></li>
+</ol>
+<hr>
+<h2 id="1-what-it-is-and-what-it-is-not">1. What it is and what it is not</h2>
+<p><b>It is</b> a preflop tournament solver: it computes the equilibrium (approximate Nash) of a hand with specific stacks, blinds, antes and payout structure, in <b>chip EV</b>, <b>ICM</b> (including multi-table) and <b>PKO</b>. Play after the flop uses an abstraction (MCCFR with geometric bet sizes and hands grouped into <i>buckets</i>), so that the preflop strategy knows how much seeing a flop is really worth with each hand.</p>
+<p><b>It is not</b> a postflop solver. The postflop game is there to value preflop decisions correctly; its frequencies are not postflop study material. To study a specific flop, export the ranges that reach it (<code>--export-pio</code>) and load them into a postflop solver.</p>
+<p><b>Quality.</b> The prize models (ICM, multi-table ICM, PKO) are exact, and the strategy is validated with NashConv (how much a perfect opponent could exploit it) and with exact checks on small spots. In typical push/fold and ICM spots the solution is practically exact; in deep spots with postflop play, the frequencies of indifferent actions may vary between runs without costing any EV (see §5.4).</p>
+<hr>
+<h2 id="2-installation-and-first-run">2. Installation and first run</h2>
+<h3 id="requirements">Requirements</h3>
+<ul>
+<li>64-bit Windows 10/11. Nothing to install.</li>
+<li>RAM: 8 GB is enough for almost everything; large trees (deep 6-max with 3-4 way pots and 1024 buckets) can need several GB. The tree preview shows the estimate before solving.</li>
+<li>CPU: all cores are used. If the processor supports AVX2, the interface automatically picks <code>solve-avx2.exe</code>, which is faster.</li>
+</ul>
+<h3 id="folder-contents">Folder contents</h3>
+<table><tr><th>File</th><th>Purpose</th></tr>
+<tr><td><code>PreflopSolver.exe</code></td><td>Opens the interface in its own window (Chrome or Edge in app mode).</td></tr>
+<tr><td><code>serve.exe</code></td><td>Local server for the interface (<code>http://127.0.0.1:8765/</code>). Started by the one above.</td></tr>
+<tr><td><code>solve.exe</code>, <code>solve-avx2.exe</code></td><td>The engine. Can also be used directly from a console.</td></tr>
+<tr><td><code>ui/</code></td><td>The interface.</td></tr>
+<tr><td><code>spots/</code></td><td>Spots saved from the interface and example spots.</td></tr>
+<tr><td><code>.cache/</code></td><td>Created automatically: equity matrix, postflop pool, FGS tables. Do not delete.</td></tr>
+</table>
+<h3 id="first-run">First run</h3>
+<p>Double-click <code>PreflopSolver.exe</code>. <b>The first time</b>, the engine computes and stores in <code>.cache/</code>:</p>
+<ul>
+<li>the exact equity matrix (~40 s),</li>
+<li>the <i>board bunching</i> matrices (1-3 min, with 3 or more players),</li>
+<li>the postflop pool for each bucket configuration (seconds),</li>
+<li>the FGS tables and ranking, if you use FGS (~1 min),</li>
+<li>with multi-table ICM and many players, the field table (up to ~13 min for an MTT with 200+ players; only the first time for that structure).</li>
+</ul>
+<p>After that everything comes from the cache. If a first calculation seems "stuck" in the preparation phase, this is almost always why: check the <b>Log</b> tab.</p>
+<p>When you close the window, the program exits on its own within a minute. If a calculation is running, it waits until it finishes.</p>
+<hr>
+<h2 id="3-workflow-in-the-interface">3. Workflow in the interface</h2>
+<p>The normal cycle is: <b>＋ New hand</b> → wizard → review the tree → <b>▶ Solve</b> → read the results.</p>
+<h3 id="31-creating-the-hand-the-wizard">3.1 Creating the hand: the wizard</h3>
+<p><b>＋ New hand</b> opens the three-step wizard. It is the only place where a hand is configured.</p>
+<p><b>Step 1 · Game and equity</b></p>
+<ul>
+<li><b>Template</b>: fills the wizard with a typical spot (MTT final table, SNG, push/fold SNG endgame, PKO final table, heads-up, chip EV 6-max). Then change the stacks and prizes to those of your hand. It is the fastest way to start.</li>
+<li><b>📋 Import hand history</b>: paste or open a PokerStars, GGPoker or Winamax hand history, pick the hand, and players, stacks in bb, SB, ante (including big blind ante) and bounties are filled in. Your seat is marked with ★ and your cards.</li>
+<li><b>Players</b> and <b>stacks</b>, in bb and in action order (UTG … BTN, SB, BB). If you prefer to type chips as shown by the tournament clock, fill in <b>BB in chips</b> and type the stacks in chips: they are converted to bb when you accept.</li>
+<li><b>Equity model</b>: Chip EV, ICM or multi-table ICM. With ICM, add the <b>remaining prizes</b> (+ Place). With multi-table ICM, the <b>stacks of the other tables</b> (individually or as <code>NxS</code>, e.g. <code>16x25,2x40</code>), or <b>🎲 Generate stacks</b> from the tournament average.</li>
+<li><b>Bounty</b>: Off, PKO or SKO, with each player's bounty (and the average of other tables). With Chip EV, bounties are valued in chips (useful to isolate the bounty effect without ICM pressure).</li>
+<li><b>FGS</b>: no, 1, 2, 3 or auto. See §4.4.</li>
+</ul>
+<p><b>Step 2 · Preflop betting</b></p>
+<ul>
+<li><b>Profile</b>: <i>Push/fold</i> (all-in or fold) or <i>Standard</i> (opens, 3-bets, 4-bets…).</li>
+<li><b>Open sizes by position</b>, <b>BB raise over limp</b>, SB opens.</li>
+<li><b>By level</b>: 3-bet/4-bet/5-bet sizes in and out of position. Grammar: <code>2.5bb</code>, <code>3x</code> (of the last raise), <code>75%</code> (of the pot after calling), <code>ai</code>, <code>2.5bb+1bb</code> (+1 bb per limper/caller).</li>
+<li><b>All-in threshold</b>: a raise that commits more than this % of the effective stack becomes an all-in.</li>
+<li><b>⚙ Advanced</b>: <i>flats</i> per level (how many players may call without raising), <i>closing flats</i> (whoever closes the action can always call) and <i>cold calls</i>. The defaults are good; only change them to reproduce a specific tree.</li>
+</ul>
+<p><b>Step 3 · Postflop and calculation</b></p>
+<ul>
+<li><b>Postflop</b>: <i>Full</i> (the normal choice) or <i>Check-down</i> (nobody bets after the flop: faster, less accurate).</li>
+<li><b>Postflop precision</b>: <i>Normal</i> (256 hand groups per street) or <i>High</i> (1024, slower). See §4.3.</li>
+<li><b>⚙ Advanced</b>: geometric size, maximum bets, postflop raises and raises in 3-way pots. Only to reproduce a specific tree.</li>
+<li><b>Max active players</b>: how many players can reach a flop or an all-in together (2-6).</li>
+<li><b>Quality</b>: <i>Quick</i> (CI 20), <i>Study</i> (CI 10, recommended) or <i>Reference</i> (CI 3). There is no iteration count to choose: the calculation runs until the CI drops below the target (see §4.5).</li>
+<li><b>🌳 Preview tree</b>: builds the tree without solving (instant), with action nodes, flop leaves, postflop nodes, size and estimated RAM.</li>
+</ul>
+<p><b>Accept</b> saves the hand and shows its tree in the <b>Strategy</b> tab, not solved yet.</p>
+<h3 id="32-reviewing-and-pruning-the-tree-before-solving">3.2 Reviewing and pruning the tree before solving</h3>
+<p>Before pressing Solve, walk through the tree. Each ✕ next to an action <b>prunes</b> it from that specific node, seeing the tree before spending any calculation time. Use it to:</p>
+<ul>
+<li>remove sizes you do not want for a position (e.g. a single open size for the SB),</li>
+<li>cut absurd lines that bloat the tree.</li>
+</ul>
+<p>The last action of a node cannot be pruned. Prunes are saved with the hand.</p>
+<blockquote><b>Good practice</b>: a smaller tree converges faster and better. Every extra size multiplies the number of nodes and dilutes the iterations. Start with few sizes and only add those that change a real decision.</blockquote>
+<h3 id="33-solving-stopping-and-continuing">3.3 Solving, stopping and continuing</h3>
+<ul>
+<li><b>▶ Solve</b> starts the calculation. The top bar shows the <b>CI</b> live, colored by threshold (red ≥ 10, amber &lt; 10, green ≤ 3), and an estimate of the time left to reach the chosen quality.</li>
+<li><b>■ Stop</b> stops the calculation within a second and keeps what was computed.</li>
+<li><b>⏩ Continue</b> loads the previous solution and keeps iterating on the same tree: up to the chosen quality if you stopped early; if it had already got there, down to half of its CI.</li>
+<li><b>Save spot</b> saves the configuration in <code>spots/</code> for reuse.</li>
+<li><b>Duplicate</b> (hands panel ☰) copies the current hand without its solution: the quick way to study variants (another stack, another prize). Double-click a hand to rename it.</li>
+<li><b>download</b> (top bar, when finished): ranges as TSV and the solution as JSON.</li>
+</ul>
+<h3 id="34-reading-the-solution-strategy-tab">3.4 Reading the solution (Strategy tab)</h3>
+<ul>
+<li><b>Tree</b>: folds are flattened, so the root directly shows every position's open. Click a row to see that player's range at that node; ▸ or double-click shows the responses. With the tree focused: ← parent node, → enter, ↑↓ sibling action.</li>
+<li><b>13×13 grid</b>: color by action and frequency per hand. Each cell's height is the share of that hand reaching the node (empty: it was already folded). Modes:
+<ul>
+<li><b>Strategy</b>: frequencies.</li>
+<li><b>EV</b>: EV of each action relative to folding, in $ with ICM or in bb (unit selector).</li>
+<li><b>EV vs best other</b>: how much the chosen action gains over the best alternative. This is the view that actually tells you whether a decision matters.</li>
+</ul>
+</li>
+<li><b>Node panel</b>: per action, frequency, combos and average EV of the combos that play it. You can also lock an action's range or frequency from here.</li>
+<li><b>✎ Paint lock</b>: paint actions onto the grid and lock the node to that strategy (<i>node locking</i>). Locks apply when you solve again; see §6.4.</li>
+<li><b>🎯 Refine this spot</b> (node panel, with a saved solution): keeps iterating only that node's subtree; see §6.5.</li>
+<li><b>Image</b>: downloads the node's grid as a PNG.</li>
+</ul>
+<h3 id="35-other-tabs">3.5 Other tabs</h3>
+<ul>
+<li><b>ICM</b>: ICM (and FGS) calculator for the stacks, without solving anything.</li>
+<li><b>Log</b>: the engine's output. The first place to look if something is slow or fails.</li>
+</ul>
+<p>Lab options (iterations, threads, update scheme, report interval, periodic NashConv, general re-raise size, maximum raises, bounty α, percentile river buckets, per-street buckets, pool boards, bunching) are not in the interface: the defaults are the right ones. They are still available on the command line (<code>solve --help</code>).</p>
+<hr>
+<h2 id="4-choosing-the-settings">4. Choosing the settings</h2>
+<p>The defaults are a good choice in almost every case. This section explains when to change them.</p>
+<h3 id="41-profile-pushfold-or-standard">4.1 Profile: push/fold or standard</h3>
+<table><tr><th>Effective stack</th><th>Recommended profile</th></tr>
+<tr><td>≤ 10-12 bb</td><td><b>Push/fold</b>. It is what is actually played, and it converges in seconds.</td></tr>
+<tr><td>12-20 bb</td><td><b>Standard</b> with all-in as an option (the all-in threshold adds it automatically). Compare with push/fold if in doubt.</td></tr>
+<tr><td>&gt; 20 bb</td><td><b>Standard</b>.</td></tr>
+</table>
+<p>In push/fold, limped pots (SB complete) can be played postflop with the <i>postflop</i> option; without it they go straight to showdown.</p>
+<h3 id="42-max-active-players">4.2 Max active players</h3>
+<ul>
+<li><b>3</b> (default) covers almost everything relevant: cold calls and squeezes.</li>
+<li><b>4</b> at short-handed tables with short stacks where 4-way all-ins are common (push/fold with 4-6 players). Much more expensive in standard trees.</li>
+<li><b>2</b> only for quick heads-up studies or when the tree does not fit.</li>
+</ul>
+<h3 id="43-postflop-precision">4.3 Postflop precision</h3>
+<table><tr><th>Precision</th><th>Use</th></tr>
+<tr><td><b>Normal</b> (256 buckets)</td><td>The standard. Recommended.</td></tr>
+<tr><td>High (1024 buckets)</td><td>Somewhat more accurate, more memory and time. Useful in deep PKO, where the value of seeing a flop matters more.</td></tr>
+</table>
+<h3 id="44-fgs-future-game-simulation">4.4 FGS (Future Game Simulation)</h3>
+<p>Plain ICM "freezes" the value of the chips at this hand. FGS simulates the following hands in push/fold: a short SB about to move to the button is not undervalued, and a player about to pay the big blind next hand is not overvalued.</p>
+<ul>
+<li>Use it at <b>final tables and SNGs with short stacks</b> (below ~20 bb), where future position changes decisions.</li>
+<li><b>auto</b> applies the rules: 2-4 players → 3 hands; 5-7 → 2; otherwise → 1.</li>
+<li><b>Blind level increase in FGS</b>: if blinds go up soon, enter from which simulated hand and with which blinds (in bb of the current level), e.g. <code>2@0.75/1.5/0.2</code>.</li>
+<li>Only has an effect with ICM.</li>
+</ul>
+<h3 id="45-quality-ci">4.5 Quality (CI)</h3>
+<p>The solver does not ask how many iterations to run: it continues until the <b>CI</b> (convergence indicator) drops below the target of the chosen quality.</p>
+<table><tr><th>Quality</th><th>CI</th><th>Meaning</th><th>Use</th></tr>
+<tr><td>Quick</td><td>20</td><td>Still changing somewhat</td><td>A quick idea of the spot.</td></tr>
+<tr><td>Study</td><td>10</td><td>Stable: opens, flats and 3-bets settled</td><td>Normal study. Recommended.</td></tr>
+<tr><td>Reference</td><td>3</td><td>Mixes and marginal hands settled</td><td>In-depth review or sharing.</td></tr>
+</table>
+<p>Approximate times to CI 10 with 16 threads:</p>
+<table><tr><th>Spot</th><th>Approximate time</th></tr>
+<tr><td>3-player push/fold, 10 bb</td><td>&lt; 10 s</td></tr>
+<tr><td>Heads-up 25 bb with postflop</td><td>~30 s</td></tr>
+<tr><td>4-max 25 bb standard with postflop</td><td>1.5-2 min</td></tr>
+<tr><td>5-9 player push/fold ICM</td><td>2 min – 1 h (depending on players and max active)</td></tr>
+<tr><td>Deep 4-max with 4-way all-ins</td><td>hours</td></tr>
+<tr><td>Deep 6-max PKO MTT</td><td>45 min – 3 h</td></tr>
+</table>
+<p>Reference (CI 3) usually takes several times as long as Study.</p>
+<h3 id="46-prize-models">4.6 Prize models</h3>
+<ul>
+<li><b>Chip EV</b>: no prizes. For cash-like play, early stages or as a baseline.</li>
+<li><b>ICM</b>: the table's remaining prizes. The last paid place is the last one you enter; players below it get 0.</li>
+<li><b>Multi-table ICM</b>: adds the stacks of the other tables. Essential near an MTT bubble: with only your table, ICM over- or underestimates the pressure.</li>
+<li><b>PKO</b>: progressive at 50 % by default (half of the bounty is paid out, the other half is added to yours). If the site uses a different split, change it (<code>--ko 100%</code> or the site's %); <b>SKO</b> pays the whole bounty.</li>
+</ul>
+<hr>
+<h2 id="5-reading-the-results">5. Reading the results</h2>
+<h3 id="51-ci-and-nashconv">5.1 CI and NashConv</h3>
+<ul>
+<li><b>CI</b> measures how much the strategy is still changing. It is cheap and reported at every progress report.</li>
+<li><b>NashConv</b> (in the Log, at the end) measures how much an opponent exploiting you optimally could win, summed over players. It is the real measure of distance to equilibrium. Rough values: &lt; 0.01 bb is very good in postflop spots, &lt; 0.001 in push/fold.</li>
+</ul>
+<p>A low CI with a high NashConv points to a badly designed tree (e.g. a node that is almost never reached and does not converge), not to a solver problem.</p>
+<h3 id="52-mixed-frequencies">5.2 Mixed frequencies</h3>
+<p>A hand that comes out 50/50 between two actions is almost always <b>indifferent</b>: both actions are worth the same. Check <b>EV vs best other</b>: if the difference is cents or hundredths of a bb, either action is correct. Do not memorize exact mixes of indifferent hands; memorize the thresholds where the EV difference is large.</p>
+<h3 id="53-ev-relative-to-folding">5.3 EV relative to folding</h3>
+<p>EVs in the grid and in exports are relative to folding at that same node (fold = 0). An EV of +$0.40 for a call means calling is worth $0.40 more than folding, not that you win $0.40 in the hand. If the node has no fold (e.g. the BB after limps), the EV is absolute.</p>
+<h3 id="54-improbable-nodes">5.4 Improbable nodes</h3>
+<p>Very rare lines (small open → shove → call → re-shove → the original caller decides again) converge poorly <b>in any solver</b>. Their ranges can look strange and it does not matter: they carry almost no weight in the total EV. When comparing solutions, always weight by the probability of reaching the node.</p>
+<h3 id="55-exporting">5.5 Exporting</h3>
+<table><tr><th>Export</th><th>Contents</th></tr>
+<tr><td><code>--export ranges.tsv</code></td><td>Ranges of every node in standard notation.</td></tr>
+<tr><td><code>--export-ev ev.tsv</code></td><td>EV per action and hand class, in $ and in bb.</td></tr>
+<tr><td><code>--export-json sol.json</code></td><td>Full solution: configuration, EV per seat, frequencies and EV per node.</td></tr>
+<tr><td><code>--export-pio flops.tsv</code></td><td>Ranges reaching each heads-up flop, in PioSolver format.</td></tr>
+<tr><td><code>--html report.html</code></td><td>Report with colored grids.</td></tr>
+</table>
+<hr>
+<h2 id="6-study-recipes">6. Study recipes</h2>
+<h3 id="61-reviewing-a-hand-you-played">6.1 Reviewing a hand you played</h3>
+<ol>
+<li>＋ New hand → <b>📋 Import hand history</b> → pick the hand.</li>
+<li>Add the remaining prizes (and other tables for an MTT).</li>
+<li>Profile according to the effective stack (§4.1). Preview the tree and prune unused sizes.</li>
+<li>Solve to CI &lt; 10.</li>
+<li>Go to your decision node, find your hand and look at <b>EV vs mejor otra</b> (EV vs best alternative): that is what your play cost (or gained).</li>
+</ol>
+<h3 id="62-sensitivity-to-a-parameter">6.2 Sensitivity to a parameter</h3>
+<p>To find out whether a decision depends on a detail (an opponent's stack, a prize):</p>
+<ol>
+<li>Solve the base hand.</li>
+<li><b>Duplicate</b>, change only that parameter and solve.</li>
+<li>Compare both grids at the same node.</li>
+</ol>
+<h3 id="63-bubble-and-icm-pressure">6.3 Bubble and ICM pressure</h3>
+<p>Solve the same spot in Chip EV and in ICM (or multi-table ICM). The difference between the two calling ranges is the ICM pressure; between the shoving ranges, the extra <i>fold equity</i> it gives you.</p>
+<h3 id="64-exploiting-an-opponent-node-locking">6.4 Exploiting an opponent (node locking)</h3>
+<ol>
+<li>Solve the equilibrium.</li>
+<li>At the opponent's node, use <b>✎ Paint lock</b> with what you think they do (e.g. call only QQ+), or use <code>--freq</code> to lock only their frequency and let the solver choose the combos.</li>
+<li>Solve again: your strategy in the following nodes is the maximal response against that locked opponent.</li>
+</ol>
+<p>Lock with care: exploiting a wrong read loses more than playing the equilibrium.</p>
+<h3 id="65-refining-a-specific-node">6.5 Refining a specific node</h3>
+<p>If an important node does not quite converge, <b>🎯 Refine this spot</b> in the node panel (on the command line, <code>--subtree &quot;CO:R2 BTN:F&quot;</code> with <code>--load</code>) iterates only that subtree with the solution's incoming ranges, much faster than the whole tree.</p>
+<hr>
+<h2 id="7-command-line">7. Command line</h2>
+<p><code>solve.exe --help</code> lists every option. Common recipes:</p>
+<pre><code># Heads-up push/fold, chip EV
+solve --stacks 10,10 --iters 500
+
+# 6 players, ICM with other tables
+solve --stacks 12,18,25,9,15,20 --payouts 50,30,20 --offtable 16x25,2x40 --iters 300
+
+# Standard 4-max 25 bb to CI 10, with exports
+solve --stacks 25,25,25,25 --profile standard --target-ci 10 --iters 3000 --export ranges.tsv --export-ev ev.tsv
+
+# Automatic FGS at a final table
+solve --stacks 8,25,12,30,6,19 --payouts 50,30,20 --fgs auto
+
+# PKO with bounties and other tables
+solve --stacks 15,30,22 --payouts 50,30,20 --bounties 10,10,10,10 --offtable 25
+
+# From a hand history (bounties included if present)
+solve --hh hand.txt --hand 3 --payouts 50,30,20 --html report.html
+
+# ICM calculator without solving
+solve icm --stacks 20,15,10 --payouts 50,30,20
+
+# Save, continue and refine a subtree
+solve --spot myspot.spot --iters 500 --save sol.bin
+solve --spot myspot.spot --load sol.bin --iters 1500 --save sol.bin
+solve --spot myspot.spot --load sol.bin --subtree &quot;CO:R2 BTN:F&quot; --iters 500
+
+# Show the tree without solving (JSON)
+solve preview --stacks 25,25,25,25 --profile standard</code></pre>
+<p>A <b>spot file</b> (<code>--spot</code>) has one option per line, <code>key = value</code>, and <code>#</code> for comments; it is the way to avoid very long command lines:</p>
+<pre><code># 4-max 25 bb, ICM 50/30/20
+stacks = 25,25,25,25
+payouts = 50,30,20
+profile = standard
+max-in-pot = 3
+target-ci = 10
+iters = 3000</code></pre>
+<hr>
+<h2 id="8-performance">8. Performance</h2>
+<ul>
+<li><b>Close other calculations</b>. Two calculations at once share the CPU and both take twice as long.</li>
+<li><b>Small tree first</b>. Tree size is the main lever: bet sizes, max active players and buckets, in that order.</li>
+<li><b>Hybrid CPUs (Intel 12th gen or later)</b>. The engine takes itself out of Windows efficiency mode so it does not get stuck on the E-cores. If CPU usage still sits around 20-25 %, check in Task Manager that <i>Efficiency mode</i> is not enabled for <code>solve</code>.</li>
+<li><b>Memory</b>. Usage grows up to a ceiling and stays there; there are no leaks. If the preview estimates more RAM than you have, reduce buckets or max active players.</li>
+<li><b>Cache</b>. <code>.cache/</code> saves minutes on every start. If you move the program folder, move the cache with it.</li>
+</ul>
+<hr>
+<h2 id="9-troubleshooting">9. Troubleshooting</h2>
+<table><tr><th>Symptom</th><th>Likely cause</th><th>What to do</th></tr>
+<tr><td>The first calculation takes minutes "without progress"</td><td>Building the cache (§2)</td><td>Check the Log; it only happens once.</td></tr>
+<tr><td>CPU at 20-25 %</td><td>Windows put the process on the E-cores</td><td>See §8.</td></tr>
+<tr><td>Very strange ranges in a long line</td><td>Improbable node not converged</td><td>Normal (§5.4). If it matters, <code>--subtree</code>.</td></tr>
+<tr><td>The tree lacks an action you expected</td><td>All-in threshold, flats or a prune</td><td>Check ⚙ Advanced and the prunes; the preview shows them.</td></tr>
+<tr><td>Every open becomes an all-in</td><td>All-in threshold too low for the stack</td><td>Raise the threshold or review the sizes.</td></tr>
+<tr><td>The profile switches back to Push/fold</td><td>An old value stored in the browser</td><td>Change it once by hand; it stays saved.</td></tr>
+<tr><td>"Failed to fetch" when browsing the tree</td><td>The server closed (window closed for a long time)</td><td>Reopen <code>PreflopSolver.exe</code> and load the hand.</td></tr>
+<tr><td>FGS changes nothing</td><td>You are in Chip EV</td><td>FGS only acts with ICM.</td></tr>
+</table>
+<p>If a problem persists, save the full <b>Log</b> before closing: it shows which phase the calculation is in (preparation, iterations or final evaluation).</p>
+<hr>
+<h2 id="10-glossary">10. Glossary</h2>
+<ul>
+<li><b>Bucket</b>: a group of hands that the postflop game treats as identical on a street.</li>
+<li><b>Board bunching / card bunching</b>: the effect of the cards held by players who folded on the other players' hands and on the board.</li>
+<li><b>CFR+ / MCCFR</b>: regret-minimization algorithms that converge to equilibrium; MCCFR samples boards instead of enumerating all of them.</li>
+<li><b>CI</b>: convergence indicator: how much the strategy is still changing (§4.5).</li>
+<li><b>Closing flats</b>: whoever closes the preflop action can always call.</li>
+<li><b>FGS</b>: simulation of future hands to value chips better than plain ICM.</li>
+<li><b>Flats</b>: calls without raising allowed per level.</li>
+<li><b>Multi-table ICM</b>: ICM that includes the stacks at the tournament's other tables.</li>
+<li><b>NashConv</b>: the sum of what each player would gain by exploiting the others; 0 at the exact equilibrium.</li>
+<li><b>Node locking</b>: fixing a player's strategy at a node to compute the best response.</li>
+<li><b>OCHS</b>: a way to group river hands by their strength against 8 groups of opponents.</li>
+<li><b>PKO / SKO</b>: progressive bounty (part of the bounty grows) / standard bounty (paid in full).</li>
+<li><b>Pruning</b>: removing an action from a specific node of the tree.</li>
+<li><b>Raise over limp</b>: a raise after one or more players limped in.</li>
+<li><b>SPR</b>: stack-to-pot ratio; with a low SPR the postflop game adds all-in as an option.</li>
+</ul>
+</main>
+</body>
+</html>

@@ -239,7 +239,7 @@ impl InfosetTable {
 
     /// Devuelve el infoset de `key`, creándolo si no existe. `None` si la tabla está llena.
     pub fn get_or_insert(&self, key: u64) -> Option<&PostflopInfoset> {
-        debug_assert!(key & OCCUPIED == 0, "las claves usan como máximo 63 bits");
+        debug_assert!(key & OCCUPIED == 0, "keys use at most 63 bits");
         let tagged = key | OCCUPIED;
         let mut i = self.home(key);
         for _ in 0..=self.mask {

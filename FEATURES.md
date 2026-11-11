@@ -72,6 +72,7 @@ hand-written.
 
 ## Interface
 
+- English and Spanish interface (ES/EN button) and user guides.
 - Three-step wizard with **templates** for typical spots, import of **PokerStars, GGPoker
   and Winamax hand histories** (stacks, ante, big blind ante and bounties) and stacks in
   chips or in bb.

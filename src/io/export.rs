@@ -52,7 +52,7 @@ pub fn class_ev(row: &[f32]) -> [f64; 169] {
 
 fn path_or_root(p: &str) -> &str {
     if p.is_empty() {
-        "(raíz)"
+        "(root)"
     } else {
         p
     }
@@ -157,7 +157,7 @@ pub fn pio_tsv<E: PostflopEstimator>(s: &Solver<E>) -> String {
 pub fn pio_script(path: &str, oop: &str, ip: &str, pot: f64, eff: f64, oop_range: &str, ip_range: &str) -> String {
     let chips = |x: f64| (x * 100.0).round() as i64;
     format!(
-        "# preflop_engine → PioSolver\n# Ruta preflop: {path}\n# OOP = {oop}, IP = {ip}; bote {pot:.2} bb, stack efectivo {eff:.2} bb (1 bb = 100 fichas)\n\
+        "# preflop_engine → PioSolver\n# Preflop path: {path}\n# OOP = {oop}, IP = {ip}; pot {pot:.2} bb, effective stack {eff:.2} bb (1 bb = 100 chips)\n\
          set_range OOP {oop_range}\nset_range IP {ip_range}\nset_pot 0 0 {}\nset_eff_stack {}\n",
         chips(pot),
         chips(eff)

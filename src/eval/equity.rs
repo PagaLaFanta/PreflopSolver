@@ -405,7 +405,7 @@ impl EquityMatrix {
                     })
                 })
                 .collect();
-            handles.into_iter().map(|h| h.join().expect("hilo de equity")).collect()
+            handles.into_iter().map(|h| h.join().expect("equity thread")).collect()
         });
         let mut it = accs.into_iter();
         let mut acc = it.next().unwrap();
@@ -534,7 +534,7 @@ impl EquityMatrix {
         std::fs::File::open(path)?.read_to_end(&mut bytes)?;
         let n = NUM_COMBOS * HAND_STRIDE;
         if bytes.len() != 12 + 8 * n || &bytes[..8] != MAGIC {
-            return Err(std::io::Error::new(std::io::ErrorKind::InvalidData, "caché de equity inválida"));
+            return Err(std::io::Error::new(std::io::ErrorKind::InvalidData, "invalid equity cache"));
         }
         let boards = u32::from_le_bytes(bytes[8..12].try_into().unwrap());
         let floats: Vec<f32> = bytes[12..].chunks_exact(4).map(|c| f32::from_le_bytes(c.try_into().unwrap())).collect();
@@ -550,11 +550,11 @@ impl EquityMatrix {
             }
         }
         if boards == 0 {
-            eprintln!("matriz de equity: enumerando todos los boards (solo la primera vez, ~1 min)…");
+            eprintln!("equity matrix: enumerating every board (first time only, ~1 min)…");
         }
         let m = if boards == 0 { Self::exact(threads) } else { Self::monte_carlo(boards, seed, threads) };
         if let Err(e) = m.save(path) {
-            eprintln!("aviso: no se pudo guardar la caché de equity en {}: {e}", path.display());
+            eprintln!("warning: could not save the equity cache to {}: {e}", path.display());
         }
         m
     }

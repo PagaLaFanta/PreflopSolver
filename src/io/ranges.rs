@@ -27,17 +27,17 @@ enum Kind {
 fn parse_hand(t: &str) -> Result<(usize, usize, Kind), String> {
     let cs: Vec<char> = t.chars().collect();
     if cs.len() < 2 || cs.len() > 3 {
-        return Err(format!("mano inválida: {t}"));
+        return Err(format!("invalid hand: {t}"));
     }
-    let (a, b) = (rank(cs[0]).ok_or(format!("rango inválido en {t}"))?, rank(cs[1]).ok_or(format!("rango inválido en {t}"))?);
+    let (a, b) = (rank(cs[0]).ok_or(format!("invalid rank in {t}"))?, rank(cs[1]).ok_or(format!("invalid rank in {t}"))?);
     let (hi, lo) = (a.max(b), a.min(b));
     let kind = match (hi == lo, cs.get(2).map(|c| c.to_ascii_lowercase())) {
         (true, None) => Kind::Pair,
-        (true, Some(_)) => return Err(format!("un par no lleva s/o: {t}")),
+        (true, Some(_)) => return Err(format!("a pair takes no s/o: {t}")),
         (false, Some('s')) => Kind::Suited,
         (false, Some('o')) => Kind::Offsuit,
         (false, None) => Kind::Both,
-        _ => return Err(format!("sufijo inválido en {t}")),
+        _ => return Err(format!("invalid suffix in {t}")),
     };
     Ok((hi, lo, kind))
 }
@@ -69,12 +69,12 @@ fn expand(tok: &str) -> Result<Vec<String>, String> {
     if cs.len() >= 2 && cs[1].eq_ignore_ascii_case(&'x') {
         let plus = tok.ends_with('+');
         let core: String = cs.iter().filter(|&&c| c != '+').collect();
-        let hi = rank(cs[0]).ok_or(format!("rango inválido en {tok}"))?;
+        let hi = rank(cs[0]).ok_or(format!("invalid rank in {tok}"))?;
         let kind = match core.chars().nth(2).map(|c| c.to_ascii_lowercase()) {
             None => Kind::Both,
             Some('s') => Kind::Suited,
             Some('o') => Kind::Offsuit,
-            _ => return Err(format!("sufijo inválido en {tok}")),
+            _ => return Err(format!("invalid suffix in {tok}")),
         };
         let mut v = Vec::new();
         for h in hi..if plus { 13 } else { hi + 1 } {
@@ -102,7 +102,7 @@ fn expand(tok: &str) -> Result<Vec<String>, String> {
         let (h1, l1, k1) = parse_hand(a)?;
         let (h2, l2, k2) = parse_hand(b)?;
         if k1 != k2 {
-            return Err(format!("extremos de distinto tipo: {tok}"));
+            return Err(format!("endpoints of different types: {tok}"));
         }
         let mut v = Vec::new();
         if k1 == Kind::Pair {
@@ -120,7 +120,7 @@ fn expand(tok: &str) -> Result<Vec<String>, String> {
                 v.extend(names(h, h - gap, k1));
             }
         } else {
-            return Err(format!("rango con guion no soportado: {tok}"));
+            return Err(format!("unsupported dash range: {tok}"));
         }
         return Ok(v);
     }
@@ -133,11 +133,11 @@ pub fn parse_range(s: &str) -> Result<Vec<f32>, String> {
     let mut class_w: std::collections::HashMap<String, f32> = std::collections::HashMap::new();
     for raw in s.split([',', ' ', '\t', ';']).map(str::trim).filter(|t| !t.is_empty() && (!t.ends_with('%') || *t == "100%")) {
         let (tok, w) = match raw.split_once(':') {
-            Some((t, w)) => (t, w.trim().parse::<f32>().map_err(|_| format!("peso inválido en {raw}"))?),
+            Some((t, w)) => (t, w.trim().parse::<f32>().map_err(|_| format!("invalid weight in {raw}"))?),
             None => (raw, 1.0),
         };
         if !(0.0..=1.0).contains(&w) {
-            return Err(format!("peso fuera de [0,1] en {raw}"));
+            return Err(format!("weight outside [0,1] in {raw}"));
         }
         for name in expand(tok)? {
             class_w.insert(name, w);

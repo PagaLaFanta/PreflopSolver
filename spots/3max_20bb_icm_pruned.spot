@@ -1,0 +1,16 @@
+# 3-max 20bb ICM 50/30/20, tamaños por asiento y un ejemplo de poda nodo a nodo (Prune
+# Action/Children): quita el all-in como opción propia del open de BTN, dejando solo
+# fold/2bb — para ver qué cambia respecto al árbol completo, compáralo quitando la línea
+# `prune`. "profile = standard" puesto a mano a propósito: dejarlo vacío o en pushfold
+# junto con tamaños de Estándar (opens-by, 3bet...) da un árbol sin sentido, no un error,
+# así que hay que decirlo explícito (ver asistente: Nueva mano > Perfil).
+stacks = 20,20,20
+payouts = 50,30,20
+profile = standard
+opens-by = BTN:2bb,ai;SB:3.5bb,ai;BB:3.5bb,ai
+no-allin = open
+allin-threshold = 40%
+prune = @A
+iters = 1000
+nashconv-every = 0
+show = ""

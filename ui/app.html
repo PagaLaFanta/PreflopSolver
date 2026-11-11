@@ -1,0 +1,1454 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preflop Solver</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<style>
+:root{
+  --bg:#f2f3f5;--panel:#fff;--line:#dcdfe5;--fg:#1b1f27;--muted:#6b7280;--accent:#2f6fdb;--run:#1f9d55;
+  --bar:#1c2230;--bar-fg:#e8ebf1;--bar-muted:#9aa3b2;--bar-line:#2e3647;
+  /* Acciones: fold azul apagado, check/call verdes, raises de rojo suave (pequeño) a rojo
+     (grande), all-in rojo oscuro intenso. Personalizables en «Colores». */
+  --fold:#6f8fce;--check:#7cc79a;--call:#2e9d5b;--raise-lo:#f4a79d;--raise-hi:#cf4a3f;--allin:#8c0f1d;
+  --grid-bg:#e4e7ec;--sel:#ffe9a8;--err:#c0392b;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--line:#34332f;--fg:#ecebe6;--muted:#9a9993;--grid-bg:#2a2a27;--sel:#4a4020}}
+:root[data-theme="dark"]{--bg:#161615;--panel:#1f1f1d;--line:#34332f;--fg:#ecebe6;--muted:#9a9993;--grid-bg:#2a2a27;--sel:#4a4020}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.4 "Segoe UI",system-ui,-apple-system,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.toolbar{display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--bar);color:var(--bar-fg);border-bottom:1px solid var(--bar-line);flex-wrap:wrap}
+.toolbar b.t{margin-right:12px;font-size:14px;letter-spacing:.02em}
+.toolbar b.t span{color:#e0564a}
+.toolbar button,.toolbar select{background:transparent;color:var(--bar-fg);border-color:var(--bar-line)}
+.toolbar button:hover{border-color:var(--bar-muted);background:#ffffff0d}
+.toolbar select option{color:#1b1f27}
+.toolbar button.primary{background:var(--run);border-color:var(--run);color:#fff}
+.toolbar .note,.toolbar a{color:var(--bar-muted)}
+.toolbar .stat{color:var(--bar-muted)}.toolbar .stat b{color:var(--bar-fg)}
+.toolbar .err{color:#ff8a80}
+.sep{width:1px;height:22px;background:var(--line);margin:0 6px}
+.toolbar .sep{background:var(--bar-line)}
+button{font:inherit;padding:5px 10px;border:1px solid var(--line);border-radius:5px;background:var(--panel);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--muted)}button:disabled{opacity:.5;cursor:default}
+button.primary{background:var(--run);color:#fff;border-color:var(--run);font-weight:600}
+.stat{margin-left:auto;display:flex;align-items:baseline;gap:14px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.stat b{color:var(--fg)}
+.stat-more{display:flex;align-items:baseline;gap:14px}
+.stat-more summary{cursor:pointer;list-style:none}
+.stat-more summary::-webkit-details-marker{display:none}
+.stat-more summary:hover{color:var(--fg)}
+.stat-more:not([open]) summary::after{content:" ▸";font-size:10px}
+.stat-more[open] summary::after{content:" ▾";font-size:10px}
+.stat-more:not([open])>span{display:none}
+.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;min-height:0}
+#detail table td,#detail table th{white-space:nowrap;padding:4px 6px}
+.side,.right{background:var(--panel);overflow:auto;padding:10px}
+.side{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
+h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 0 6px}
+label{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--muted);margin-bottom:6px}
+label.chk{flex-direction:row;align-items:center;gap:6px;color:var(--fg)}
+input,select,textarea{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg);width:100%}
+input[type=checkbox]{width:auto}
+textarea{font-family:ui-monospace,Menlo,monospace;font-size:12px;min-height:54px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.center{display:flex;flex-direction:column;min-width:0}
+.tabs{display:flex;gap:2px;padding:6px 10px 0;background:var(--panel);border-bottom:1px solid var(--line)}
+.tabs button{border-bottom:0;border-radius:6px 6px 0 0;background:var(--bg)}
+.tabs button.on{background:var(--panel);font-weight:600;margin-bottom:-1px;border-bottom:1px solid var(--panel)}
+.page{display:none;flex:1;overflow:auto;padding:14px 16px}.page.on{display:block}
+.crumbs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.crumbs a{padding:3px 8px;border-radius:12px;background:var(--grid-bg);cursor:pointer;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.crumbs a.cur{background:var(--accent);color:#fff}
+.legend{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.legend button{display:flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px}
+.grid{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;max-width:720px}
+.cell{position:relative;aspect-ratio:1.3;border-radius:4px;overflow:hidden;display:flex;background:var(--grid-bg);box-shadow:inset 0 0 0 1px #00000012}
+.cell>i{height:100%}
+.cell span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;text-shadow:0 0 2px #000a}
+.cell:hover{outline:2px solid var(--accent)}
+.cell.part span{color:var(--fg);text-shadow:0 0 2px var(--grid-bg)}
+.cell.out span{color:var(--muted);text-shadow:none;font-weight:400}
+.stratwrap{display:flex;gap:14px;align-items:flex-start}
+.stratmain{flex:1;min-width:0}
+.treebox{width:280px;flex:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;max-height:calc(100vh - 130px);position:sticky;top:0}
+.treebox .th{display:flex;gap:4px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line)}
+.treebox .th b{flex:1;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.treebox .th button{padding:1px 6px;font-size:11px}
+.tree:focus{outline:none}.tree{overflow:auto;padding:6px;font-size:12px;user-select:none}
+.tn-h{padding:3px 6px;border-radius:4px;cursor:pointer;font-weight:600;white-space:nowrap}
+.tn-h small{font-weight:400;color:var(--muted)}
+.tn-a{display:flex;align-items:center;gap:6px;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap}
+.tn-a.term{cursor:default;color:var(--muted)}
+.tn-a .cv{width:10px;color:var(--muted);font-size:10px}
+.tn-a i{width:10px;height:10px;border-radius:2px;flex:none}
+.tn-a .sn{min-width:30px;font-weight:600}
+.tn-a .f{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;padding-left:8px}
+.tn-h:hover,.tn-a:not(.term):hover{background:var(--bg)}
+.tn-h.on,.tn-a.on{background:var(--sel)}.tn-h.cur{color:var(--accent)}
+.tn-k{margin-left:11px;padding-left:6px;border-left:1px solid var(--line)}
+.main.noside{grid-template-columns:1fr 330px}.main.noside .side{display:none}
+@media (max-width:1200px){.stratwrap{flex-direction:column}.treebox{width:100%;position:static;max-height:40vh}}
+table{border-collapse:collapse;width:100%}
+th,td{padding:4px 8px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11px;color:var(--muted);text-transform:uppercase}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.card h2{font-size:14px;margin:0 0 8px}
+.log{font-family:ui-monospace,Menlo,monospace;font-size:12px;white-space:pre-wrap;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;max-height:55vh;overflow:auto}
+svg.chart{width:100%;height:160px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.tip{position:fixed;pointer-events:none;background:#1e1e1c;color:#fff;padding:6px 8px;border-radius:5px;font-size:12px;display:none;z-index:30;min-width:170px}
+.tip .note{color:#b8b8b0}
+.tip-head{font-weight:600;margin-bottom:3px}
+.tip-row{display:flex;align-items:center;gap:5px;padding:1px 0;white-space:nowrap}
+.tip-row i{width:9px;height:9px;border-radius:2px;flex:none}
+.tip-row b{margin-left:auto;padding-left:8px;font-variant-numeric:tabular-nums}
+.tip-row .note{margin-left:8px}
+.tip .tip-total{border-top:1px solid #ffffff2b;margin-top:3px;padding-top:3px}
+#hand .tip-total{border-top:1px solid var(--line);margin-top:3px;padding-top:3px}
+.note{font-size:12px;color:var(--muted)}.err{color:var(--err)}
+.range{font-family:ui-monospace,Menlo,monospace;font-size:11px;word-break:break-word;color:var(--muted)}
+.modes{display:flex;gap:4px;margin:0 0 8px;flex-wrap:wrap;align-items:center}
+.modes button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cell.num span{color:var(--fg);text-shadow:none;font-weight:500;flex-direction:column;line-height:1.1}
+.cell.num span small{font-size:9px;color:var(--muted);font-weight:400}
+.lockbox{border:1px solid var(--line);border-radius:6px;padding:6px;margin:6px 0}
+.lockbox textarea{min-height:40px}
+.locks div{display:flex;justify-content:space-between;gap:6px;font-family:ui-monospace,Menlo,monospace;font-size:11px;padding:3px 0;border-bottom:1px solid var(--line);word-break:break-all}
+.locks button{padding:0 6px}
+tr.click{cursor:pointer}tr.click:hover{background:var(--bg)}tr.on{background:var(--sel)}
+.toolbar select{width:auto}
+.hands div{display:flex;justify-content:space-between;align-items:center;padding:3px 6px;border-radius:4px;cursor:pointer}
+.hands div.on{background:var(--sel)}.hands div span.x{color:var(--muted);padding:0 4px}.hands div span.x:hover{color:var(--err)}
+.hands .st{font-size:11px;color:var(--muted);margin-left:6px}
+#paintbar{display:none;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px;padding:6px;border:1px dashed var(--accent);border-radius:6px}
+#paintbar button.sel{outline:2px solid var(--accent)}
+.cell.painted{outline:2px dashed var(--fg);outline-offset:-2px}
+.modal{display:none;position:fixed;inset:0;background:#0006;z-index:40;align-items:center;justify-content:center;padding:16px}
+.dlg{background:var(--panel);border:1px solid var(--line);border-radius:10px;width:820px;max-width:100%;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 14px 40px #0006}
+.dlg-h{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+.dlg-b{padding:14px;overflow:auto}
+.dlg-f{display:flex;justify-content:flex-end;gap:8px;padding:10px 14px;border-top:1px solid var(--line);align-items:center}
+#wz-steps{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+#wz-steps span{padding:4px 10px;border-radius:14px;background:var(--grid-bg);color:var(--muted);cursor:pointer}
+#wz-steps span.on{background:var(--accent);color:#fff}
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:4px 12px}
+#wz-seats td{padding:3px 4px}#wz-seats input{min-width:60px}
+#wz-levels td,#wz-levels th{text-align:left;padding:3px 4px}#wz-levels input:not([type=checkbox]){min-width:60px}
+#wz-seats input[type=checkbox],#wz-levels input[type=checkbox]{min-width:0;width:auto}
+@media (max-width:900px){body{height:auto;overflow:auto}.main{grid-template-columns:1fr}.side,.right{border:0}}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <b class="t">Preflop<span>●</span>Solver</b>
+  <button id="side-btn" title="Mostrar u ocultar la lista de manos abiertas">☰</button>
+  <button id="new" title="Asistente de configuración">＋ Nueva mano</button>
+  <select id="spot-list" title="Spots guardados"><option value="">Abrir spot…</option></select>
+  <button id="spot-save">Guardar spot</button>
+  <span class="sep"></span>
+  <button class="primary" id="run">▶ Resolver</button><button id="cont" disabled title="Carga la solución anterior y sigue iterando (mismo árbol)">⏩ Continuar</button><button id="stop" disabled>■ Parar</button>
+  <span id="dl" class="note" style="display:none;margin-left:6px">descargar: <a id="dl-tsv" href="/api/export" download="rangos.tsv">rangos TSV</a> · <a id="dl-json" href="/api/export.json" download="solucion.json">estrategias JSON</a></span>
+  <span class="sep"></span>
+  <button id="theme" title="Tema claro / oscuro">◐</button><button id="colors-btn" title="Colores de las acciones">🎨 Colores</button>
+  <a href="/guia" target="_blank" class="note" style="margin-left:6px" title="Cómo usar el solver">Guía</a>
+  <div class="stat">
+    <details class="stat-more" id="stat-more"><summary title="Iteraciones hechas y NashConv (qué tan lejos del equilibrio exacto está la estrategia -- más fino que el CI pero caro de calcular con postflop real; para el día a día basta con el CI de al lado)">iter / NashConv</summary><span>iter <b id="s-iter">–</b></span><span>NashConv <b id="s-nc">–</b></span></details>
+    <span title="Indicador de convergencia con la misma fórmula y escala que el CI: cuánto cambia todavía la estrategia. < 10 ya es estable; ≤ 3 para material de referencia.">CI <b id="s-ci">–</b></span><span id="s-state">sin cálculo</span>
+  </div>
+</div>
+<div class="main">
+  <div class="side">
+    <h3>Manos abiertas</h3>
+    <div class="hands" id="hands"></div>
+    <div style="display:flex;gap:6px;margin:4px 0 2px"><button id="hand-dup" title="Copia de la mano actual (sin solución)">Duplicar</button></div>
+    <!-- La configuración (stacks, perfil, tamaños…) vive solo en el asistente («＋ Nueva
+         mano»): tenerla también aquí eran dos formularios que podían desincronizarse (p.
+         ej. el "Perfil" de uno en Estándar y el del otro en Push/fold sin que se notara) —
+         la causa de varios bugs raros de árboles rotos. Los campos siguen aquí, ocultos:
+         son el único almacén real que lee `pairs()`/`args()`; el asistente los rellena. -->
+    <div style="display:none">
+    <h3>Juego y equidad</h3>
+    <label>Stacks en bb, en orden de acción (…, SB, BB)<input id="stacks" value="20,20,20"></label>
+    <div class="two">
+      <label>Ante<input id="ante" value="0"></label>
+      <label class="chk" style="margin-top:16px"><input type="checkbox" id="bbante"> Ante de BB</label>
+    </div>
+    <label>Premios (vacío = chip EV)<input id="payouts" value="50,30,20"></label>
+    <label>Otras mesas (p. ej. 16x25,2x40)<input id="offtable"></label>
+    <label>Bounties PKO (mesa + otras)<input id="bounties"></label>
+    <label>FGS<select id="fgs"><option value="">no</option><option>1</option><option>2</option><option>3</option><option value="auto">auto</option></select></label>
+    <h3>Betting</h3>
+    <label>Perfil<select id="profile"><option value="pushfold">Push/fold</option><option value="standard" selected>Estándar</option></select></label>
+    <div class="two">
+      <label>Opens<input id="opens" placeholder="2.5bb+1bb"></label>
+      <label>Re-raise<input id="reraise" placeholder="3x+1x"></label>
+    </div>
+    <label>Máx. jugadores activos<select id="maxpot"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></label>
+    <label class="chk"><input type="checkbox" id="limp"> Open-limp</label>
+    <label class="chk"><input type="checkbox" id="checkdown" checked> Postflop en check-down (más rápido)</label>
+    <h3>Cálculo</h3>
+    <div class="two">
+      <label>Iteraciones<input id="iters" value="300"></label>
+      <label>Informe cada<input id="every" value="25"></label>
+    </div>
+    <div class="two">
+      <label>Objetivo NashConv<input id="target" placeholder="0"></label>
+      <label title="CI < 10: estrategia estable; 2-3: material de referencia">Objetivo CI<input id="targetci" placeholder="10 estable · 3 ref."></label>
+    </div>
+    <label><span>Opciones extra de <code>solve</code> (separadas por espacios)</span><textarea id="extra" placeholder="--pf-max-bets 2"></textarea></label>
+    </div>
+  </div>
+  <div class="center">
+    <div class="tabs"><button class="on" data-p="strat">Estrategia</button><button data-p="icm">ICM</button><button data-p="log">Registro</button></div>
+    <div class="page on" id="p-strat"><div class="stratwrap">
+      <div class="treebox"><div class="th"><b>Árbol</b><button id="tree-all" title="Desplegar todo el árbol">＋</button><button id="tree-none" title="Plegar hasta el nodo actual">－</button></div>
+        <div id="tree-stats" class="note" style="padding:4px 8px;border-bottom:1px solid var(--line);display:none"></div>
+        <div class="tree" id="tree" tabindex="0" title="Flechas: ← nodo padre, ↑↓ acciones, → entrar"><div class="note">Resuelve una mano para ver el árbol.</div></div></div>
+      <div class="stratmain">
+      <div class="crumbs" id="crumbs"></div>
+      <div class="note" id="seat-ev"></div>
+      <div class="legend" id="legend"></div>
+      <div class="modes" id="modes"><button data-m="strat" class="on">Estrategia</button><button data-m="ev">EV</button><button data-m="evdiff">EV vs mejor otra</button><select id="ev-unit" title="Unidades del EV"><option value="ev">EV en $ (ICM)</option><option value="ev_chips">EV en fichas (bb)</option></select><span style="flex:1"></span><button id="paint" title="Pinta acciones sobre el grid y bloquea el nodo con esa estrategia">✎ Pintar bloqueo</button><button id="img" title="Descarga el grid del nodo como imagen PNG">Imagen</button></div>
+      <div id="paintbar"></div>
+      <div class="grid" id="grid"></div>
+      <p class="note" id="mode-note"></p>
+    </div></div></div>
+    <div class="page" id="p-icm">
+      <div class="card"><h2>Calculadora ICM</h2>
+        <p class="note">Usa los stacks, premios, otras mesas, antes y FGS de la mano actual (configúrala con ＋ Nueva mano). La primera vez con FGS se calibran las tablas push/fold (≈ 1 minuto) y quedan en caché.</p>
+        <button id="icm-go">Calcular</button> <span id="icm-err" class="err"></span>
+        <div id="icm-out"></div>
+        <div id="icm-detail" style="display:none"></div></div>
+    </div>
+    <div class="page" id="p-log">
+      <svg class="chart" id="chart" viewBox="0 0 600 160" preserveAspectRatio="none"></svg>
+      <p class="note">NashConv por informe (escala logarítmica). Con postflop solo se calcula al final.</p>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+  <div class="right">
+    <h3>Nodo</h3>
+    <div id="detail" class="note">Sin nodo seleccionado.</div>
+    <h3>Mano</h3>
+    <div id="hand" class="note">Pasa el ratón por el grid.</div>
+    <h3>Bloqueos (se aplican al resolver)</h3>
+    <div class="locks" id="locks"><span class="note">Ninguno.</span></div>
+    <p class="note" id="locks-warn" style="display:none"></p>
+  </div>
+</div>
+<div class="modal" id="wizard"><div class="dlg">
+  <div class="dlg-h"><b>Nueva mano</b><button id="wz-close">✕</button></div>
+  <div class="dlg-b">
+    <div id="wz-steps"><span class="on">1 · Juego y equidad</span><span>2 · Betting preflop</span><span>3 · Postflop y cálculo</span></div>
+    <div class="wpage">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <label style="flex:1;min-width:240px;margin:0" title="Rellena el asistente con un spot típico: luego cambia stacks y premios a los de tu mano.">Plantilla<select id="wz-template"><option value="">— elige un spot típico para empezar —</option></select></label>
+        <span id="wz-template-note" class="note"></span>
+      </div>
+      <div style="margin-bottom:8px">
+        <button type="button" id="wz-hh-btn" title="Pega o abre un historial de PokerStars, GGPoker o Winamax y se rellenan jugadores, stacks, ciegas, ante (también el de la BB) y bounties">📋 Importar historial</button>
+        <span id="wz-hh-note" class="note"></span>
+        <div id="wz-hh" style="display:none;margin-top:6px">
+          <textarea id="wz-hh-text" rows="4" spellcheck="false" style="width:100%" placeholder="Pega aquí una o varias manos de PokerStars, GGPoker o Winamax…"></textarea>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px">
+            <input type="file" id="wz-hh-file" accept=".txt,text/plain">
+            <select id="wz-hh-hand" style="flex:1;min-width:200px"></select>
+            <button type="button" id="wz-hh-go">Usar esta mano</button>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <label>Jugadores<select id="wz-n"><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+        <label>Modelo de equidad<select id="wz-model"><option value="chip">Chip EV</option><option value="icm">ICM (Malmuth-Harville)</option><option value="icm-field">ICM multimesa (MTSNG/MTT)</option></select></label>
+        <label title="Con Modelo = ICM, los bounties se cobran en $ y se suman al valor ICM del resto del stack. Con Modelo = Chip EV, los bounties van directamente en fichas, sin ICM — útil en early-game de torneos PKO, donde la presión de ICM todavía es despreciable pero el incentivo del bounty no.">Bounty<select id="wz-bounty"><option value="off">Off</option><option value="pko">PKO (progresivo)</option><option value="sko">Knockout clásico (SKO, 100%)</option></select></label>
+        <span id="wz-bounty-note" class="note" style="display:none"></span>
+        <label title="Opcional:, mete los stacks, la ciega pequeña y el ante en fichas (lo que marque el reloj del torneo) en vez de en bb — se convierte solo, con la BB en fichas de aquí como referencia.">BB en fichas (opcional)<input id="wz-bbchips" placeholder="p.ej. 100"></label>
+        <label>Ciega pequeña<input data-key="sb" data-def="" data-omit="0.5" placeholder="0.5 bb"><span id="wz-sb-hint" class="note"></span></label>
+        <label>Ante<input data-key="ante" data-def="" placeholder="0"><span id="wz-ante-hint" class="note"></span></label>
+        <label class="chk" style="margin-top:16px"><input type="checkbox" data-key="bb-ante"> Ante de BB</label>
+      </div>
+      <table id="wz-seats"></table>
+      <div class="cols icm" style="margin-top:8px">
+        <label title="FGS: en cada estado futuro se resuelve el push/fold de la mano siguiente con sus utilidades ICM. «auto» aplica las reglas de profundidad (2-4 jugadores: 3 manos; 5-7: 2; resto: 1).">FGS<select data-key="fgs" data-def=""><option value="">no</option><option value="1">1 mano</option><option value="2">2 manos</option><option value="3">3 manos</option><option value="auto">auto</option></select></label>
+        <label title="Subida de ciegas en las manos simuladas del FGS: desde la mano simulada d (1 = la primera), ciegas y ante nuevos en bb del nivel actual. Ejemplo: 2@0.75/1.5/0.2.">Subida de nivel en el FGS<input data-key="fgs-next-level" data-def="" placeholder="d@sb/bb/ante, opcional"></label>
+      </div>
+      <div class="card icm" id="wz-prizes-panel" style="margin-top:8px">
+        <h2 style="font-size:13px;margin:0 0 8px">Premios restantes</h2>
+        <table id="wz-prizes"></table>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
+          <button type="button" id="wz-prize-add">+ Puesto</button>
+          <input id="wz-prizes-paste" placeholder="o pega una lista: 50,30,20,18" style="flex:1;min-width:160px">
+        </div>
+        <p class="note" id="wz-prizes-sum"></p>
+        <input type="hidden" data-key="payouts" id="wz-payouts-hidden">
+      </div>
+      <div class="cols pko">
+        <label title="Qué parte de la cabeza del eliminado se cobra en efectivo al momento; el resto crece en la cabeza de quien elimina. Varía por sala: 50 % es lo normal (PKO progresivo), pero algunas dan el 100 % (KO clásico) u otro valor">% de la cabeza en efectivo<input id="wz-ko" data-key="ko" data-def="" placeholder="50"></label>
+      </div>
+      <div class="card icm-field" id="wz-field-panel" style="margin-top:8px;display:none">
+        <h2 style="font-size:13px;margin:0 0 8px">Otras mesas del torneo</h2>
+        <div class="cols">
+          <label>Stacks de las otras mesas (sueltos o NxS)<input id="wz-offtable" data-key="offtable" data-def="" placeholder="16x25,2x40"></label>
+          <label class="pko" title="Si no sabes cuánto bounty le queda de media a los rivales de otras mesas, déjalo en blanco: asumimos que es parecido al de tu propia mesa (mejor estimación que suponer que no les queda nada).">Bounty media de otras mesas<span id="wz-offbounty-unit" class="note"></span><input id="wz-offbounty" placeholder="si no lo sabes, déjalo en blanco"></label>
+        </div>
+        <p class="note" style="margin:8px 0 2px">¿No sabes el stack de cada rival? Pon lo que normalmente da el lobby del torneo y genera una distribución a partir de ahí:</p>
+        <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <label style="flex:1;min-width:140px">Jugadores fuera de tu mesa<input id="wz-gen-n" placeholder="p.ej. 550"></label>
+          <label style="flex:1;min-width:140px">Media del torneo<span id="wz-gen-unit" class="note"></span><input id="wz-gen-avg" placeholder="p.ej. 22"></label>
+          <button type="button" id="wz-gen-go" style="margin-bottom:6px" title="Genera stacks al azar con esa media (más cortos que largos, como un campo real) y rellena el campo de arriba">🎲 Generar stacks</button>
+        </div>
+        <table id="wz-field-stats" style="margin-top:8px"></table>
+        <svg class="chart" id="wz-field-chart" viewBox="0 0 600 170" preserveAspectRatio="none" style="margin-top:8px"></svg>
+        <p class="note">Percentil de stack en todo el campo del torneo (0 = líder, 100 = el más corto). Área = resto de mesas; puntos rojos = tu mesa.</p>
+      </div>
+    </div>
+    <div class="wpage" style="display:none">
+      <div class="cols">
+        <label title="Push/fold: solo foldear o ir all-in (y, si se permite, el complete de la SB), sin tamaños de raise — para stacks cortos (≤ unas 10-15 bb). Estándar: tamaños de open/3-bet/4-bet propios y postflop real — la opción normal salvo que estés de verdad en stacks de push/fold.">Perfil<select id="wz-profile" data-key="profile" data-def="standard"><option value="pushfold">Push/fold</option><option value="standard" selected>Estándar</option></select></label>
+        <label title="Un raise que suba más de este % del stack efectivo se convierte automáticamente en all-in, aunque hayas puesto un tamaño concreto. Por defecto 40 % con perfil Estándar, 50 % con Push/fold. Súbelo si un tamaño que has puesto desaparece y solo ves All-in en su lugar -- p. ej. a stacks cortos, un re-raise ×3 sobre un ROL ya pequeño puede caer justo por encima del 40 % y perderse.">Umbral de all-in<input data-key="allin-threshold" data-def="" placeholder="40%"></label>
+        <label title="Jugadores activos como máximo en un bote. Cada jugador más multiplica el árbol -- 2 es bastante más rápido si no te hacen falta los botes a 3.">Máx. jugadores activos<select id="wz-maxpot" data-key="max-in-pot" data-def="3"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></label>
+      </div>
+      <h3>Tamaños de open, por posición</h3>
+      <div class="cols">
+        <label title="La SB suele abrir más grande que el resto por estar fuera de posición contra toda la mesa. Por defecto escala con el stack efectivo: 3bb hasta 25bb, 3.5bb a partir de ahí.">Opens de la SB<input data-key="sb-opens" data-def="" placeholder="3bb+1bb"></label>
+        <label class="chk" style="margin-top:16px"><input type="checkbox" data-key="no-limp"> No completar SB</label>
+        <label title="Tamaño al subir sobre un limp (raise-over-limp): la BB nunca «abre» en el sentido normal, solo puede subir sobre quien ha limpeado delante. Por defecto escala con el stack efectivo: 2.5bb (<17bb), 3bb (17-20bb), 3.2bb (20-25bb), 3.5bb (25bb+).">ROL de la BB<input data-key="bb-opens" data-def="" placeholder="3bb+1bb"></label>
+        <label title="Genérico: un único tamaño de open para el resto de posiciones (BTN, CO, HJ, UTG...). Por posición: tamaño (y si pueden limpear) de cada una por separado -- más preciso, pero hay que rellenar más.">Modo<select id="wz-bet-mode"><option value="generic" selected>Genérico</option><option value="position">Por posición</option></select></label>
+        <label class="bet-generic">Opens (resto de posiciones)<input data-key="opens" data-def="2.1bb+1bb" placeholder="2.1bb+1bb"></label>
+        <label class="bet-generic chk" style="margin-top:16px"><input type="checkbox" id="wz-open-limp" data-key="limp"> Open-limp desde cualquier posición</label>
+      </div>
+      <table id="wz-bet-seats" class="bet-position" style="display:none;margin-top:4px"></table>
+      <h3>Por nivel</h3>
+      <table id="wz-levels">
+        <tr><th>Nivel</th><th>Tamaños</th><th>En posición</th><th>Fuera de posición</th></tr>
+        <tr><td>Open</td><td colspan="3" class="note">tamaños arriba (genérico, SB, BB, o por posición)</td></tr>
+        <tr><td>3-bet</td><td><input data-key="3bet" data-def="" placeholder="3x,ai"></td><td><input data-key="3bet-ip" data-def="" placeholder="2.5x,ai (<30bb) / 3x,ai" title="Por defecto: 2.5x con menos de 30bb efectivos, 3x con más."></td><td><input data-key="3bet-oop" data-def="" placeholder="3.2x,ai (<30bb) / 4x,ai" title="Por defecto: 3.2x con menos de 30bb efectivos, 4x con más."></td></tr>
+        <tr><td>4-bet</td><td><input data-key="4bet" data-def="" placeholder="2.2x,ai"></td><td><input data-key="4bet-ip" data-def="2x,ai" placeholder="2x,ai"></td><td><input data-key="4bet-oop" data-def="2.5x,ai" placeholder="2.5x,ai"></td></tr>
+        <tr><td>5-bet</td><td><input data-key="5bet" data-def="ai" placeholder="ai"></td><td><input data-key="5bet-ip" data-def="" placeholder="ai"></td><td><input data-key="5bet-oop" data-def="" placeholder="ai"></td></tr>
+      </table>
+      <p class="note">Sin tamaño en un nivel se usa el re-raise por defecto (<code>3x</code>). Dar tamaños a un nivel permite llegar a él (5-bet ⇒ hasta 4 raises). Tamaños: <code>2.5bb</code>, <code>3x</code>, <code>75%</code>, <code>ai</code>, <code>2.5bb+1bb</code> (por limper), <code>3x+1x</code> (por caller); varios separados por comas. Cada jugador más en el bote multiplica el árbol.</p>
+      <details>
+        <summary class="note" style="cursor:pointer">⚙ Avanzado (flats / cold calls)</summary>
+        <p class="note" style="margin:8px 0">Por defecto: sin límite de limps/overlimps ni de cold calls en el open, pero ninguno extra en 3-bet o más allá -- ahí solo paga quien cierra la acción (closing flats, ver abajo), sin añadir cold-callers nuevos. Permitir más apenas cambia el EV y hace el árbol bastante más grande. Sube estos números solo si de verdad quieres estudiar más cold calls en algún nivel.</p>
+        <table id="wz-flats">
+          <tr><th>Nivel</th><th title="Cuántos jugadores como máximo pueden pagar (sin subir) en este nivel. En blanco = sin límite (Limps/Open) o 0 (3-bet/4-bet/5-bet). La BB cuenta como uno más.">Flats máx.</th></tr>
+          <tr><td>Limps</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="limps" placeholder="sin límite" title="Cuántos pueden limpear/overlimpear como máximo, antes de que nadie suba. Quién puede limpear (qué posiciones) se controla arriba, en 'Open-limp desde cualquier posición' / modo por posición."></td></tr>
+          <tr><td>Open</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="open" placeholder="sin límite"></td></tr>
+          <tr><td>3-bet</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="3bet" placeholder="0"></td></tr>
+          <tr><td>4-bet</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="4bet" placeholder="0"></td></tr>
+          <tr><td>5-bet</td><td><input type="number" min="0" step="1" class="lv-flats" data-level="5bet" placeholder="0"></td></tr>
+        </table>
+        <label class="chk" style="margin-top:8px"><input type="checkbox" data-key="no-closing-flats" title="Closing flats (activado por defecto): quien cierra la acción -- nadie más queda por responder a la subida vigente -- siempre puede pagar un 3-bet o más allá, aunque Flats máx. ya esté agotado en ese nivel. Desmarcar esta casilla lo desactiva: con Flats máx. bajo, quien cierre se vería forzado a jugar solo raise-or-fold, nada realista."> Sin closing flats (quien cierra la acción no se salta Flats máx.)</label>
+      </details>
+    </div>
+    <div class="wpage" style="display:none">
+      <div class="cols">
+        <label title="Completo: el postflop se juega con apuestas y raises (lo normal). Check-down: nadie apuesta tras el flop; mucho más rápido pero valora peor ver flops.">Postflop<select id="wz-post"><option value="mccfr">Completo</option><option value="checkdown">Check-down (más rápido, menos preciso)</option></select></label>
+        <label title="Cuántos grupos de manos distingue el postflop en cada calle. Normal = 256. Alta = 1024: algo más precisa (sobre todo en PKO profundo), más lenta y con más memoria.">Precisión postflop<select id="wz-precision"><option value="256" selected>Normal</option><option value="1024">Alta (más lenta)</option></select></label>
+      </div>
+      <details>
+        <summary class="note" style="cursor:pointer">⚙ Avanzado</summary>
+        <div class="cols" style="margin-top:8px">
+          <label title="Tamaño de las apuestas postflop: el geométrico más cercano a este % del bote.">Tamaño geométrico %<input data-key="geo-size" data-def="" placeholder="0.66"></label>
+          <label title="Apuestas y raises como máximo por mano postflop.">Apuestas máximas<input data-key="pf-max-bets" data-def="" placeholder="3"></label>
+          <label title="Raises postflop: vacío = geométricos; un número = a ese múltiplo de la apuesta; 0 = sin raises.">Raise postflop (m×)<input data-key="pf-raise" data-def="" placeholder="geométrico"></label>
+          <label class="chk"><input type="checkbox" data-key="no-pf-raise-multiway"> Sin raises en botes a 3</label>
+        </div>
+      </details>
+      <h3>Cálculo</h3>
+      <div class="cols">
+        <label title="El cálculo sigue hasta que el CI (cuánto cambia todavía la estrategia) baja del objetivo. Puedes pararlo antes con ■ Parar y seguir luego con ⏩ Continuar.">Calidad<select id="wz-quality">
+          <option value="20">Rápido (CI 20): una idea en poco tiempo</option>
+          <option value="10" selected>Estudio (CI 10): estrategia estable</option>
+          <option value="3">Referencia (CI 3): mezclas y manos marginales</option>
+        </select></label>
+        <input type="hidden" data-key="report-every" data-def="25">
+      </div>
+      <h3>Resumen</h3>
+      <div id="wz-sum" class="note"></div>
+      <h3>Vista previa del árbol</h3>
+      <div class="note">Mira la estructura del árbol (tamaños, ramas) antes de resolver, y
+        quita acciones concretas de un nodo concreto sin
+        tener que esperar a ver el resultado raro después.</div>
+      <button id="wz-preview-btn" type="button">🌳 Previsualizar árbol</button>
+      <span id="wz-prune-note" class="note" style="margin-left:8px"></span>
+    </div>
+  </div>
+  <div class="dlg-f"><span id="wz-err" class="err" style="margin-right:auto"></span><button id="wz-cancel">Cancelar</button><button id="wz-prev">‹ Anterior</button><button id="wz-next" class="primary">Siguiente ›</button><button id="wz-ok" class="primary">Aceptar</button></div>
+</div></div>
+<div class="modal" id="preview"><div class="dlg" style="width:720px">
+  <h2>Vista previa del árbol</h2>
+  <div class="note">El mismo árbol desplegable que verás al resolver, pero antes de
+    lanzar el cálculo: clic en una rama para desplegarla, ✕ la quita (poda)
+    — no hace falta esperar a ver un resultado raro para darte cuenta de que el tamaño o la
+    rama no era la que querías.</div>
+  <div class="treebox" style="margin-top:8px;width:100%;max-height:55vh;position:static"><div class="th"><b>Árbol</b><button id="pv-all" title="Desplegar todo el árbol">＋</button><button id="pv-none" title="Plegar todo">－</button></div>
+    <div id="pv-stats" class="note" style="padding:4px 8px;border-bottom:1px solid var(--line)"></div>
+    <div class="tree" id="pv-tree"></div></div>
+  <div class="dlg-f"><span id="pv-err" class="err" style="margin-right:auto"></span><button id="pv-close" class="primary">Cerrar</button></div>
+</div></div>
+<div class="modal" id="colors"><div class="dlg" style="width:420px">
+  <div class="dlg-h"><b>Colores de las acciones</b><button id="col-close">✕</button></div>
+  <div class="dlg-b"><table id="col-table"></table><p class="note">Los raises que no son all-in usan una escala entre «raise pequeño» y «raise grande» según su tamaño en cada nodo.</p></div>
+  <div class="dlg-f"><button id="col-reset">Restablecer</button><button id="col-ok" class="primary">Aceptar</button></div>
+</div></div>
+<div class="tip" id="tip"></div>
+<script>
+const $=id=>document.getElementById(id);
+const RANKS="AKQJT98765432";
+const cname=(i,j)=>i===j?RANKS[i]+RANKS[i]:(j>i?RANKS[i]+RANKS[j]+"s":RANKS[j]+RANKS[i]+"o");
+const combos=(i,j)=>i===j?6:(j>i?4:12);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// Color de una acción: fold, check, call y all-in fijos; los raises (no all-in) en una
+// escala de rojo suave a rojo según su tamaño dentro del nodo.
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+function hexRgb(h){h=h.replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");const v=parseInt(h,16);return[v>>16&255,v>>8&255,v&255]}
+function mixHex(a,b,t){const x=hexRgb(a),y=hexRgb(b);return`rgb(${x.map((c,i)=>Math.round(c+(y[i]-c)*t)).join(",")})`}
+// Nombre completo de una acción en el nodo `path`: Fold, Check, Call/Limp, Raise/3-bet/…
+// "X bb" (subir a X bb en total), All-in. El nivel cuenta las subidas previas de la ruta.
+function actName(label,path){
+  const raises=segs(path||"").filter(x=>/:(R|A)/.test(x)).length;
+  if(label==="F")return"Fold";if(label==="X")return"Check";if(label==="A")return"All-in";
+  if(label==="C")return raises?"Call":"Limp";
+  const m=/^R(.+)$/.exec(label);
+  if(m)return(raises?`${raises+2}-bet`:"Raise")+` ${m[1]} bb`;
+  return label;
+}
+function segName(seg,prefix){const i=seg.indexOf(":");return i<0?seg:seg.slice(0,i)+" "+actName(seg.slice(i+1),prefix)}
+function color(label,k){
+  if(label==="F")return cssVar("--fold");if(label==="X")return cssVar("--check");if(label==="C")return cssVar("--call");if(label==="A")return cssVar("--allin");
+  const sizes=(node?node.actions.map(a=>a.label):[]).filter(l=>/^R/.test(l)).map(l=>parseFloat(l.slice(1))).sort((a,b)=>a-b);
+  const i=sizes.indexOf(parseFloat(label.slice(1)));
+  const t=sizes.length>1&&i>=0?i/(sizes.length-1):0.35;
+  return mixHex(cssVar("--raise-lo"),cssVar("--raise-hi"),t);
+}
+const api=async(path,opt={})=>{const r=await fetch(path,opt);const j=await r.json();if(!r.ok)throw new Error(j.error||r.statusText);return j};
+const post=(path,body)=>api(path,{method:"POST",headers:{"X-Solver":"1","Content-Type":"text/plain"},body});
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+// Tema
+{const t=store.get("theme",null);if(t)document.documentElement.dataset.theme=t}
+$("theme").onclick=()=>{const d=document.documentElement,n=d.dataset.theme==="dark"?"light":"dark";d.dataset.theme=n;store.set("theme",n)};
+
+// iter/NashConv plegado en la barra superior (el CI de al lado ya basta la mayoría del
+// tiempo; esto se abre si quieres ver el detalle).
+{const sm=$("stat-more");sm.open=store.get("statMoreOpen",false);sm.ontoggle=()=>store.set("statMoreOpen",sm.open)}
+
+// Pestañas
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("on",p.id==="p-"+b.dataset.p));
+});
+
+// ---------------------------------------------------------------- formulario ⇄ argumentos
+const FIELDS=["stacks","ante","payouts","offtable","bounties","fgs","profile","opens","reraise","maxpot","iters","every","target","targetci","extra"];
+const CHECKS=["bbante","limp","checkdown"];
+// clave de solve ⇒ campo del formulario
+const KEYMAP={stacks:"stacks",ante:"ante",payouts:"payouts",offtable:"offtable",bounties:"bounties",fgs:"fgs",profile:"profile",opens:"opens",reraise:"reraise","max-in-pot":"maxpot",iters:"iters","report-every":"every",target:"target","target-ci":"targetci"};
+const FLAGMAP={"bb-ante":"bbante",limp:"limp",checkdown:"checkdown"};
+let locks=store.get("locks",[]);   // {kind:"lock"|"freq", path, label, value}
+function loadForm(){const s=store.get("form",{});FIELDS.forEach(f=>{if(s[f]!==undefined)$(f).value=s[f]});CHECKS.forEach(f=>{if(s[f]!==undefined)$(f).checked=s[f]})}
+function saveForm(){const s={};FIELDS.forEach(f=>s[f]=$(f).value);CHECKS.forEach(f=>s[f]=$(f).checked);store.set("form",s);store.set("locks",locks)}
+loadForm();
+// Pares [clave, valor|null] (sin "--"): la base para argumentos y ficheros de spot.
+function pairs(){
+  const out=[],v=f=>$(f).value.trim();
+  for(const [k,f] of Object.entries(KEYMAP)){const x=v(f);if(x&&!(k==="ante"&&x==="0"))out.push([k,x])}
+  for(const [k,f] of Object.entries(FLAGMAP))if($(f).checked)out.push([k,null]);
+  for(const l of locks)out.push([l.kind,`${l.path}@${l.label}=${l.value}`]);
+  const ex=v("extra").match(/"[^"]*"|\S+/g)||[];
+  for(let i=0;i<ex.length;i++){const t=ex[i].replace(/^"|"$/g,"");if(!t.startsWith("--"))continue;const nx=ex[i+1];
+    if(nx&&!nx.startsWith("--")){out.push([t.slice(2),nx.replace(/^"|"$/g,"")]);i++}else out.push([t.slice(2),null])}
+  return out;
+}
+const args=()=>pairs().flatMap(([k,v])=>v===null?["--"+k]:["--"+k,v]);
+const spotText=()=>"# spot guardado desde la interfaz\n"+pairs().map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n")+"\n";
+function applySpot(text){
+  FIELDS.forEach(f=>{if(f!=="profile"&&f!=="maxpot"&&f!=="fgs")$(f).value=""});CHECKS.forEach(f=>$(f).checked=false);
+  $("profile").value="standard";$("maxpot").value="3";$("fgs").value="";$("ante").value="0";
+  // locksAtLastSolve compara con los bloqueos de ESTA mano en su última resolución; al
+  // cargar un spot (nueva mano o cambio de mano) esa referencia ya no vale — null = "sin
+  // aviso" hasta la próxima resolución, mejor que comparar contra la mano anterior y
+  // avisar en falso.
+  locksAtLastSolve=null;
+  locks=[];const extra=[];
+  for(let line of text.split("\n")){line=line.split("#")[0].trim();if(!line)continue;
+    const i=line.indexOf("="),k=(i<0?line:line.slice(0,i)).trim(),v=i<0?null:line.slice(i+1).trim().replace(/^"|"$/g,"");
+    if(KEYMAP[k])$(KEYMAP[k]).value=v??"";
+    else if(FLAGMAP[k])$(FLAGMAP[k]).checked=true;
+    else if((k==="lock"||k==="freq")&&v&&v.includes("@")){const [path,rest]=[v.slice(0,v.indexOf("@")),v.slice(v.indexOf("@")+1)],e=rest.indexOf("=");locks.push({kind:k,path,label:rest.slice(0,e),value:rest.slice(e+1)})}
+    else extra.push(v===null?"--"+k:`--${k} ${v===""||/\s/.test(v)?'"'+v+'"':v}`);
+  }
+  $("extra").value=extra.join(" ");renderLocks();saveForm();
+}
+
+// (spots: ver «spots recientes» más abajo)
+
+// ---------------------------------------------------------------- bloqueos
+// Si los bloqueos cambian respecto a la última vez que se resolvió y luego se pulsa
+// "Continuar", la estrategia media de los nodos por debajo del bloqueo mezcla algo de
+// historia de antes de bloquear (el nodo bloqueado en sí siempre sale limpio — ver
+// Solver::average_strategy). Con avg-power 3 (por defecto) se diluye solo en pocas
+// iteraciones; para una lectura inmediata limpia, resolver de cero. Aviso en vez de
+// hacerlo solo: rehacer el cálculo también descarta estrategia media útil cuando el
+// bloqueo no ha cambiado de verdad.
+let locksAtLastSolve=null;
+function renderLocks(){
+  const box=$("locks");
+  if(!locks.length){box.innerHTML='<span class="note">Ninguno.</span>';}
+  else{
+    box.innerHTML="";locks.forEach((l,k)=>{const d=document.createElement("div");
+      d.innerHTML=`<span>${l.kind==="freq"?"frec.":"rango"} ${esc(l.path||"(raíz)")} · ${esc(l.label)} = ${esc(l.value.length>60?l.value.slice(0,60)+"…":l.value)}</span>`;
+      const b=document.createElement("button");b.textContent="×";b.title="Quitar";b.onclick=()=>{locks.splice(k,1);saveForm();renderLocks()};d.appendChild(b);box.appendChild(d)});
+  }
+  const warn=$("locks-warn");
+  if(locks.length&&locksAtLastSolve!==null&&locksAtLastSolve!==JSON.stringify(locks)){
+    warn.style.display="";
+    warn.textContent="Bloqueos cambiados desde la última resolución: si pulsas Continuar, los nodos por debajo del bloqueo tardan unas iteraciones en \"olvidar\" la media de antes (se diluye solo con avg-power 3, el de serie). Para una lectura limpia ya mismo, pulsa ▶ Resolver (empieza de cero) en vez de Continuar.";
+  }else warn.style.display="none";
+}
+function addLock(kind,path,label,value){
+  locks=locks.filter(l=>!(l.path===path&&l.label===label));locks.push({kind,path,label,value});saveForm();renderLocks();
+}
+renderLocks();
+
+// ---------------------------------------------------------------- cálculo y progreso
+let from=0,polling=null,points=[],lastIter=0,haveBin=false,lastError=null;
+// Semáforo del CI con los umbrales: < 10 estable (opens y flats/3-bets firmes),
+// ≤ 3 calidad de referencia (mezclas y manos marginales).
+function setCi(v,estimated){const e=$("s-ci"),x=parseFloat(v);e.textContent=(estimated?"≈":"")+(isNaN(x)?v:x.toFixed(2));
+  e.style.color=isNaN(x)?"":x<=3?"#5fd08a":x<10?"#f0c050":"#ff8a80";
+  e.style.opacity=estimated?.75:1;
+  e.title=isNaN(x)?"":(estimated?"estimado entre informes reales -- ":"")+(x<=3?"CI ≤ 3: calidad de referencia":x<10?"CI < 10: estrategia estable; ≤ 3 para material de referencia":"CI ≥ 10: todavía cambiando; sigue iterando")}
+// "iter" y "resolviendo…" solo se movían cuando llegaba un informe completo (cada
+// --report-every iteraciones) — con árboles grandes eso puede tardar minutos y parecía
+// colgado (no lo estaba: la CPU seguía activa). ticker() interpola
+// entre informes con el ritmo medido (ms/iteración de los dos últimos informes) para que el
+// contador y el ETA se muevan solos cada segundo, aunque el próximo informe real tarde.
+let itersTarget=0,lastReportIter=0,lastReportTime=0,msPerIter=null,ticker=null;
+// Con objetivo de CI, el ETA sale de ajustar CI ≈ c·t^(−a) a los dos últimos informes
+// (el CI baja más o menos como una potencia de las iteraciones) y despejar t.
+let ciTarget=0,ciHist=[];
+function ciEta(shown){
+  if(!(ciTarget>0)||ciHist.length<2||!(msPerIter>0))return null;
+  const [[t1,c1],[t2,c2]]=ciHist.slice(-2);
+  if(!(c2>ciTarget)||!(c1>c2)||!(t2>t1))return null;
+  const a=Math.log(c1/c2)/Math.log(t2/t1);if(!(a>0.05))return null;
+  const need=t2*Math.pow(c2/ciTarget,1/a);
+  return Math.max(0,need-shown)*msPerIter/1000;
+}
+const iterText=n=>itersTarget&&!ciTarget?`${n} / ${itersTarget}`:String(n);
+// El CI tampoco se movía hasta el siguiente informe real -- misma idea que iter/ETA:
+// entre informes se interpola con el ritmo de bajada medido entre los dos últimos
+// informes reales, marcado con "≈" para que quede claro que es una estimación.
+let lastCi=null,ciPerIter=0;
+function tick(){
+  if(!polling)return;
+  let shown=lastReportIter;
+  if(msPerIter>0){
+    const guess=lastReportIter+(Date.now()-lastReportTime)/msPerIter;
+    shown=itersTarget?Math.min(itersTarget,Math.round(guess)):Math.round(guess);
+  }
+  $("s-iter").textContent=iterText(shown);
+  if(ciTarget>0){
+    const eta=ciEta(shown);
+    $("s-state").textContent=`resolviendo hasta CI ${ciTarget}…`+(eta!==null?` ETA ≈ ${fmtTime(eta)}`:"");
+  }else if(msPerIter>0&&itersTarget>shown){
+    $("s-state").textContent=`resolviendo… ETA ≈ ${fmtTime((itersTarget-shown)*msPerIter/1000)} (al tope de iteraciones)`;
+  }else $("s-state").textContent="resolviendo…";
+  if(lastCi!==null&&shown>lastReportIter){
+    // Entre informes: la curva CI ≈ c·t^(−a) de los dos últimos (como el ETA); con un solo
+    // informe, el ritmo lineal sin bajar de la mitad del último CI.
+    let est=null;const [a1,a2]=ciHist.slice(-2);
+    if(a2&&a1&&a1[1]>a2[1]&&a2[0]>a1[0]){const a=Math.log(a1[1]/a2[1])/Math.log(a2[0]/a1[0]);est=a2[1]*Math.pow(shown/a2[0],-a)}
+    else if(ciPerIter>0)est=Math.max(lastCi*0.5,lastCi-ciPerIter*(shown-lastReportIter));
+    // Mientras sigue en marcha no ha llegado al objetivo (pararía), y el ajuste puede pasarse.
+    if(est!==null)setCi(Math.max(est,ciTarget,lastCi*0.5).toFixed(2),true);
+  }
+}
+async function launch(cont,subtree){
+  saveForm();
+  const a=args();
+  if(cont){const t=a.indexOf("--target-ci");
+    if(t>=0&&lastCi!==null&&lastCi<=+a[t+1]*1.05)a[t+1]=String(+(lastCi/2).toFixed(2));}
+  if(cont){const i=a.indexOf("--iters"),more=+($("iters").value||100);if(i>=0)a[i+1]=String(lastIter+more);else a.push("--iters",String(lastIter+more));a.push("--continue");if(hands[hi].job)a.push(String(hands[hi].job));if(subtree!==undefined)a.push("--subtree",subtree)}
+  runningHand=hi;store.set("runningHand",hi);saveCurrentHand();
+  $("run").disabled=$("cont").disabled=true;$("s-state").textContent="resolviendo…";
+  try{await post("/api/solve",a.join("\n"))}catch(e){$("s-state").textContent=e.message;$("run").disabled=false;$("cont").disabled=!haveBin;return}
+  locksAtLastSolve=JSON.stringify(locks);renderLocks();
+  from=0;if(!cont)points=[];$("log").textContent="";$("stop").disabled=false;
+  const ii=a.indexOf("--iters");itersTarget=ii>=0?+a[ii+1]:0;
+  const ti=a.indexOf("--target-ci");ciTarget=ti>=0?+a[ti+1]:0;if(!cont)ciHist=[];
+  lastReportIter=cont?lastIter:0;lastReportTime=Date.now();if(!cont){msPerIter=null;lastCi=null;ciPerIter=0}
+  clearInterval(polling);polling=setInterval(poll,400);
+  clearInterval(ticker);ticker=setInterval(tick,1000);
+}
+$("run").onclick=()=>launch(false);
+$("cont").onclick=()=>launch(true);
+$("stop").onclick=()=>post("/api/stop","").catch(()=>{});
+async function poll(){
+  let p;try{p=await api("/api/progress?from="+from)}catch(e){return}
+  from=p.total;liveJob=p.job;
+  for(const l of p.lines){
+    $("log").textContent+=l+"\n";
+    const m=l.match(/^iter\s+(\d+)\s.*CI = ([\d.-]+)/);
+    if(m){
+      const newIter=+m[1],now=Date.now(),newCi=+m[2];
+      if(lastReportTime>0&&newIter>lastReportIter){
+        const rate=(now-lastReportTime)/(newIter-lastReportIter);
+        msPerIter=msPerIter?msPerIter*0.5+rate*0.5:rate;
+      }
+      if(lastCi!==null&&newIter>lastReportIter&&!isNaN(newCi)){
+        const ciRate=(lastCi-newCi)/(newIter-lastReportIter);
+        ciPerIter=ciPerIter?ciPerIter*0.5+ciRate*0.5:ciRate;
+      }
+      if(!isNaN(newCi))lastCi=newCi;
+      lastReportIter=newIter;lastReportTime=now;
+      lastIter=newIter;$("s-iter").textContent=iterText(newIter);setCi(m[2]);if(!isNaN(newCi))ciHist.push([newIter,newCi]);
+      const nc=l.match(/NashConv preflop = ([\d.e+-]+)/);if(nc){$("s-nc").textContent=(+nc[1]).toFixed(4);points.push([+m[1],+nc[1]]);chart()}
+      // Árbol y estrategia en vivo: cada informe acaba de reescribir el export (ver
+      // write_export en solve.rs), así que ya hay algo nuevo que mostrar.
+      if((runningHand??hi)===hi)loadTree(true);}
+    const c=l.match(/solución cargada: .* \(iteración (\d+)\)/);if(c)lastIter=+c[1];
+    const er=l.match(/^error: (.*)/);if(er)lastError=er[1];
+    const se=l.match(/^EV por asiento: \[(.*)\]/),sc=l.match(/^EV por asiento en fichas \(bb netas\): \[(.*)\]/);
+    if(se||sc){const h=hands[runningHand??hi];if(h){if(se)h.seatEv=se[1].split(",").map(Number);if(sc)h.seatChips=sc[1].split(",").map(Number);store.set("hands",hands)}if((runningHand??hi)===hi)seatEvLine()}
+  }
+  if(p.lines.length)$("log").scrollTop=1e9;
+  if(!p.running){
+    clearInterval(polling);clearInterval(ticker);$("run").disabled=false;$("stop").disabled=true;
+    if(lastCi!==null)setCi(lastCi.toFixed(2));
+    $("s-iter").textContent=iterText(lastIter);
+    $("s-state").textContent=p.exit===0?"resuelto":(lastError?`error: ${lastError}`:`terminado (código ${p.exit})`);
+    $("s-state").classList.toggle("err",p.exit!==0&&!!lastError);lastError=null;
+    if(p.exit===0&&p.job){const h=hands[runningHand??hi];if(h){h.job=p.job;h.iter=lastIter;h.solved=true;store.set("hands",hands)}
+      if((runningHand??hi)===hi){haveBin=true;loadTree();dlLinks()}renderHands()}
+    runningHand=null;liveJob=null;$("cont").disabled=!haveBin;
+  }
+}
+function chart(){
+  const svg=$("chart");if(points.length<1){svg.innerHTML="";return}
+  const xs=points.map(p=>p[0]),ys=points.map(p=>Math.log10(Math.max(p[1],1e-6)));
+  const x0=Math.min(...xs),x1=Math.max(...xs,x0+1),y0=Math.min(...ys),y1=Math.max(...ys,y0+0.1);
+  const pt=points.map((p,k)=>`${10+(xs[k]-x0)/(x1-x0)*580},${150-(ys[k]-y0)/(y1-y0)*140}`).join(" ");
+  svg.innerHTML=`<polyline fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" points="${pt}"/>`;
+}
+
+// ---------------------------------------------------------------- árbol y estrategia
+let nodes=[],byPath={},cur="",node=null,mode="strat",flops=new Set();
+const segs=p=>p?p.split(" "):[];
+async function loadTree(live){
+  let n;try{n=await api("/api/nodes?"+jq())}catch(e){if(!live)$("tree").innerHTML=`<div class="err">${esc(e.message)}</div>`;return}
+  nodes=n;byPath={};nodes.forEach(x=>byPath[x.path]=x);
+  try{flops=new Set(await api("/api/flops?"+jq()))}catch(e){flops=new Set()}
+  show(byPath[cur]?cur:"");
+}
+// Árbol desplegable: los folds no se muestran como rama propia, se aplanan.
+// Bajo una acción (o en la raíz) salen, al mismo nivel, las acciones de cada jugador al que
+// le llega la mano foldeada (UTG R, MP R, HJ R… en la raíz; tras MP R: HJ C, CO 3B, BU 3B…),
+// sin tener que entrar por UTG Fold → MP Fold → … para ver el open de otra posición.
+let treeOpen=new Set([""]),treeSel=null;
+const childOf=(path,n,label)=>(path?path+" ":"")+n.seat+":"+label;
+// Filas de la "situación" en `path`: acciones que no son fold del jugador que actúa ahí, y
+// las de los siguientes mientras los anteriores foldean. `cut(p,label)` corta la cadena
+// (vista previa: un fold podado).
+function foldChain(path,map,cut){
+  const rows=[];let p=path;
+  while(map[p]){
+    const n=map[p];
+    n.actions.forEach((label,k)=>{if(label!=="F")rows.push({path:p,n,label,k,child:childOf(p,n,label)})});
+    if(!n.actions.includes("F")||(cut&&cut(p,"F")))break;
+    p=childOf(p,n,"F");
+  }
+  return rows;
+}
+function renderTree(){
+  const t=$("tree");if(!byPath[""]){return}
+  t.innerHTML="";t.appendChild(treeNode(""));
+  const on=t.querySelector(".on");if(on)on.scrollIntoView({block:"nearest"});
+}
+function treeNode(path){
+  const w=document.createElement("div");
+  foldChain(path,byPath).forEach(({path:p,n,label,k,child})=>{
+    const has=!!byPath[child],open=has&&treeOpen.has(child),r=document.createElement("div");
+    const on=p===cur&&(treeSel===null||treeSel===child||!n.actions.some(l=>childOf(p,n,l)===treeSel));
+    r.className="tn-a"+(has?"":" term")+(on?" on":"");
+    r.innerHTML=`<span class="cv">${has?(open?"▾":"▸"):""}</span><i style="background:${color(label,k)}"></i><b class="sn">${esc(n.seat)}</b>${esc(actName(label,p))}<span class="f">${(n.freqs[k]*100).toFixed(1)} %</span>`;
+    if(has)r.querySelector(".cv").onclick=e=>{e.stopPropagation();open?treeOpen.delete(child):treeOpen.add(child);renderTree()};
+    r.onclick=()=>{treeSel=child;show(p)};
+    if(has)r.ondblclick=()=>{open?treeOpen.delete(child):treeOpen.add(child);renderTree()};
+    r.title=has?"Clic: rango de "+n.seat+" en este nodo · doble clic o ▸: respuestas":"lleva a un nodo terminal (flop, showdown…)";
+    w.appendChild(r);
+    if(open){const kids=document.createElement("div");kids.className="tn-k";kids.appendChild(treeNode(child));w.appendChild(kids)}
+  });
+  return w;
+}
+$("tree-all").onclick=()=>{nodes.forEach(n=>treeOpen.add(n.path));renderTree()};
+$("tree-none").onclick=()=>{treeOpen=new Set([""]);const s=segs(cur);for(let k=1;k<=s.length;k++)treeOpen.add(s.slice(0,k).join(" "));renderTree()};
+$("tree").onkeydown=e=>{
+  if(!node)return;const s=segs(cur),n=byPath[cur];
+  if(e.key==="ArrowLeft"&&s.length){e.preventDefault();show(s.slice(0,-1).join(" "))}
+  else if(e.key==="ArrowRight"&&n){const c=n.actions.map(l=>childOf(cur,n,l)).find(p=>byPath[p]);if(c){e.preventDefault();show(c)}}
+  else if((e.key==="ArrowDown"||e.key==="ArrowUp")&&s.length){
+    const par=s.slice(0,-1).join(" "),pn=byPath[par],sib=pn.actions.map(l=>childOf(par,pn,l)).filter(p=>byPath[p]);
+    const i=sib.indexOf(cur)+(e.key==="ArrowDown"?1:-1);if(i>=0&&i<sib.length){e.preventDefault();show(sib[i])}}
+};
+$("side-btn").onclick=()=>{const m=document.querySelector(".main");m.classList.toggle("noside");store.set("noside",m.classList.contains("noside"))};
+if(store.get("noside",false))document.querySelector(".main").classList.add("noside");
+document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll("#modes button").forEach(x=>x.classList.toggle("on",x===b));drawGrid()});
+const NOTES={strat:"",
+  ev:"EV de la mano con la estrategia del nodo (media de las acciones ponderada por su frecuencia): en $ con ICM/PKO (equity de premios) o en fichas, bb netas ganadas o perdidas en la mano (misma estrategia medida en fichas). Color: de peor (rojo) a mejor (verde) dentro del nodo.",
+  evdiff:"Diferencia entre la mejor acción y la mejor de las otras. Cerca de 0: indiferencia (mezclas). El color es el de la mejor acción."};
+// Unidad del EV: $ (tabla del modelo) o fichas netas. Con chip EV el modelo ya son fichas
+// (stack final), así que se usan las netas.
+let evUnit=store.get("evUnit","ev");
+function unitKey(){const icm=node&&node.actions[0]&&node.actions[0].ev_chips&&$("payouts").value.trim()!=="";return icm?evUnit:(node&&node.actions[0]&&node.actions[0].ev_chips?"ev_chips":"ev")}
+function unitLabel(k){return k==="ev_chips"?"bb":($("payouts").value.trim()?"$":"bb")}
+$("ev-unit").value=evUnit;$("ev-unit").onchange=e=>{evUnit=e.target.value;store.set("evUnit",evUnit);drawGrid()};
+function evsOf(idx,key){const a=node.actions;return a.every(x=>x[key]&&x[key][idx]!==null&&x[key][idx]!==undefined)?a.map(x=>x[key][idx]):null}
+function cellInfo(idx){
+  const a=node.actions,evs=evsOf(idx,unitKey());
+  let mixed=null,best=-1,diff=null;
+  if(evs){const tot=a.reduce((s,x)=>s+x.grid[idx],0)||1;mixed=a.reduce((s,x,k)=>s+x.grid[idx]*evs[k],0)/tot;
+    best=evs.indexOf(Math.max(...evs));const others=evs.filter((_,k)=>k!==best);diff=others.length?evs[best]-Math.max(...others):0}
+  return{evs,mixed,best,diff};
+}
+function drawGrid(){
+  $("mode-note").textContent=NOTES[mode];$("mode-note").style.display=NOTES[mode]?"":"none";
+  const icm=$("payouts").value.trim()!=="";$("ev-unit").style.display=mode!=="strat"&&icm?"":"none";
+  const g=$("grid");g.innerHTML="";if(!node)return;
+  const infos=[];for(let idx=0;idx<169;idx++)infos.push(cellInfo(idx));
+  const noEv=mode!=="strat"&&infos.every(x=>x.evs===null);
+  if(noEv)$("mode-note").textContent="Esta solución no tiene EV por mano: vuelve a resolver.";
+  const inRange=idx=>!node.reach||node.reach[idx]>=0.02;
+  const mixedVals=infos.map((x,idx)=>inRange(idx)?x.mixed:null).filter(x=>x!==null),lo=Math.min(...mixedVals),hi=Math.max(...mixedVals);
+  const dmax=Math.max(1e-9,...infos.map((x,idx)=>inRange(idx)?(x.diff??0):0));
+  for(let i=0;i<13;i++)for(let j=0;j<13;j++){
+    const d=document.createElement("div");d.className="cell";const idx=i*13+j,inf=infos[idx];
+    if(paint.on&&paint.grid[idx]>=0){
+      const k=paint.grid[idx],b=document.createElement("i");b.style.width="100%";b.style.background=color(node.actions[k].label,k);d.appendChild(b);d.classList.add("painted");
+      d.insertAdjacentHTML("beforeend",`<span>${cname(i,j)}</span>`);
+    }else if(mode==="strat"||noEv){
+      // La altura de las barras es la parte de la clase que llega al nodo.
+      const rh=node.reach?node.reach[idx]:1;d.style.alignItems="flex-end";if(rh<0.02)d.classList.add("out");else if(rh<0.5)d.classList.add("part");
+      node.actions.forEach((a,k)=>{const f=a.grid[idx];if(f>0.001&&rh>0.001){const b=document.createElement("i");b.style.width=(f*100)+"%";b.style.height=(rh*100)+"%";b.style.background=color(a.label,k);d.appendChild(b)}});
+      d.insertAdjacentHTML("beforeend",`<span>${cname(i,j)}</span>`);
+    }else if(mode==="ev"){
+      d.classList.add("num");
+      if(inf.mixed!==null){const t=hi>lo?(inf.mixed-lo)/(hi-lo):0.5;d.style.background=`color-mix(in srgb,hsl(${Math.round(t*120)},60%,50%) 45%,var(--grid-bg))`}
+      d.insertAdjacentHTML("beforeend",`<span>${cname(i,j)}<small>${inf.mixed===null?"–":inf.mixed.toFixed(2)}</small></span>`);
+    }else{
+      d.classList.add("num");
+      if(inf.best>=0){const t=Math.min(1,inf.diff/dmax);d.style.background=`color-mix(in srgb,${color(node.actions[inf.best].label,inf.best)} ${Math.round(15+t*70)}%,var(--grid-bg))`}
+      d.insertAdjacentHTML("beforeend",`<span>${cname(i,j)}<small>${inf.diff===null?"–":inf.diff.toFixed(3)}</small></span>`);
+    }
+    if(mode!=="strat"&&!noEv&&!inRange(idx)){d.style.background="";d.classList.add("out")}
+    d.onmousemove=e=>{const tip=$("tip");tip.style.display="block";tip.style.left=Math.min(e.clientX+12,innerWidth-200)+"px";tip.style.top=e.clientY+12+"px";
+      const e$=$("payouts").value.trim()?evsOf(idx,"ev"):null,ec=evsOf(idx,"ev_chips");
+      const fmt=k=>[e$?`${e$[k].toFixed(3)} $`:null,ec?`${ec[k]>=0?"+":""}${ec[k].toFixed(2)} bb`:null,(!e$&&!ec&&inf.evs)?inf.evs[k].toFixed(3):null].filter(Boolean).join(" · ");
+      const rh=node.reach?node.reach[idx]:1;
+      tip.innerHTML=`<div class="tip-head">${cname(i,j)} <span class="note">(${(combos(i,j)*rh).toFixed(rh<1?1:0)} de ${combos(i,j)} combos llegan)</span></div>`+
+        node.actions.map((a,k)=>`<div class="tip-row"><i style="background:${color(a.label,k)}"></i><span>${esc(actName(a.label,cur))}</span><b>${(a.grid[idx]*100).toFixed(1)} %</b>${fmt(k)?`<span class="note">${fmt(k)}</span>`:""}</div>`).join("")+
+        (inf.mixed!==null?`<div class="tip-row tip-total"><span>EV mano</span><b>${inf.mixed.toFixed(3)} ${unitLabel(unitKey())}</b></div>`:"");
+      $("hand").innerHTML=tip.innerHTML};
+    d.onmouseleave=()=>$("tip").style.display="none";
+    d.onmousedown=e=>{if(paint.on){e.preventDefault();painting=true;paintCell(idx,d)}};
+    d.onmouseenter=e=>{if(paint.on&&painting&&e.buttons&1)paintCell(idx,d)};
+    g.appendChild(d);
+  }
+}
+async function show(path){
+  cur=path;{const s=segs(path);for(let k=0;k<=s.length;k++)treeOpen.add(s.slice(0,k).join(" "))}renderTree();
+  let n;try{n=await api("/api/node?path="+encodeURIComponent(path)+"&"+jq())}catch(e){$("detail").innerHTML=`<span class="err">${esc(e.message)}</span>`;return}
+  node=n;if(paint.path!==path){paint.grid.fill(-1);paint.path=path}paintBar();
+  const c=$("crumbs");c.innerHTML="";const s=segs(path);
+  for(let k=0;k<=s.length;k++){const a=document.createElement("a"),p=s.slice(0,k).join(" ");a.textContent=k?segName(s[k-1],s.slice(0,k-1).join(" ")):"Inicio";if(k===s.length)a.className="cur";a.onclick=()=>show(p);c.appendChild(a)}
+  const L=$("legend");L.innerHTML="";
+  n.actions.forEach((a,k)=>{const b=document.createElement("button"),child=(path?path+" ":"")+n.seat+":"+a.label;
+    b.innerHTML=`<i style="background:${color(a.label,k)}"></i>${esc(n.seat)} ${esc(actName(a.label,path))} · ${(a.freq*100).toFixed(1)} %`;
+    if(byPath[child])b.onclick=()=>show(child);else{b.disabled=true;b.title="nodo terminal"}L.appendChild(b);
+    if(flops.has(child)){const x=document.createElement("a");x.href="/api/pio?path="+encodeURIComponent(child)+"&"+jq();x.download="pio_"+child.replace(/[^A-Za-z0-9]+/g,"_")+".txt";x.className="note";x.textContent="flop → Pio";x.title="Rangos, bote y stack de este flop heads-up como script de PioSolver";L.appendChild(x)}});
+  drawGrid();
+  // Detalles y bloqueo
+  const det=$("detail");
+  // Por acción: combos que la juegan y su EV medio (ponderado por combos y frecuencia).
+  const icmNow=$("payouts").value.trim()!=="";
+  const avgEv=(a,key)=>{if(!a[key])return null;let num=0,den=0;for(let idx=0;idx<169;idx++){const v=a[key][idx];if(v===null||v===undefined)continue;const w=a.grid[idx]*(node.reach?node.reach[idx]:1)*combos(Math.floor(idx/13),idx%13);num+=w*v;den+=w}return den>0?num/den:null};
+  const fmtEv=a=>{const d=icmNow?avgEv(a,"ev"):null,c=avgEv(a,"ev_chips");return [d!==null?`${d.toFixed(2)} $`:null,c!==null?`${c>=0?"+":""}${c.toFixed(2)} bb`:null].filter(Boolean).join("<br>")||"–"};
+  const rc=n.reach_combos??1326;
+  det.innerHTML=`<div>Actúa <b>${esc(n.seat)}</b> · rango ${rc.toFixed(0)} combos (${(rc/13.26).toFixed(1)} %)</div><table><tr><th>Acción</th><th>Frec.</th><th>Combos</th><th>EV</th></tr>`+
+    n.actions.map((a,k)=>`<tr><td><i style="display:inline-block;width:10px;height:10px;background:${color(a.label,k)};margin-right:6px"></i>${esc(actName(a.label,path))}</td><td>${(a.freq*100).toFixed(1)} %</td><td>${(a.combos??a.freq*1326).toFixed(0)}</td><td>${fmtEv(a)}</td></tr>`).join("")+"</table>";
+  // Muestreo de subárbol: sigue iterando solo este spot.
+  if(haveBin&&$("stop").disabled){const sb=document.createElement("button");sb.textContent="🎯 Afinar este spot";
+    sb.title="Continúa el cálculo iterando solo el subárbol de este nodo: mucho más rápido para estudiar un spot concreto. El resto del árbol no cambia.";
+    sb.style.margin="8px 0";sb.onclick=()=>launch(true,path);det.appendChild(sb)}
+  const more=document.createElement("details");more.open=store.get("rangesOpen",false);
+  more.ontoggle=()=>store.set("rangesOpen",more.open);
+  more.innerHTML=`<summary class="note" style="cursor:pointer;margin:8px 0 4px">Rangos y bloqueo por acción</summary>`;det.appendChild(more);
+  n.actions.forEach((a,k)=>{
+    const box=document.createElement("div");box.className="lockbox";
+    box.innerHTML=`<i style="display:inline-block;width:10px;height:10px;background:${color(a.label,k)};margin-right:6px;border-radius:2px;vertical-align:middle"></i><b>${esc(actName(a.label,path))}</b>`+(k===0?` <span class="note">(recibe el resto al bloquear las demás)</span><div class="range">${esc(a.range||"—")}</div>`:
+      `<textarea spellcheck="false">${esc(a.range)}</textarea><div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap"><button data-k="lock">Bloquear rango</button><input type="number" min="0" max="100" step="1" placeholder="%" style="width:64px" value="${(a.freq*100).toFixed(0)}"><button data-k="freq">Bloquear frecuencia</button></div>`);
+    if(k>0){
+      box.querySelector('[data-k=lock]').onclick=()=>addLock("lock",path,a.label,box.querySelector("textarea").value.trim()||"");
+      box.querySelector('[data-k=freq]').onclick=()=>{const v=+box.querySelector("input").value;if(v>=0&&v<=100)addLock("freq",path,a.label,String(v/100))};
+    }
+    more.appendChild(box);
+  });
+}
+
+// ---------------------------------------------------------------- ICM
+let icmLast=null;
+$("icm-go").onclick=async()=>{
+  saveForm();$("icm-err").textContent="";
+  const body=`stacks=${$("stacks").value}\npayouts=${$("payouts").value}\nofftable=${$("offtable").value}\nfgs=${$("fgs").value}\nante=${$("ante").value}\nbb-ante=${$("bbante").checked?1:0}`;
+  $("icm-err").textContent="calculando…";
+  let r;try{r=await post("/api/icm",body)}catch(e){$("icm-err").textContent=e.message;return}
+  icmLast=r;
+  const names=r.seats.slice(0,r.table).map(s=>s.name);
+  $("icm-err").textContent="";
+  $("icm-detail").style.display="none";
+  const F=r.fgs>0;
+  let h=`<table><tr><th>Asiento</th><th>Stack</th><th>% fichas</th><th>ICM</th>${F?`<th>FGS-${r.fgs}</th><th>Δ</th>`:""}</tr>`+r.seats.map(s=>`<tr><td>${s.name}</td><td>${s.stack}</td><td>${(s.chips*100).toFixed(2)} %</td><td>${s.icm.toFixed(3)}</td>${F?`<td>${s.fgs.toFixed(3)}</td><td>${(s.fgs-s.icm>=0?"+":"")+(s.fgs-s.icm).toFixed(3)}</td>`:""}</tr>`).join("")+"</table>"+(F?`<p class="note">Las matrices usan el modelo FGS-${r.fgs}.</p>`:"");
+  const mat=(title,m,fmt,lo,max)=>`<h3>${title}</h3><table><tr><th></th>${names.map(n=>`<th>${n}</th>`).join("")}</tr>`+m.map((row,i)=>`<tr><td>${names[i]}</td>`+row.map((v,j)=>v===null?"<td>—</td>":`<td style="cursor:pointer;background:color-mix(in srgb,var(--err) ${Math.round(Math.min(1,Math.max(0,(v-lo)/(max-lo)))*55)}%,transparent)" onclick="icmDetail(${i},${j})">${fmt(v)}</td>`).join("")+"</tr>").join("")+"</table>";
+  const bmax=Math.max(2,...r.bubble.flat().filter(v=>v!==null)),rmax=Math.max(0.25,...r.risk.flat().filter(v=>v!==null));
+  h+=mat("Bubble factor (fila decide, columna rival)",r.bubble,v=>v.toFixed(2),1,bmax)+mat("Risk premium",r.risk,v=>(v*100).toFixed(1)+" %",0,rmax);
+  h+=`<p class="note">Clic en una celda para ver el desglose (EV ahora / ganando / perdiendo el all-in).</p>`;
+  $("icm-out").innerHTML=h;
+};
+function icmDetail(i,j){
+  const r=icmLast;if(!r)return;
+  const names=r.seats.slice(0,r.table).map(s=>s.name);
+  const base=r.ev_base[i][j],win=r.ev_win[i][j],lose=r.ev_lose[i][j],bf=r.bubble[i][j],rp=r.risk[i][j];
+  if(base===null||bf===null){$("icm-detail").style.display="none";return}
+  const gain=win-base,loss=base-lose,tEq=(rp+0.5)*100;
+  $("icm-detail").style.display="";
+  $("icm-detail").innerHTML=`<h3 style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">${esc(names[i])} contra ${esc(names[j])}</h3><table>
+    <tr><td>EV ahora</td><td>${base.toFixed(4)}</td></tr>
+    <tr><td>EV si ${esc(names[i])} gana el all-in</td><td>${win.toFixed(4)} <span class="note">(+${gain.toFixed(4)})</span></td></tr>
+    <tr><td>EV si ${esc(names[i])} pierde el all-in</td><td>${lose.toFixed(4)} <span class="note">(−${loss.toFixed(4)})</span></td></tr>
+    <tr><td>cEq (equity necesaria en chip EV)</td><td>50,0 %</td></tr>
+    <tr><td>tEq (equity real necesaria para pagar)</td><td>${tEq.toFixed(1)} %</td></tr>
+    <tr><td>Risk premium (tEq − cEq)</td><td>${(rp*100).toFixed(1)} %</td></tr>
+    <tr><td>Bubble factor (pérdida / ganancia)</td><td>${bf.toFixed(3)}</td></tr>
+  </table><p class="note">Todo en la unidad de ${F_last()?"FGS":"ICM"} (fracción del pozo), no en fichas: por eso "ganar" y "perder" no son simétricos cerca de la burbuja.</p>`;
+}
+function F_last(){return icmLast&&icmLast.fgs>0}
+
+// ---------------------------------------------------------------- manos abiertas
+let hands=store.get("hands",null),hi=store.get("hand",0),runningHand=null,liveJob=null;
+if(!Array.isArray(hands)||!hands.length)hands=[{name:"Mano 1",spot:null,job:0,iter:0}];
+if(hi>=hands.length)hi=0;
+// Mientras se resuelve la mano que se está viendo, el árbol/estrategia se lee del cálculo en
+// curso (liveJob, el `job` que ya devuelve /api/progress) en vez de esperar a que termine.
+const jq=()=>(runningHand===hi&&liveJob)?"job="+liveJob:(hands[hi]&&hands[hi].job?"job="+hands[hi].job:"");
+function dlLinks(){const q=jq();$("dl-tsv").href="/api/export"+(q?"?"+q:"");$("dl-json").href="/api/export.json"+(q?"?"+q:"");$("dl").style.display=hands[hi].job?"":"none"}
+function saveCurrentHand(){hands[hi].spot=spotText();store.set("hands",hands);store.set("hand",hi)}
+function renderHands(){
+  const box=$("hands");box.innerHTML="";
+  hands.forEach((h,k)=>{const d=document.createElement("div");d.className=k===hi?"on":"";
+    d.innerHTML=`<span>${esc(h.name)}<span class="st">${h.job?`✓ ${h.iter||""}`:"sin resolver"}</span></span>`;
+    d.title="Clic: abrir · doble clic: renombrar";d.onclick=()=>switchHand(k);
+    d.ondblclick=()=>{const n=prompt("Nombre de la mano:",h.name);if(n){h.name=n;store.set("hands",hands);renderHands()}};
+    if(hands.length>1){const x=document.createElement("span");x.className="x";x.textContent="×";x.title="Cerrar";
+      x.onclick=e=>{e.stopPropagation();if(runningHand===k)return;hands.splice(k,1);if(hi>=k&&hi>0)hi--;const h2=hands[hi];if(h2.spot)applySpot(h2.spot);showHand();store.set("hands",hands)};d.appendChild(x)}
+    box.appendChild(d)});
+}
+function clearView(){nodes=[];byPath={};node=null;$("tree").innerHTML='<div class="note">Resuelve la mano para ver el árbol.</div>';$("grid").innerHTML="";$("legend").innerHTML="";$("crumbs").innerHTML="";$("detail").textContent="Sin nodo seleccionado."}
+// EV por asiento de la mano actual ($ y bb netas), del registro de su último cálculo.
+function seatEvLine(){const h=hands[hi],names=SEATS[(h.seatChips||h.seatEv||[]).length]||[];
+  if(!h.seatEv&&!h.seatChips){$("seat-ev").textContent="";return}
+  const icm=$("payouts").value.trim()!=="";
+  $("seat-ev").innerHTML="EV por asiento: "+names.map((n,k)=>`<b>${n}</b> `+[icm&&h.seatEv?`${h.seatEv[k].toFixed(2)} $`:null,h.seatChips?`${h.seatChips[k]>=0?"+":""}${h.seatChips[k].toFixed(2)} bb`:null].filter(Boolean).join(" / ")).join(" · ")}
+function showHand(){const h=hands[hi];lastIter=h.iter||0;haveBin=!!h.job;$("cont").disabled=!haveBin||!$("stop").disabled;cur="";points=[];chart();
+  $("s-iter").textContent=h.iter||"–";$("s-nc").textContent="–";
+  $("s-ci").textContent="–";$("s-ci").style.opacity=1;$("s-ci").title="";lastCi=null;ciPerIter=0;
+  $("tree-stats").style.display="none";
+  if(h.job||(runningHand===hi&&liveJob))loadTree(true);
+  else if(h.spot){loadPrunedFromExtra();showPreviewInMainTree()}
+  else clearView();
+  dlLinks();renderHands();seatEvLine();store.set("hand",hi)}
+function switchHand(k){if(k===hi)return;saveCurrentHand();hi=k;const h=hands[k];if(h.spot)applySpot(h.spot);showHand()}
+function newHand(dup){saveCurrentHand();hands.push({name:dup?hands[hi].name+" (copia)":`Mano ${hands.length+1}`,spot:dup?spotText():null,job:0,iter:0});hi=hands.length-1;showHand();store.set("hands",hands)}
+$("hand-dup").onclick=()=>newHand(true);
+renderHands();dlLinks();
+// El asistente y abrir spot nombran la mano actual si aún no está resuelta.
+function nameHand(n){const h=hands[hi];if(!h.job){h.name=n;store.set("hands",hands);renderHands()}}
+
+// ---------------------------------------------------------------- spots recientes
+function pushRecent(n){const r=store.get("recent",[]).filter(x=>x!==n);r.unshift(n);store.set("recent",r.slice(0,8))}
+async function listSpots(){
+  try{const names=await api("/api/spots"),rec=store.get("recent",[]).filter(n=>names.includes(n));
+    $("spot-list").innerHTML='<option value="">Abrir spot…</option>'+(rec.length?`<optgroup label="Recientes">${rec.map(n=>`<option>${esc(n)}</option>`).join("")}</optgroup>`:"")+`<optgroup label="Todos">${names.map(n=>`<option>${esc(n)}</option>`).join("")}</optgroup>`}catch(e){}
+}
+$("spot-list").onchange=async e=>{const n=e.target.value;if(!n)return;
+  try{const r=await api("/api/spot?name="+encodeURIComponent(n));applySpot(r.text);pushRecent(n);nameHand(n);$("s-state").textContent="spot cargado: "+n;listSpots()}catch(err){$("s-state").textContent=err.message}
+  e.target.value=""};
+$("spot-save").onclick=async()=>{const n=prompt("Nombre del spot (letras, dígitos, _ y -):",store.get("lastSpot",""));if(!n)return;
+  try{await post("/api/spot?name="+encodeURIComponent(n),spotText());store.set("lastSpot",n);pushRecent(n);nameHand(n);$("s-state").textContent="spot guardado: "+n;listSpots()}catch(err){$("s-state").textContent=err.message}};
+listSpots();
+
+// ---------------------------------------------------------------- pintar bloqueo en el grid
+let paint={on:false,sel:1,grid:new Array(169).fill(-1),path:null};
+function paintBar(){
+  const bar=$("paintbar");if(!paint.on||!node){bar.style.display="none";return}
+  bar.style.display="flex";bar.innerHTML='<span class="note">Pinta con:</span>';
+  node.actions.forEach((a,k)=>{const b=document.createElement("button");b.innerHTML=`<i style="display:inline-block;width:10px;height:10px;background:${color(a.label,k)};margin-right:5px"></i>${esc(actName(a.label,cur))}`;
+    if(k===paint.sel)b.className="sel";b.onclick=()=>{paint.sel=k;paintBar()};bar.appendChild(b)});
+  const n=paint.grid.filter(x=>x>=0).length;
+  bar.insertAdjacentHTML("beforeend",`<span class="note"><span id="paint-n">${n}</span> clases pintadas</span>`);
+  const ok=document.createElement("button");ok.className="primary";ok.textContent="Bloquear nodo";ok.title="Bloquea el nodo entero: las clases pintadas con su acción, el resto con la estrategia actual";ok.onclick=applyPaint;bar.appendChild(ok);
+  const no=document.createElement("button");no.textContent="Descartar";no.onclick=()=>{paint.grid.fill(-1);drawGrid();paintBar()};bar.appendChild(no);
+}
+function applyPaint(){
+  if(!node)return;const idxs=[...Array(169).keys()];
+  node.actions.forEach((a,k)=>{if(k===0)return;
+    const parts=[];for(const idx of idxs){const i=Math.floor(idx/13),j=idx%13,p=paint.grid[idx],w=p>=0?(p===k?1:0):a.grid[idx];
+      if(w>0.0005)parts.push(w>0.9995?cname(i,j):`${cname(i,j)}:${w.toFixed(3)}`)}
+    addLock("lock",cur,a.label,parts.join(",")||"")});
+  paint.grid.fill(-1);paint.on=false;$("paint").classList.remove("on");drawGrid();paintBar();
+  $("s-state").textContent="nodo bloqueado: resuelve para aplicarlo";
+}
+$("paint").onclick=()=>{paint.on=!paint.on;$("paint").classList.toggle("on",paint.on);if(paint.on&&mode!=="strat"){document.querySelector('#modes [data-m=strat]').click()}drawGrid();paintBar()};
+let painting=false;window.addEventListener("mouseup",()=>painting=false,true);
+// Solo se repinta la celda (rehacer el grid bajo el ratón dispararía mouseenter en bucle).
+function paintCell(idx,el){
+  if(!paint.on||!node||paint.grid[idx]===paint.sel)return;paint.grid[idx]=paint.sel;
+  const i=Math.floor(idx/13),j=idx%13,k=paint.sel;
+  el.innerHTML=`<i style="width:100%;background:${color(node.actions[k].label,k)}"></i><span>${cname(i,j)}</span>`;el.classList.add("painted");
+  const c=$("paint-n");if(c)c.textContent=paint.grid.filter(x=>x>=0).length;
+}
+
+// ---------------------------------------------------------------- grid como imagen
+function cssColor(c){const e=document.createElement("i");e.style.color=c;document.body.appendChild(e);const v=getComputedStyle(e).color;e.remove();return v}
+$("img").onclick=()=>{
+  if(!node)return;const W=60,H=46,top=56,pad=8,cv=document.createElement("canvas");cv.width=13*W+2*pad;cv.height=13*H+top+pad;
+  const g=cv.getContext("2d"),bg=cssColor("var(--panel)"),cellbg=cssColor("var(--grid-bg)"),fg=cssColor("var(--fg)");
+  g.fillStyle=bg;g.fillRect(0,0,cv.width,cv.height);g.fillStyle=fg;g.font="bold 15px system-ui,sans-serif";
+  g.fillText(`${cur||"(raíz)"} — actúa ${node.seat}`,pad,22);g.font="13px system-ui,sans-serif";
+  let x=pad;node.actions.forEach((a,k)=>{g.fillStyle=cssColor(color(a.label,k));g.fillRect(x,32,12,12);g.fillStyle=fg;const t=`${a.label} ${(a.freq*100).toFixed(1)} %`;g.fillText(t,x+16,43);x+=g.measureText(t).width+34});
+  for(let i=0;i<13;i++)for(let j=0;j<13;j++){const idx=i*13+j,cx=pad+j*W,cy=top+i*H;g.fillStyle=cellbg;g.fillRect(cx+1,cy+1,W-2,H-2);
+    let off=0;node.actions.forEach((a,k)=>{const f=a.grid[idx];if(f>0.001){g.fillStyle=cssColor(color(a.label,k));const w=(W-2)*f;g.fillRect(cx+1+off,cy+1,w,H-2);off+=w}});
+    g.fillStyle="#fff";g.font="bold 13px system-ui,sans-serif";g.shadowColor="rgba(0,0,0,.7)";g.shadowBlur=2;const t=cname(i,j);g.fillText(t,cx+(W-g.measureText(t).width)/2,cy+H/2+5);g.shadowBlur=0}
+  cv.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`grid_${(cur||"raiz").replace(/[^A-Za-z0-9]+/g,"_")}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)},"image/png");
+};
+
+// ---------------------------------------------------------------- colores
+const COLOR_KEYS=[["--fold","Fold"],["--check","Check"],["--call","Call"],["--raise-lo","Raise pequeño (p. ej. 3-bet mínimo)"],["--raise-hi","Raise grande"],["--allin","All-in"]];
+function applyColors(){const c=store.get("colors",{});COLOR_KEYS.forEach(([k])=>{if(c[k])document.documentElement.style.setProperty(k,c[k]);else document.documentElement.style.removeProperty(k)})}
+applyColors();
+$("colors-btn").onclick=()=>{
+  const t=$("col-table");t.innerHTML="";
+  COLOR_KEYS.forEach(([k,name])=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${name}</td><td><input type="color" data-k="${k}" value="${cssVar(k)}" style="width:60px;padding:0;height:28px"></td>`;t.appendChild(tr)});
+  t.querySelectorAll("input").forEach(i=>i.oninput=()=>{document.documentElement.style.setProperty(i.dataset.k,i.value);if(node)drawGrid()});
+  $("colors").style.display="flex"};
+$("col-ok").onclick=()=>{const c={};document.querySelectorAll("#col-table input").forEach(i=>c[i.dataset.k]=i.value);store.set("colors",c);$("colors").style.display="none";if(node)show(cur)};
+$("col-close").onclick=()=>{applyColors();$("colors").style.display="none";if(node)drawGrid()};
+$("col-reset").onclick=()=>{store.set("colors",{});applyColors();document.querySelectorAll("#col-table input").forEach(i=>i.value=cssVar(i.dataset.k));if(node)show(cur)};
+
+// Latido para el modo aplicación (`serve --app` se cierra cuando deja de recibirlo).
+const ping=()=>fetch("/api/ping").catch(()=>{});ping();setInterval(ping,10000);
+
+// Mano actual al abrir la página: su formulario y, si el servidor aún tiene su solución, el árbol.
+if(hands[hi].spot)applySpot(hands[hi].spot);if(hands[hi].job)loadTree();
+// Si hay un cálculo en marcha en el servidor (recarga de página), seguir su progreso.
+api("/api/progress?from=0").then(p=>{if(p.running){runningHand=store.get("runningHand",hi);from=0;$("run").disabled=true;$("stop").disabled=false;polling=setInterval(poll,400)}}).catch(()=>{});
+
+// ---------------------------------------------------------------- asistente "Nueva mano"
+const SEATS={2:["SB","BB"],3:["BTN","SB","BB"],4:["CO","BTN","SB","BB"],5:["HJ","CO","BTN","SB","BB"],6:["LJ","HJ","CO","BTN","SB","BB"],7:["UTG","LJ","HJ","CO","BTN","SB","BB"],8:["UTG","UTG1","LJ","HJ","CO","BTN","SB","BB"],9:["UTG","UTG1","UTG2","LJ","HJ","CO","BTN","SB","BB"],10:["UTG","UTG1","UTG2","UTG3","LJ","HJ","CO","BTN","SB","BB"]};
+let wzStep=0,wzOpensBy={},wzLimpBy=null,wzPruned=[],pvNodes={},pvCur="";
+function spotMap(text){const m={};for(let line of text.split("\n")){line=line.split("#")[0].trim();if(!line)continue;const i=line.indexOf("="),k=(i<0?line:line.slice(0,i)).trim(),v=i<0?"":line.slice(i+1).trim().replace(/^"|"$/g,"");if(k!=="lock"&&k!=="freq")m[k]=v}return m}
+const expand=v=>(v||"").split(",").map(t=>t.trim()).filter(Boolean).flatMap(t=>{const m=t.match(/^(\d+)\s*[xX]\s*([\d.]+)$/);return m?Array(+m[1]).fill(m[2]):[t]});
+function wzSeats(stacks,bounties){
+  const n=+$("wz-n").value,names=SEATS[n],pko=$("wz-bounty").value!=="off",tb=$("wz-seats");
+  const isIcm=$("wz-model").value==="icm"||$("wz-model").value==="icm-field";
+  const bountyUnit=isIcm?"$":"fichas";
+  const old=[...tb.querySelectorAll("tr[data-k]")].map(r=>({stack:r.querySelector(".st").value,bounty:r.querySelector(".bo").value}));
+  // Con "BB en fichas" puesto, como en la tabla "Chips | BB": esta columna es la
+  // ficha real del torneo y "≈ bb" (siguiente) es la derivada. Sin él, sigue siendo bb
+  // directo (nuestro modo por defecto, más simple para quien no tiene el reloj a mano).
+  const stackHeader=(+$("wz-bbchips").value||0)>0?"Chips":"Stack (bb)";
+  tb.innerHTML=`<tr><th>Posición</th><th id="wz-stack-th">${stackHeader}</th><th class="note" style="font-weight:400">≈ bb</th><th class="pko">Bounty (${bountyUnit})</th></tr>`;
+  const keep=old.length===n;
+  names.forEach((s,k)=>{const o=keep?old[k]||{}:{},tr=document.createElement("tr");tr.dataset.k=k;
+    const st=stacks?stacks[k]??"":o.stack??"20",bo=bounties?bounties[k]??"":o.bounty??"";
+    tr.innerHTML=`<td>${s}</td><td><input class="st" value="${esc(st)}"></td><td class="note bbhint"></td><td class="pko"><input class="bo" value="${esc(bo)}"></td>`;
+    tb.appendChild(tr)});
+  document.querySelectorAll("#wizard .pko").forEach(e=>e.style.display=pko?"":"none");
+  document.querySelectorAll("#wizard .icm").forEach(e=>e.style.display=$("wz-model").value==="chip"?"none":"");
+  $("wz-field-panel").style.display=$("wz-model").value==="icm-field"?"":"none";
+  $("wz-offbounty-unit").textContent=pko?` (${bountyUnit})`:"";
+  const note=$("wz-bounty-note");
+  if(pko&&!isIcm){note.style.display="";note.textContent="Bounties en fichas, sin ICM: se suman directo al stack final en vez de convertirse a $.";}
+  else note.style.display="none";
+  wzUpdateHints();
+  wzUpdateField();
+  wzBetSeats();
+}
+// Tabla de aperturas por posición (modo "Por posición" de Betting preflop): solo el resto
+// de asientos, ni SB ni BB -- esas dos tienen su propio campo siempre visible (Opens de la
+// SB / ROL de la BB) porque no encajan en "genérico vs. por posición": SB abre distinto
+// al resto por jugar fuera de posición, y la BB nunca "abre" en el sentido normal, solo
+// puede subir sobre limpers.
+function wzBetSeats(){
+  const tb=$("wz-bet-seats");
+  if(!tb)return;
+  const names=SEATS[+$("wz-n").value].filter(s=>s!=="SB"&&s!=="BB");
+  const old=[...tb.querySelectorAll("tr[data-k]")].map(r=>({open:r.querySelector(".op").value,limp:r.querySelector(".lp").checked}));
+  const keep=old.length===names.length;
+  let h="<tr><th>Posición</th><th>Open</th><th title=\"Open-limp permitido desde esta posición\">Limp</th></tr>";
+  names.forEach((s,k)=>{
+    const o=keep?old[k]||{}:{};
+    const op=wzOpensBy[s]??o.open??"";
+    const checked=(wzLimpBy?wzLimpBy.has(s):o.limp)?"checked":"";
+    h+=`<tr data-k="${k}" data-s="${s}"><td>${s}</td><td><input class="op" placeholder="por defecto" value="${esc(op)}"></td><td><input type="checkbox" class="lp" ${checked}></td></tr>`;
+  });
+  tb.innerHTML=h;
+}
+// Solo cambia visibilidad -- el contenido de la tabla ya lo mantiene wzBetSeats() (desde
+// wzSeats(), en cambios de jugadores/modelo/bounty o al cargar un spot). Si esta función
+// también reconstruyera la tabla en cada cambio de modo, perderías lo que hubieras escrito
+// al ir y volver de "Genérico" (el valor restaurado del spot pisaría la edición en curso).
+function wzBetModeUpdate(){
+  const pos=$("wz-bet-mode").value==="position";
+  document.querySelectorAll("#wizard .bet-generic").forEach(e=>e.style.display=pos?"none":"");
+  $("wz-bet-seats").style.display=pos?"":"none";
+}
+// Si "BB en fichas" tiene un valor, los stacks/SB/ante se interpretan en fichas y
+// aquí se ve a cuántas bb equivale cada uno, en vivo; si no, van ya en bb y los
+// hints solo repiten el mismo número (para no tener dos comportamientos que aprender).
+// Tamaños de open/ROL/3-bet que escalan con el stack efectivo (el más corto de la mesa),
+// como se haría a mano: más profundo, más grande. Solo se autorrellena si el campo está
+// en blanco o todavía tiene el último valor automático (así no se pisa lo que el usuario
+// haya escrito a mano).
+function wzSmartDefaults(){
+  const bbc=+$("wz-bbchips").value||0;
+  const stacks=[...document.querySelectorAll("#wz-seats tr[data-k] .st")].map(e=>+e.value).filter(v=>v>0).map(v=>bbc>0?v/bbc:v);
+  if(!stacks.length)return;
+  const eff=Math.min(...stacks);
+  const set=(key,v)=>{const e=document.querySelector(`#wizard [data-key="${key}"]`);if(!e)return;
+    if(e.value.trim()===""||e.value===e.dataset.def)e.value=v;
+    e.dataset.def=v};
+  set("sb-opens",(eff>25?"3.5bb+1bb":"3bb+1bb")+",ai");
+  set("bb-opens",(eff<17?"2.5bb+1bb":eff<20?"3bb+1bb":eff<25?"3.2bb+1bb":"3.5bb+1bb")+",ai");
+  set("3bet-ip",(eff<30?"2.5x":"3x")+",ai");
+  set("3bet-oop",(eff<30?"3.2x":"4x")+",ai");
+}
+function wzUpdateHints(){
+  const bbc=+$("wz-bbchips").value||0;
+  const toBb=x=>{const v=+x;if(bbc<=0||!(v>0))return"";return`≈ ${(v/bbc).toFixed(v/bbc<1?3:2)} bb`};
+  document.querySelectorAll("#wz-seats tr[data-k]").forEach(r=>{r.querySelector(".bbhint").textContent=toBb(r.querySelector(".st").value)});
+  const sth=$("wz-stack-th");if(sth)sth.textContent=bbc>0?"Chips":"Stack (bb)";
+  const sbEl=document.querySelector('#wizard [data-key="sb"]'),anteEl=document.querySelector('#wizard [data-key="ante"]');
+  $("wz-sb-hint").textContent=toBb(sbEl.value||"0.5");
+  $("wz-ante-hint").textContent=toBb(anteEl.value);
+  wzUpdateField();
+  wzPrizesUpdateSummary();
+  wzSmartDefaults();
+}
+// Panel "Otras mesas" (ICM multimesa): tabla de jugadores/fichas/bb media y curva de
+// percentil de stack de todo el campo, como la 2ª pantalla cuando el modelo es
+// ICM multimesa (0 = líder del campo, 100 = el stack más corto).
+function wzUpdateField(){
+  const stats=$("wz-field-stats"),svg=$("wz-field-chart");
+  const bbc0=+$("wz-bbchips").value||0;
+  const gu=$("wz-gen-unit");if(gu)gu.textContent=bbc0>0?" (fichas)":" (bb)";
+  if(!stats||$("wz-model").value!=="icm-field"){if(stats)stats.innerHTML="";if(svg)svg.innerHTML="";return}
+  const bbc=bbc0;
+  const toBb=x=>{const v=+x;if(!(v>0))return 0;return bbc>0?v/bbc:v};
+  const active=[...document.querySelectorAll("#wz-seats .st")].map(e=>toBb(e.value)).filter(v=>v>0);
+  const other=expand($("wz-offtable").value).map(toBb).filter(v=>v>0);
+  const nA=active.length,nO=other.length,n=nA+nO;
+  const sum=a=>a.reduce((x,y)=>x+y,0),chipsA=sum(active),chipsO=sum(other),chipsT=chipsA+chipsO;
+  const avg=(s,k)=>k?(s/k).toFixed(2)+" bb":"—";
+  stats.innerHTML=n?`<tr><th></th><th>Otras mesas</th><th>Tu mesa</th><th>Total</th></tr>
+    <tr><td>Jugadores</td><td>${nO}</td><td>${nA}</td><td>${n}</td></tr>
+    <tr><td>Fichas (bb)</td><td>${chipsO.toFixed(1)}</td><td>${chipsA.toFixed(1)}</td><td>${chipsT.toFixed(1)}</td></tr>
+    <tr><td>bb media</td><td>${avg(chipsO,nO)}</td><td>${avg(chipsA,nA)}</td><td>${avg(chipsT,n)}</td></tr>`:"<tr><td class=\"note\">Mete al menos tu mesa y las otras mesas del torneo.</td></tr>";
+  if(n<2){svg.innerHTML="";return}
+  const all=other.map(v=>({v,a:false})).concat(active.map(v=>({v,a:true}))).sort((p,q)=>q.v-p.v);
+  const ymax=all[0].v||1,x=k=>10+k/(n-1)*580,y=v=>10+(1-v/ymax)*140,bottom=155;
+  const others=all.map((p,k)=>({k,v:p.v,a:p.a})).filter(p=>!p.a);
+  const poly=others.map(p=>`${x(p.k)},${y(p.v)}`).join(" ");
+  const area=others.length?`${x(others[0].k)},${bottom} ${poly} ${x(others[others.length-1].k)},${bottom}`:"";
+  const fill=area?`<polygon points="${area}" fill="#8a7fd1" fill-opacity="0.35" stroke="#8a7fd1" stroke-width="2" vector-effect="non-scaling-stroke"/>`:"";
+  const dots=all.map((p,k)=>p.a?`<circle cx="${x(k)}" cy="${y(p.v)}" r="4" fill="var(--err)"/>`:"").join("");
+  svg.innerHTML=fill+dots;
+}
+// Genera N stacks al azar (lognormal, más cortos que largos como un campo real) con la
+// media exacta pedida, en la misma unidad que "Stacks de las otras mesas" (bb, o fichas
+// si "BB en fichas" está puesto) — rellena ese campo en vez de obligar a escribir NxS a
+// mano o adivinar una distribución.
+function wzGenStacks(n,avg,sigma){
+  const vals=[];
+  for(let i=0;i<n;i++){
+    const u1=Math.max(Math.random(),1e-12),u2=Math.random();
+    const z=Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+    vals.push(Math.exp(sigma*z-sigma*sigma/2));
+  }
+  const m=vals.reduce((a,b)=>a+b,0)/n;
+  return vals.map(v=>Math.max(0.1,Math.round(v/m*avg*10)/10));
+}
+$("wz-gen-go").onclick=()=>{
+  const n=Math.round(+$("wz-gen-n").value),avg=+$("wz-gen-avg").value;
+  if(!(n>0)||!(avg>0)){$("wz-err").textContent="Pon jugadores y media del torneo, los dos mayores que 0.";return}
+  $("wz-err").textContent="";
+  $("wz-offtable").value=wzGenStacks(n,avg,0.7).join(",");
+  $("wz-offtable").dispatchEvent(new Event("input"));
+};
+// Premios restantes como tabla editable , en vez de
+// una lista por comas: más claro. La lista por comas sigue siendo
+// la fuente real para wzPairs() (input oculto data-key="payouts"); la tabla solo la edita.
+let wzPrizesArr=[];
+function wzPrizesFromHidden(){
+  wzPrizesArr=($("wz-payouts-hidden").value||"").split(",").map(s=>s.trim()).filter(Boolean).map(Number);
+  wzRenderPrizes();
+}
+function wzPrizesToHidden(){
+  $("wz-payouts-hidden").value=wzPrizesArr.map(v=>v||0).join(",");
+}
+function wzRenderPrizes(){
+  const tb=$("wz-prizes");
+  let h="<tr><th>Puesto</th><th>Premio ($)</th><th>%</th><th></th></tr>";
+  wzPrizesArr.forEach((v,k)=>{
+    h+=`<tr><td>${k+1}</td><td><input class="wz-pz" data-k="${k}" value="${v}" style="width:90px"></td><td class="wz-pct" data-k="${k}">—</td><td><button type="button" class="wz-pz-x" data-k="${k}">×</button></td></tr>`;
+  });
+  tb.innerHTML=wzPrizesArr.length?h:'<tr><th>Puesto</th><th>Premio ($)</th><th>%</th><th></th></tr><tr><td colspan="4" class="note">Sin premios todavía: añade un puesto, o Chip EV si no quieres ICM.</td></tr>';
+  wzPrizesUpdateSummary();
+}
+function wzPrizesUpdateSummary(){
+  const total=wzPrizesArr.reduce((a,b)=>a+(+b||0),0);
+  document.querySelectorAll("#wz-prizes .wz-pct").forEach(e=>{const k=+e.dataset.k,v=+wzPrizesArr[k]||0;e.textContent=total>0?(v/total*100).toFixed(2)+" %":"—"});
+  const totalChips=[...document.querySelectorAll("#wz-seats .st")].reduce((s,e)=>s+(+e.value||0),0);
+  $("wz-prizes-sum").textContent=wzPrizesArr.length?`Puestos pagados: ${wzPrizesArr.length} · Premios: ${total.toFixed(2)} · Fichas totales: ${totalChips.toFixed(0)}`:"";
+}
+$("wz-prizes").addEventListener("input",e=>{
+  if(e.target.classList.contains("wz-pz")){wzPrizesArr[+e.target.dataset.k]=+e.target.value||0;wzPrizesToHidden();wzPrizesUpdateSummary()}
+});
+$("wz-prizes").addEventListener("click",e=>{
+  if(e.target.classList.contains("wz-pz-x")){wzPrizesArr.splice(+e.target.dataset.k,1);wzPrizesToHidden();wzRenderPrizes()}
+});
+$("wz-prize-add").onclick=()=>{wzPrizesArr.push(0);wzPrizesToHidden();wzRenderPrizes()};
+$("wz-prizes-paste").addEventListener("change",e=>{
+  const vals=e.target.value.split(",").map(s=>s.trim()).filter(Boolean).map(Number).filter(v=>!isNaN(v));
+  if(vals.length){wzPrizesArr=vals;wzPrizesToHidden();wzRenderPrizes()}
+  e.target.value="";
+});
+function wzOpen(){
+  // "BB en fichas" no se guarda en el spot (los stacks ya se guardan convertidos a bb):
+  // si se quedara puesto de una mano a otra, reinterpretaría mal los stacks de la
+  // siguiente. Cada mano empieza en modo bb; quien quiera fichas lo vuelve a poner.
+  $("wz-bbchips").value="";
+  loadPrunedFromExtra();$("wz-prune-note").textContent=wzPruned.length?`${wzPruned.length} acción(es) podada(s) antes de resolver`:"";
+  $("wz-template").value="";$("wz-template-note").textContent="";
+  wzLoad(spotMap(spotText()));
+  wzStep=0;wzGo(0);$("wizard").style.display="flex";
+}
+function wzLoad(m){
+  const stacks=(m.stacks||"20,20,20").split(",").map(s=>s.trim());
+  $("wz-n").value=String(Math.min(10,Math.max(2,stacks.length)));
+  $("wz-model").value=m.payouts?(m.offtable?"icm-field":"icm"):"chip";
+  $("wz-bounty").value=m.bounties?(m.ko==="sko"||parseFloat(m.ko)>=100?"sko":"pko"):"off";
+  wzLimpBy=m["limp-by"]!==undefined?new Set(m["limp-by"].split(/[,;]/).map(x=>x.trim().toUpperCase()).filter(Boolean)):null;
+  // "Flats" por nivel: --flats es denso,
+  // [0]=limps, [1]=open, [2]=3-bet... Vacío = el valor por defecto del motor para ese
+  // nivel (sin límite en limps/open -- 255 -- y 0 en 3-bet/4-bet/5-bet),
+  // así que un valor que coincide con ese valor por defecto se enseña en blanco (es
+  // indistinguible de no haberlo tocado).
+  {const fl=(m.flats||"").split(",").map(x=>x.trim());
+    const flatsDef={limps:255,open:255,"3bet":0,"4bet":0,"5bet":0};
+    ["limps","open","3bet","4bet","5bet"].forEach((lv,i)=>{
+      const v=fl[i],e=document.querySelector(`#wz-flats .lv-flats[data-level="${lv}"]`);
+      e.value=(v===undefined||v===""||isNaN(+v)||+v===flatsDef[lv])?"":v;
+    });}
+  wzOpensBy={};(m["opens-by"]||"").split(";").filter(Boolean).forEach(p=>{const i=p.indexOf(":");if(i>0)wzOpensBy[p.slice(0,i).trim().toUpperCase()]=p.slice(i+1)});
+  // SB y BB tienen su propio campo (sb-opens/bb-opens); "opens-by"/"limp-by" ya solo hablan
+  // del resto de posiciones -- si tienen algo, el spot se guardó en modo "por posición".
+  $("wz-bet-mode").value=(wzLimpBy||Object.keys(wzOpensBy).length)?"position":"generic";
+  document.querySelectorAll("#wizard [data-key]").forEach(e=>{const k=e.dataset.key;
+    if(e.type==="checkbox")e.checked=k in m;else if(k in m)e.value=m[k];else e.value=e.dataset.def??""});
+  $("wz-post").value="checkdown" in m?"checkdown":"mccfr";
+  {const ci=parseFloat(m["target-ci"]);$("wz-quality").value=!(ci>0)?"10":ci<=3?"3":ci<=10?"10":"20";}
+  $("wz-precision").value=(m.buckets||"").split(",").some(x=>+x>=1024)?"1024":"256";
+  const off=expand(m.offtable).length,b=(m.bounties||"").split(",").map(s=>s.trim());
+  wzSeats(stacks,b.slice(0,stacks.length));
+  wzBetModeUpdate();
+  if(off&&b.length>stacks.length)$("wz-offbounty").value=b[stacks.length];
+  wzPrizesFromHidden();
+}
+// Plantillas: spots típicos en bb, con las mismas claves que un fichero de spot. Solo
+// rellenan el asistente; la configuración que no nombran vuelve a su valor por defecto.
+const TEMPLATES=[
+  ["Mesa final de MTT, 9 jugadores (ICM)",{stacks:"25,40,18,60,32,15,22,28,12",payouts:"30,20,14,10,8,6,5,4,3",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
+  ["SNG 6 jugadores, 20 bb (ICM 65/35)",{stacks:"20,20,20,20,20,20",payouts:"65,35",profile:"standard","max-in-pot":"3",fgs:"auto","target-ci":"10"}],
+  ["Final de SNG, 3 jugadores push/fold (ICM 50/30/20)",{stacks:"12,8,10",payouts:"50,30,20",profile:"pushfold",fgs:"auto","target-ci":"10"}],
+  ["Mesa final PKO, 8 jugadores (ICM + bounties)",{stacks:"30,25,40,20,35,18,28,22",payouts:"25,17,12,9,7,5.5,4.5,3.5",bounties:"20,15,30,10,25,12,18,15",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
+  ["Heads-up 25 bb (chip EV)",{stacks:"25,25",profile:"standard","target-ci":"10"}],
+  ["6-max 40 bb, primeras fases (chip EV)",{stacks:"40,40,40,40,40,40",ante:"0.12","bb-ante":"",profile:"standard","max-in-pot":"3","target-ci":"10"}],
+];
+TEMPLATES.forEach(([name],k)=>$("wz-template").add(new Option(name,String(k))));
+$("wz-template").onchange=e=>{const t=TEMPLATES[+e.target.value];if(!e.target.value||!t)return;
+  wzPruned=[];$("wz-prune-note").textContent="";$("wz-bbchips").value="";
+  wzLoad(t[1]);wzGo(0);
+  $("wz-template-note").textContent="Plantilla aplicada: cambia stacks y premios a los de tu mano.";
+};
+function wzGo(k){wzStep=k;document.querySelectorAll("#wizard .wpage").forEach((p,i)=>p.style.display=i===k?"":"none");
+  document.querySelectorAll("#wz-steps span").forEach((s,i)=>s.classList.toggle("on",i===k));
+  $("wz-prev").disabled=k===0;$("wz-next").style.display=k<2?"":"none";$("wz-ok").style.display=k===2?"":"none";$("wz-err").textContent="";
+  if(k===2)wzSummary()}
+$("wz-n").addEventListener("change",()=>{wzLimpBy=null});
+// Calidad = objetivo de CI: el cálculo para al
+// llegar. Las iteraciones solo son un tope de seguridad por si el CI no llegara a bajar.
+const ITERS_CAP=20000;
+// Claves que solo tienen sentido con el perfil Estándar (tamaños de raise y su árbol).
+const STD_ONLY=k=>["opens","sb-opens","bb-opens","opens-by","reraise","reraise-ip","reraise-oop","max-raises","allin-threshold","flats","no-closing-flats","no-cold-calls"].includes(k)||/^[345]bet/.test(k);
+function wzPairs(){
+  const out=[],rows=[...document.querySelectorAll("#wz-seats tr[data-k]")],names=SEATS[+$("wz-n").value],model=$("wz-model").value,bounty=$("wz-bounty").value;
+  const stacks=rows.map(r=>r.querySelector(".st").value.trim());
+  if(stacks.some(s=>!(+s>0)))throw new Error("Todos los stacks deben ser números positivos.");
+  out.push(["stacks",stacks.join(",")]);
+  document.querySelectorAll("#wizard [data-key]").forEach(e=>{const k=e.dataset.key,cls=e.closest(".icm,.pko,.icm-field,.bet-generic");
+    if(cls&&cls.style.display==="none")return;
+    if(e.type==="checkbox"){if(e.checked)out.push([k,null])}else if(e.value.trim()!==""&&e.value.trim()!==(e.dataset.omit??"\u0000"))out.push([k,e.value.trim()])});
+  if((model==="icm"||model==="icm-field")&&!out.some(p=>p[0]==="payouts"))throw new Error("ICM necesita la lista de premios.");
+  if(model==="icm-field"&&!out.some(p=>p[0]==="offtable"))throw new Error("ICM multimesa necesita los stacks de las otras mesas.");
+  if(bounty!=="off"){const b=rows.map(r=>r.querySelector(".bo").value.trim()||"0"),off=expand($("wz-offtable").value).length;
+    let ob=$("wz-offbounty").value.trim();
+    if(!ob){
+      // Sin dato de fuera de la mesa: mejor estimar con la media de los bounties que sí
+      // conocemos (tu mesa) que asumir en silencio que fuera no queda bounty (= 0).
+      const known=b.map(Number).filter(x=>x>0);
+      ob=known.length?(known.reduce((a,x)=>a+x,0)/known.length).toFixed(2):"0";
+    }
+    out.push(["bounties",b.concat(Array(off).fill(ob)).join(",")])}
+  if($("wz-bet-mode").value==="position"){
+    const betRows=[...document.querySelectorAll("#wz-bet-seats tr[data-k]")];
+    const ob=betRows.map(r=>[r.dataset.s,r.querySelector(".op").value.trim()]).filter(([s,v])=>v).map(([s,v])=>`${s}:${v}`);
+    if(ob.length)out.push(["opens-by",ob.join(";")]);
+    const lp=betRows.map(r=>[r.dataset.s,r.querySelector(".lp").checked]).filter(([s,v])=>v).map(([s])=>s);
+    if(lp.length)out.push(["limp-by",lp.join(",")]);
+  }
+  // Flats por nivel: solo se manda --flats si se ha tocado al menos uno (si no, el motor
+  // sigue con su valor por defecto, 255/sin límite en limps/open y 0 en 3-bet+).
+  // Si se toca uno, los demás en blanco mandan su propio valor por defecto
+  // (no "sin límite" para todos), para no desactivar sin querer el 0 de 3-bet+ al tocar
+  // solo limps/open.
+  {const levels=["limps","open","3bet","4bet","5bet"],flatsDef={limps:"255",open:"255","3bet":"0","4bet":"0","5bet":"0"};
+    const fl=levels.map(lv=>document.querySelector(`#wz-flats .lv-flats[data-level="${lv}"]`).value.trim());
+    if(fl.some(v=>v!==""))out.push(["flats",fl.map((v,k)=>v===""?flatsDef[levels[k]]:v).join(",")]);}
+  out.push(["target-ci",$("wz-quality").value],["iters",String(ITERS_CAP)]);
+  // Push/fold: los tamaños de raise del paso 2 (con valores por defecto siempre puestos) son
+  // del perfil Estándar; mandarlos metía raises en un árbol push/fold (solve los aplica sin
+  // mirar el perfil).
+  if($("wz-profile").value!=="standard")for(let i=out.length-1;i>=0;i--)if(STD_ONLY(out[i][0]))out.splice(i,1);
+  if($("wz-post").value==="checkdown")out.push(["checkdown",null]);
+  else if($("wz-precision").value!=="256"){const q=$("wz-precision").value;out.push(["buckets",`${q},${q},${q}`])}
+  if(wzPruned.length)out.push(["prune",wzPruned.map(x=>`${x.path}@${x.label}`).join(";")]);
+  // "BB en fichas": todo lo de arriba se tecleó en fichas, no en bb — se
+  // convierte aquí, al final, sobre los pares ya montados (stacks/sb/ante), antes de
+  // mandarlos; el motor nunca ve fichas, solo bb, como siempre.
+  const bbc=+$("wz-bbchips").value||0;
+  if(bbc>0)for(const p of out){
+    if(p[0]==="stacks")p[1]=p[1].split(",").map(x=>(+x/bbc).toFixed(4)).join(",");
+    else if(p[0]==="sb"||p[0]==="ante")p[1]=(+p[1]/bbc).toFixed(4);
+    // "Otras mesas" se teclea/genera en la misma unidad que los stacks de tu mesa (fichas
+    // aquí), pero no pasaba por esta conversión: el motor la recibía tal cual, como si ya
+    // estuviera en bb (p.ej. "40000" en vez de "20"). Convierte cada token, respetando los
+    // grupos "NxS" (solo la S es el stack).
+    else if(p[0]==="offtable")p[1]=p[1].split(",").map(t=>{t=t.trim();if(!t)return"";const m=t.match(/^(\d+)\s*[xX]\s*([\d.]+)$/);return m?`${m[1]}x${(+m[2]/bbc).toFixed(4)}`:(+t/bbc).toFixed(4)}).filter(Boolean).join(",");
+  }
+  return out;
+}
+// Segundos por iteración medidos con 4 hilos (perfil estándar 30 bb, MCCFR postflop, 16
+// boards por visita con reparto adaptativo), por jugadores y máximo de activos (2 o 3+);
+// 9 y 10 con 3 activos, extrapolados.
+const SEC_PER_ITER={2:{2:0.1,3:0.1},3:{2:0.19,3:0.5},4:{2:0.33,3:1.7},5:{2:0.75,3:3.9},6:{2:1.4,3:5.5},7:{2:2.1,3:11.4},8:{2:3.0,3:20.4},9:{2:4.1,3:39},10:{2:5.5,3:74}};
+function fmtTime(sec){return sec<90?`${Math.round(sec)} s`:sec<5400?`${Math.round(sec/60)} min`:`${(sec/3600).toFixed(1)} h`}
+function wzSummary(){
+  try{const p=wzPairs(),n=+$("wz-n").value,mp=Math.min(3,+$("wz-maxpot").value),std=$("wz-profile").value==="standard",cd=$("wz-post").value==="checkdown";
+    let cost;
+    if(!std)cost="bajo (push/fold: segundos)";
+    else{const t=SEC_PER_ITER[n][mp]*(cd?0.04:1);cost=`≈ ${t<1?t.toFixed(2):t.toFixed(1)} s por iteración con 4 núcleos (menos con más); para al llegar a CI ${$("wz-quality").value}`;
+      if(n>=6&&mp>=3&&!cd)cost+=`. <b>Con ${n} jugadores, “máx. 2 jugadores activos” es unas ${Math.round(SEC_PER_ITER[n][3]/SEC_PER_ITER[n][2])} veces más rápido</b> (sin cold calls ni botes a 3)`;}
+    const mixed=!std&&p.filter(([k])=>STD_ONLY(k)).map(([k])=>k);
+    const warn=mixed&&mixed.length?`<div class="err" style="margin-bottom:6px">⚠ Perfil en Push/fold pero con ${mixed.join(", ")} puestos (son de perfil Estándar): en Push/fold solo se foldea o se va all-in, esos tamaños no se usan — probablemente quieras poner Perfil en Estándar.</div>`:"";
+    const bountyTxt=$("wz-bounty").value!=="off"?`, bounty ${$("wz-bounty").selectedOptions[0].text}`:"";
+    $("wz-sum").innerHTML=`${warn}<b>${n} jugadores</b>, modelo ${$("wz-model").selectedOptions[0].text}${bountyTxt}, perfil ${$("wz-profile").selectedOptions[0].text}, postflop ${$("wz-post").selectedOptions[0].text}. Coste: ${cost}.<pre class="range">${esc(p.map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n"))}</pre>`}
+  catch(e){$("wz-sum").innerHTML=`<span class="err">${esc(e.message)}</span>`}
+}
+// Vista previa del árbol (sin resolver) y poda: una acción de un nodo
+// concreto, no todo un nivel como --no-call/--no-allin. El mismo árbol desplegable y con
+// colores que el de la mano ya resuelta (treeNode/color), solo que sin frecuencias (nada
+// resuelto aún) y con un ✕ por acción para podarla. Se manda al cerrar como
+// --prune "ruta@etq;...".
+let pvOpen=new Set([""]);
+async function openPreview(){
+  $("pv-err").textContent="";
+  let p;try{p=wzPairs()}catch(e){$("wz-err").textContent=e.message;return}
+  const body=p.map(([k,v])=>v===null?"--"+k:"--"+k+"\n"+v).join("\n");
+  $("preview").style.display="flex";$("pv-tree").innerHTML="";$("pv-stats").innerHTML="";
+  let r;try{r=await post("/api/preview",body)}catch(e){$("pv-err").textContent=e.message;return}
+  pvNodes={};r.nodes.forEach(n=>pvNodes[n.path]=n);
+  $("pv-stats").innerHTML=statsHtml(r.stats);
+  pvOpen=new Set([""]);pvTarget="pv-tree";
+  renderPvTree();
+}
+function pvPruned(path,label){return wzPruned.some(x=>x.path===path&&x.label===label)}
+// Como el panel "Tree Statistics and Abstractions": nodos y tamaño del árbol, y la
+// RAM del sistema (si el solve pudo leerla — no en todas las plataformas).
+function statsHtml(s){
+  const mb=x=>x<1024?`${x.toFixed(x<10?2:1)} MB`:`${(x/1024).toFixed(2)} GB`;
+  const ram=s.ram_total_mb!=null?` · RAM libre: ${mb(s.ram_avail_mb)} / ${mb(s.ram_total_mb)}`:"";
+  return `<b>${s.action_nodes}</b> nodos de acción, ${s.terminals} terminales, ${s.flop_leaves} hojas de flop (${s.postflop_nodes} nodos postflop) · árbol: ${mb(s.arena_mb)}${ram}`;
+}
+// Como color(), pero el degradado de tamaños de subida se calcula con las acciones del
+// propio nodo de la vista previa, no con el `node` global del árbol ya resuelto.
+function pvColor(label,actions){
+  if(label==="F")return cssVar("--fold");if(label==="X")return cssVar("--check");if(label==="C")return cssVar("--call");if(label==="A")return cssVar("--allin");
+  const sizes=actions.filter(l=>/^R/.test(l)).map(l=>parseFloat(l.slice(1))).sort((a,b)=>a-b);
+  const i=sizes.indexOf(parseFloat(label.slice(1)));
+  const t=sizes.length>1&&i>=0?i/(sizes.length-1):0.35;
+  return mixHex(cssVar("--raise-lo"),cssVar("--raise-hi"),t);
+}
+// target: contenedor donde pintar — el modal del asistente ("pv-tree") o directamente la
+// pestaña Estrategia ("tree"), para podar ahí sin tener que abrir el asistente otra vez.
+let pvTarget="pv-tree";
+function renderPvTree(){
+  const t=$(pvTarget);if(!t||!pvNodes[""]){return}
+  t.innerHTML="";t.appendChild(pvTreeNode(""));
+}
+// Relee wzPruned desde "extra" (donde vive el --prune de la mano activa): hace falta antes
+// de mostrar su árbol o abrir el asistente, para no mezclar las podas de una mano con las
+// de otra (son dos manos, dos árboles, dos podas independientes).
+function loadPrunedFromExtra(){
+  const cur=($("extra").value.match(/"[^"]*"|\S+/g)||[]).map(t=>t.replace(/^"|"$/g,""));
+  const i=cur.indexOf("--prune");
+  wzPruned=i>=0&&cur[i+1]?cur[i+1].split(";").filter(Boolean).map(e=>{const j=e.indexOf("@");return{path:e.slice(0,j),label:e.slice(j+1)}}):[];
+}
+// Guarda el --prune acumulado en "extra" (y por tanto en el spot de la mano) en cuanto se
+// poda algo, se haga desde el modal del asistente o desde el árbol de Estrategia — así
+// "Resolver" ya lo tiene en cuenta sin tener que volver a pasar por el asistente.
+function commitPruned(){
+  const cur=($("extra").value.match(/"[^"]*"|\S+/g)||[]).map(t=>t.replace(/^"|"$/g,""));
+  const out=[];
+  for(let i=0;i<cur.length;i++){if(cur[i]==="--prune"){i++;continue}out.push(cur[i])}
+  if(wzPruned.length){const v=wzPruned.map(x=>`${x.path}@${x.label}`).join(";");out.push("--prune",/\s/.test(v)?`"${v}"`:v)}
+  $("extra").value=out.join(" ");saveForm();saveCurrentHand();
+}
+// Árbol sin resolver (recién salido del asistente, o al volver a una mano configurada
+// pero todavía sin "Resolver") directamente en la pestaña Estrategia: se puede podar ahí
+// mismo, sin reabrir el asistente — y no se lanza ningún cálculo hasta que el usuario
+// pulse "Resolver" él mismo.
+async function showPreviewInMainTree(){
+  clearView();$("tree-stats").style.display="none";
+  let p;try{p=pairs()}catch(e){$("tree").innerHTML=`<div class="err">${esc(e.message)}</div>`;return}
+  const body=p.map(([k,v])=>v===null?"--"+k:"--"+k+"\n"+v).join("\n");
+  let r;try{r=await post("/api/preview",body)}catch(e){$("tree").innerHTML=`<div class="err">${esc(e.message)}</div>`;return}
+  pvNodes={};r.nodes.forEach(n=>pvNodes[n.path]=n);
+  $("tree-stats").innerHTML=statsHtml(r.stats);$("tree-stats").style.display="";
+  pvOpen=new Set([""]);pvTarget="tree";
+  renderPvTree();
+}
+function pvTreeNode(path){
+  const w=document.createElement("div");
+  foldChain(path,pvNodes,pvPruned).forEach(({path:p,n,label,child})=>{
+    if(pvPruned(p,label))return;
+    const live=n.actions.filter(l=>!pvPruned(p,l));
+    const has=!!pvNodes[child],open=has&&pvOpen.has(child);
+    const r=document.createElement("div");r.className="tn-a"+(has?"":" term");
+    r.innerHTML=`<span class="cv">${has?(open?"▾":"▸"):""}</span><i style="background:${pvColor(label,n.actions)}"></i><b class="sn">${esc(n.seat)}</b>${esc(actName(label,p))}`;
+    if(has){
+      const cv=r.querySelector(".cv");cv.onclick=e=>{e.stopPropagation();open?pvOpen.delete(child):pvOpen.add(child);renderPvTree()};
+      r.onclick=()=>{open?pvOpen.delete(child):pvOpen.add(child);renderPvTree()};
+    }else r.title="nodo terminal (flop, showdown…)";
+    if(live.length>1){const x=document.createElement("button");x.textContent="✕";x.className="f";x.style.marginLeft="auto";
+      x.title="Quita esta acción de este nodo antes de resolver";
+      x.onclick=e=>{e.stopPropagation();wzPruned.push({path:p,label});commitPruned();renderPvTree()};r.appendChild(x)}
+    w.appendChild(r);
+    if(open){const kids=document.createElement("div");kids.className="tn-k";kids.appendChild(pvTreeNode(child));w.appendChild(kids)}
+  });
+  return w;
+}
+$("wz-preview-btn").onclick=openPreview;
+$("pv-all").onclick=()=>{Object.keys(pvNodes).forEach(p=>pvOpen.add(p));renderPvTree()};
+$("pv-none").onclick=()=>{pvOpen=new Set([""]);renderPvTree()};
+$("pv-close").onclick=()=>{$("preview").style.display="none";
+  $("wz-prune-note").textContent=wzPruned.length?`${wzPruned.length} acción(es) podada(s) antes de resolver`:""};
+// Si la mano activa ya está resuelta, abre el asistente sobre una mano nueva (para no
+// pisar una solución); si todavía no se ha resuelto, reutiliza ese hueco en blanco en vez
+// de acumular manos vacías cada vez que se pulsa. Único punto de entrada para configurar:
+// ya no hay un formulario paralelo en el panel izquierdo que se pueda desincronizar.
+$("new").onclick=()=>{if(hands[hi].job)newHand(false);applySpot(hands[hi].spot||"");wzOpen()};
+$("wz-close").onclick=$("wz-cancel").onclick=()=>$("wizard").style.display="none";
+$("wz-prev").onclick=()=>wzGo(Math.max(0,wzStep-1));
+$("wz-next").onclick=()=>{try{if(wzStep===0)wzPairs();wzGo(wzStep+1)}catch(e){$("wz-err").textContent=e.message}};
+document.querySelectorAll("#wz-steps span").forEach((s,i)=>s.onclick=()=>wzGo(i));
+$("wz-n").onchange=()=>wzSeats();
+// Importar historial: el fichero se separa en manos
+// aquí y solo la elegida va a /api/hh, que la traduce a bb en el orden de acción del solver.
+const HH_START=/^(?=PokerStars Hand #|Poker Hand #|Winamax Poker - )/m;
+function wzHhHands(){return $("wz-hh-text").value.replace(/^\uFEFF/,"").split(HH_START).filter(t=>HH_START.test(t))}
+function wzHhList(){
+  const hs=wzHhHands(),sel=$("wz-hh-hand");
+  sel.innerHTML=hs.map((t,i)=>{const id=(t.match(/Hand #([^:\s]+)/)||t.match(/HandId: #(\S+)/)||[])[1]||"",cards=(t.match(/Dealt to .*? \[([^\]]+)\]/)||[])[1]||"";
+    return `<option value="${i}">${i+1} · #${esc(id)}${cards?" · "+esc(cards):""}</option>`}).join("");
+  sel.value=String(Math.max(0,hs.length-1));
+  $("wz-hh-note").textContent=hs.length?`${hs.length} mano(s) en el historial`:($("wz-hh-text").value.trim()?"no se reconoce ninguna mano de PokerStars, GGPoker ni Winamax":"");
+}
+const num4=x=>String(+(+x).toFixed(4));
+$("wz-hh-btn").onclick=()=>{const d=$("wz-hh");d.style.display=d.style.display==="none"?"":"none"};
+$("wz-hh-text").addEventListener("input",wzHhList);
+$("wz-hh-file").onchange=async e=>{const f=e.target.files[0];if(!f)return;$("wz-hh-text").value=await f.text();wzHhList()};
+$("wz-hh-go").onclick=async()=>{
+  const t=wzHhHands()[+$("wz-hh-hand").value];
+  if(!t){$("wz-hh-note").textContent="no hay ninguna mano que importar";return}
+  let h;try{h=await post("/api/hh",t)}catch(e){$("wz-hh-note").textContent=e.message;return}
+  const n=h.players.length;
+  if(n<2||n>10){$("wz-hh-note").textContent=`${n} jugadores: entre 2 y 10`;return}
+  $("wz-n").value=String(n);$("wz-bbchips").value="";wzLimpBy=null;
+  const q=k=>document.querySelector(`#wizard [data-key="${k}"]`);
+  q("sb").value=h.sb===0.5?"":num4(h.sb);q("ante").value=h.ante>0?num4(h.ante):"";q("bb-ante").checked=h.bb_ante;
+  const bounties=h.players.every(p=>p.bounty!==null)?h.players.map(p=>num4(p.bounty)):null;
+  if(bounties){if($("wz-model").value==="chip")$("wz-model").value="icm";if($("wz-bounty").value==="off"){$("wz-bounty").value="pko";$("wz-ko").value=""}}
+  else $("wz-bounty").value="off";
+  wzSeats(h.players.map(p=>num4(p.bb)),bounties);
+  if(h.hero!==null){const td=document.querySelector(`#wz-seats tr[data-k="${h.hero}"] td`);if(td)td.textContent+=` ★ ${h.hero_cards}`}
+  const need=$("wz-model").value!=="chip"&&!$("wz-payouts-hidden").value?" — añade los premios restantes":"";
+  $("wz-hh-note").textContent=`${h.site} #${h.id}: ${n} jugadores, ciegas ${num4(h.sb)}/1 bb${h.ante?", ante "+num4(h.ante)+" bb"+(h.bb_ante?" (de BB)":""):""}${bounties?", con bounties":""}${need}`;
+  $("wz-hh").style.display="none";
+};
+$("wz-bet-mode").onchange=wzBetModeUpdate;
+// Con open-limp activado (cualquier posición puede limpear), unos cuantos overlimpers
+// más es realista -- sin límite (como con solo la SB completando) dispararía el árbol.
+$("wz-open-limp").onchange=e=>{const f=document.querySelector('#wz-flats .lv-flats[data-level="limps"]');
+  if(f&&e.target.checked&&f.value.trim()==="")f.value="3"};
+$("wz-bbchips").oninput=wzUpdateHints;
+document.querySelector('#wizard [data-key="sb"]').addEventListener("input",wzUpdateHints);
+document.querySelector('#wizard [data-key="ante"]').addEventListener("input",wzUpdateHints);
+$("wz-seats").addEventListener("input",e=>{if(e.target.classList.contains("st"))wzUpdateHints()});
+$("wz-offtable").addEventListener("input",wzUpdateField);
+$("wz-offbounty").addEventListener("input",wzUpdateField);
+$("wz-model").onchange=()=>wzSeats();
+$("wz-bounty").onchange=()=>{
+  // Preset del % en efectivo al elegir PKO/SKO a mano (editable después: valor libre, no
+  // solo 50/100). Solo aquí, no en wzSeats(): wzOpen() también la llama al cargar un spot
+  // guardado y ahí no debe pisar el % que ya traía ese spot.
+  if($("wz-bounty").value==="sko")$("wz-ko").value="100";else if($("wz-bounty").value==="pko")$("wz-ko").value="";
+  wzSeats();
+};
+// Al aceptar: solo se construye el árbol (vista previa, sin CFR) y se enseña ya en la
+// pestaña Estrategia, lista para seguir podando ahí mismo — resolver es un paso aparte y
+// explícito (botón "Resolver"), nunca automático al salir del asistente.
+$("wz-ok").onclick=()=>{try{const p=wzPairs();locks=[];applySpot(p.map(([k,v])=>v===null?k:`${k} = ${v}`).join("\n"));$("wizard").style.display="none";$("s-state").textContent="mano configurada: revisa el árbol, poda si quieres y pulsa Resolver";
+  nameHand(`${$("wz-n").value} jug. ${$("wz-model").selectedOptions[0].text}`);haveBin=false;showPreviewInMainTree();
+  // Sin esto, la configuración solo vivía en los campos en vivo: si se reabría el
+  // asistente (o se cambiaba de mano) antes de pulsar Resolver, se perdía y volvía a lo
+  // último guardado de verdad -- saveCurrentHand() solo corría al lanzar el cálculo.
+  saveCurrentHand()}catch(e){$("wz-err").textContent=e.message}};
+seatEvLine();
+</script>
+</body>
+</html>

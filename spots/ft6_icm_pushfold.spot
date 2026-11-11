@@ -1,0 +1,7 @@
+# Mesa final de 6, ICM, push/fold
+stacks = 12,18,25,9,15,20
+payouts = 50,30,20
+iters = 400
+target = 0.005
+show = ""
+show = "LJ:F HJ:F CO:F BTN:F SB:A"

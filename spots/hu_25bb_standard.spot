@@ -1,0 +1,10 @@
+# HU 25 bb con opens, 3-bets, all-in y postflop MCCFR
+stacks = 25,25
+profile = standard
+boards = 64
+buckets = 32,32,32
+iters = 1500
+target = 0.01
+show = ""
+show = "SB:R3"
+show = "SB:C"

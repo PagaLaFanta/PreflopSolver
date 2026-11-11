@@ -1,0 +1,7 @@
+# Burbuja de satélite: 4 jugadores, 3 plazas iguales
+stacks = 8,14,22,16
+payouts = 100,100,100
+iters = 400
+target = 0.005
+show = ""
+show = "CO:F BTN:A"

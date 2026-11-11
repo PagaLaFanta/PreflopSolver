@@ -1,0 +1,37 @@
+[package]
+name = "preflop_engine"
+version = "0.2.0"
+edition = "2021"
+description = "Motor preflop de torneos (cEV / ICM / PKO) con CFR+ preflop y MCCFR postflop abstraído"
+license = "GPL-3.0-only"
+repository = "https://github.com/PagaLaFanta/PreflopSolver"
+
+[dependencies]
+# Dependencias externas, a propósito (antes el núcleo no tenía ninguna): el pool de hilos
+# propio (cfr::pool, con su propio mutex+condvar y un contador "idle" como heurística) se
+# quedaba corto en árboles estrechos — en cuanto no había un "hilo libre" exacto en el
+# instante de repartir, caía a ejecutar todo en línea, por diseño. rayon usa colas de robo
+# de trabajo (work-stealing) de verdad: no hay ese fallback todo-o-nada. cfr::pool pasa a
+# ser un envoltorio fino sobre rayon::join/rayon::scope, sin tocar las firmas que ya usan
+# preflop.rs/postflop.rs.
+rayon = "1.12.0"
+# El recorrido CFR clona un Box<RangeVec> (~5.3 KB) por jugador en cada nodo/acción/
+# iteración; con rayon repartiendo bien el trabajo, esas asignaciones compiten de verdad
+# por el allocator global entre hilos. mimalloc (src/lib.rs, #[global_allocator]) está
+# pensado justo para eso: medido en el mismo caso de prueba que rayon,
+# ~9-12 % más rápido encima de la mejora de rayon.
+mimalloc = "0.1.52"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+debug = 1
+
+[profile.test]
+# Los tests ejercitan Monte Carlo y CFR reales: sin optimizar serían ~30× más lentos.
+opt-level = 3
+
+[profile.bench]
+inherits = "release"

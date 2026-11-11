@@ -1,0 +1,19 @@
+PokerStars Hand #231234567890: Tournament #3141592653, $10+$1 USD Hold'em No Limit - Level XV (400/800) - 2024/01/01 12:00:00 ET
+Table '3141592653 12' 9-max Seat #3 is the button
+Seat 1: villain1 (15000 in chips)
+Seat 2: villain2 (23,000 in chips)
+Seat 3: Hero (8000 in chips)
+Seat 5: sb_guy (12000 in chips)
+Seat 7: bb_guy (9600 in chips)
+Seat 8: away (5000 in chips) is sitting out
+villain1: posts the ante 100
+villain2: posts the ante 100
+Hero: posts the ante 100
+sb_guy: posts the ante 100
+bb_guy: posts the ante 100
+sb_guy: posts small blind 400
+bb_guy: posts big blind 800
+*** HOLE CARDS ***
+Dealt to Hero [Ah Kd]
+villain1: folds
+*** SUMMARY ***

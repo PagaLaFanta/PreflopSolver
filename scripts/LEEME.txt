@@ -1,0 +1,14 @@
+Preflop Solver
+==============
+
+Doble clic en PreflopSolver.exe: se abre la interfaz en su propia ventana (Chrome o
+Edge en modo aplicación; si no hay ninguno, el navegador por defecto). Al cerrar la
+ventana, el programa se cierra solo en menos de un minuto.
+
+- La primera vez calcula la matriz de equity y el pool postflop (unos segundos) y los
+  guarda en la carpeta .cache junto al programa.
+- Los spots guardados desde la interfaz quedan en la carpeta spots.
+- serve.exe y solve.exe también se pueden usar desde la línea de comandos
+  (solve.exe --help).
+- Guía de uso y práctica: GUIA_DE_USO.md (ábrela con cualquier editor o visor de
+  Markdown).

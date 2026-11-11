@@ -1,0 +1,6 @@
+# 8 jugadores, 16 en otras mesas, 9 premios
+stacks = 12,18,25,9,15,20,30,11
+offtable = 16x25
+payouts = 100,60,40,30,25,20,15,12,10
+iters = 300
+show = ""

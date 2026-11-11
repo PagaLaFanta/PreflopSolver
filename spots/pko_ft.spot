@@ -1,0 +1,7 @@
+# Mesa final PKO de 5 jugadores, cabezas distintas
+stacks = 10,22,15,30,8
+payouts = 50,30,20
+bounties = 12,20,14,25,10
+iters = 400
+target = 0.005
+show = ""

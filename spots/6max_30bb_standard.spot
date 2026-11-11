@@ -1,0 +1,7 @@
+# 6-max 30 bb, opens/3-bets, flops en check-down
+stacks = 30,30,30,30,30,30
+profile = standard
+checkdown
+iters = 300
+show = ""
+show = "LJ:F HJ:F CO:R2.5"

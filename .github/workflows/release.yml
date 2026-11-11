@@ -1,0 +1,31 @@
+name: Release
+# Compila el paquete de Windows (scripts/package.sh, compilación cruzada con MinGW) y
+# publica un release de GitHub con dist/PreflopSolver.zip. Se lanza con un tag `v*` o con
+# un push cuyo mensaje de commit contenga `[release]` (crea el tag `v<versión de
+# Cargo.toml>` sobre ese commit).
+on:
+  push:
+    tags: ["v*"]
+    branches: ["**"]
+permissions:
+  contents: write
+jobs:
+  windows-package:
+    if: startsWith(github.ref, 'refs/tags/v') || contains(github.event.head_commit.message, '[release]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-gnu
+      - run: sudo apt-get update && sudo apt-get install -y gcc-mingw-w64-x86-64 zip
+      - run: sh scripts/package.sh
+      - id: version
+        run: echo "tag=v$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)" >> "$GITHUB_OUTPUT"
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: PreflopSolver ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.version.outputs.tag }}
+          files: dist/PreflopSolver.zip
+          body_path: RELEASE_NOTES.md

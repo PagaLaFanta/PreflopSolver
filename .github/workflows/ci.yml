@@ -1,0 +1,16 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release --all-targets
+      - run: cargo test --release
+      - run: cargo clippy --all-targets -- -D warnings -A clippy::type_complexity -A clippy::doc_lazy_continuation -A clippy::ptr_arg -A clippy::field_reassign_with_default -A clippy::unnecessary_get_then_check -A clippy::needless_range_loop
